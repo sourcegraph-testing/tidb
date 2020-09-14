@@ -169,7 +169,7 @@ func (txn *tikvTxn) Set(k kv.Key, v []byte) error {
 }
 
 func (txn *tikvTxn) String() string {
-	return fmt.Sprintf("%d", txn.StartTS())
+	return strconv.Itoa(txn.StartTS())
 }
 
 func (txn *tikvTxn) Iter(k kv.Key, upperBound kv.Key) (kv.Iterator, error) {

@@ -1245,7 +1245,7 @@ func (s *testSuiteJoinSerial) TestIndexNestedLoopHashJoin(c *C) {
 	))
 	rs := tk.MustQuery("select /*+ INL_HASH_JOIN(s) */ * from t left join s on t.a=s.a order by t.pk")
 	for i, row := range rs.Rows() {
-		c.Assert(row[0].(string), Equals, fmt.Sprintf("%d", i))
+		c.Assert(row[0].(string), Equals, strconv.Itoa(i))
 	}
 
 	// index hash join with semi join
