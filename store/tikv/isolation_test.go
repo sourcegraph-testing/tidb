@@ -17,8 +17,8 @@ package tikv
 
 import (
 	"context"
-	"fmt"
 	"sort"
+	"strconv"
 	"sync"
 	"time"
 
@@ -150,7 +150,7 @@ func (s *testIsolationSuite) TestReadWriteConflict(c *C) {
 	writeDone := make(chan struct{})
 	go func() {
 		for i := 1; i <= writeCount; i++ {
-			w := s.SetWithRetry(c, []byte("k"), []byte(fmt.Sprintf("%d", i)))
+			w := s.SetWithRetry(c, []byte("k"), []byte(strconv.Itoa(i)))
 			writes = append(writes, w)
 			time.Sleep(time.Microsecond * 10)
 		}
@@ -186,10 +186,10 @@ func (s *testIsolationSuite) TestReadWriteConflict(c *C) {
 			if r.startTS >= w.commitTS {
 				break
 			}
-			c.Assert(string(r.value), Equals, fmt.Sprintf("%d", i))
+			c.Assert(string(r.value), Equals, strconv.Itoa(i))
 		}
 	}
 	for ; j < len(reads); j++ {
-		c.Assert(string(reads[j].value), Equals, fmt.Sprintf("%d", len(writes)))
+		c.Assert(string(reads[j].value), Equals, strconv.Itoa(len(writes)))
 	}
 }
