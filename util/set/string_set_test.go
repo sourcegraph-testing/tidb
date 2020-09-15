@@ -44,7 +44,7 @@ func (s *stringSetTestSuite) TestStringSet(c *check.C) {
 
 	set = NewStringSet("1", "2", "3", "4", "5", "6")
 	for i := 1; i < 7; i++ {
-		c.Assert(set.Exist(fmt.Sprintf("%d", i)), check.IsTrue)
+		c.Assert(set.Exist(strconv.Itoa(i)), check.IsTrue)
 	}
 	c.Assert(set.Exist("7"), check.IsFalse)
 
