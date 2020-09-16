@@ -32,7 +32,6 @@ import (
 	"github.com/pingcap/log"
 	"github.com/pingcap/parser/mysql"
 	"github.com/pingcap/parser/terror"
-	"github.com/pingcap/pd/v4/client"
 	pumpcli "github.com/pingcap/tidb-tools/tidb-binlog/pump_client"
 	"github.com/pingcap/tidb/bindinfo"
 	"github.com/pingcap/tidb/config"
@@ -565,7 +564,7 @@ func setGlobalVars() {
 	variable.SysVars["lower_case_table_names"].Value = strconv.Itoa(cfg.LowerCaseTableNames)
 	variable.SysVars[variable.LogBin].Value = variable.BoolToIntStr(config.GetGlobalConfig().Binlog.Enable)
 
-	variable.SysVars[variable.Port].Value = fmt.Sprintf("%d", cfg.Port)
+	variable.SysVars[variable.Port].Value = strconv.Itoa(cfg.Port)
 	variable.SysVars[variable.Socket].Value = cfg.Socket
 	variable.SysVars[variable.DataDir].Value = cfg.Path
 	variable.SysVars[variable.TiDBSlowQueryFile].Value = cfg.Log.SlowQueryFile
