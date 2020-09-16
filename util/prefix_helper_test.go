@@ -16,6 +16,7 @@ package util_test
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"testing"
 
 	. "github.com/pingcap/check"
@@ -58,7 +59,7 @@ func (s *testPrefixSuite) TearDownSuite(c *C) {
 }
 
 func encodeInt(n int) []byte {
-	return []byte(fmt.Sprintf("%d", n))
+	return []byte(strconv.Itoa(n))
 }
 
 type MockContext struct {
