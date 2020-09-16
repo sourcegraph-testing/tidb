@@ -17,6 +17,7 @@ package util_test
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -84,7 +85,7 @@ func TestSyncerSimple(t *testing.T) {
 	if err != nil {
 		t.Fatalf("client get global version failed %v", err)
 	}
-	if InitialVersion != fmt.Sprintf("%d", globalVer) {
+	if InitialVersion != strconv.Itoa(globalVer) {
 		t.Fatalf("client get global version %d isn't equal to init version %s", globalVer, InitialVersion)
 	}
 	childCtx, _ := goctx.WithTimeout(ctx, minInterval)
