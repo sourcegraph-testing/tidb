@@ -860,7 +860,7 @@ func (s *testStmtSummarySuite) TestEnableSummaryParallel(c *C) {
 		// Add 32 times with same digest.
 		for i := 0; i < loops; i++ {
 			// Sometimes enable it and sometimes disable it.
-			s.ssMap.SetEnabled(fmt.Sprintf("%d", i%2), false)
+			s.ssMap.SetEnabled(strconv.Itoa(i%2), false)
 			s.ssMap.AddStatement(stmtExecInfo1)
 			// Try to read it.
 			s.ssMap.ToHistoryDatum(nil, true)
