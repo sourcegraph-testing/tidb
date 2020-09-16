@@ -986,7 +986,7 @@ func (s *testSuite9) TestAutoRandomID(c *C) {
 	firstValue, err := strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 	tk.MustExec(`delete from ar`)
 
 	tk.MustExec(`insert into ar(id) values (0)`)
@@ -995,7 +995,7 @@ func (s *testSuite9) TestAutoRandomID(c *C) {
 	firstValue, err = strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 	tk.MustExec(`delete from ar`)
 
 	tk.MustExec(`insert into ar(name) values ('a')`)
@@ -1004,7 +1004,7 @@ func (s *testSuite9) TestAutoRandomID(c *C) {
 	firstValue, err = strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 
 	tk.MustExec(`drop table ar`)
 }
@@ -1029,9 +1029,9 @@ func (s *testSuite9) TestMultiAutoRandomID(c *C) {
 	firstValue, err := strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	c.Assert(rs.Rows()[1][0].(string), Equals, fmt.Sprintf("%d", firstValue+1))
-	c.Assert(rs.Rows()[2][0].(string), Equals, fmt.Sprintf("%d", firstValue+2))
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	c.Assert(rs.Rows()[1][0].(string), Equals, strconv.Itoa(firstValue+1))
+	c.Assert(rs.Rows()[2][0].(string), Equals, strconv.Itoa(firstValue+2))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 	tk.MustExec(`delete from ar`)
 
 	tk.MustExec(`insert into ar(id) values (0),(0),(0)`)
@@ -1040,9 +1040,9 @@ func (s *testSuite9) TestMultiAutoRandomID(c *C) {
 	firstValue, err = strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	c.Assert(rs.Rows()[1][0].(string), Equals, fmt.Sprintf("%d", firstValue+1))
-	c.Assert(rs.Rows()[2][0].(string), Equals, fmt.Sprintf("%d", firstValue+2))
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	c.Assert(rs.Rows()[1][0].(string), Equals, strconv.Itoa(firstValue+1))
+	c.Assert(rs.Rows()[2][0].(string), Equals, strconv.Itoa(firstValue+2))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 	tk.MustExec(`delete from ar`)
 
 	tk.MustExec(`insert into ar(name) values ('a'),('a'),('a')`)
@@ -1051,9 +1051,9 @@ func (s *testSuite9) TestMultiAutoRandomID(c *C) {
 	firstValue, err = strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	c.Assert(rs.Rows()[1][0].(string), Equals, fmt.Sprintf("%d", firstValue+1))
-	c.Assert(rs.Rows()[2][0].(string), Equals, fmt.Sprintf("%d", firstValue+2))
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	c.Assert(rs.Rows()[1][0].(string), Equals, strconv.Itoa(firstValue+1))
+	c.Assert(rs.Rows()[2][0].(string), Equals, strconv.Itoa(firstValue+2))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 
 	tk.MustExec(`drop table ar`)
 }
@@ -1082,7 +1082,7 @@ func (s *testSuite9) TestAutoRandomIDAllowZero(c *C) {
 	firstValue, err := strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Equals, 0)
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 	tk.MustExec(`delete from ar`)
 
 	tk.MustExec(`insert into ar(id) values (null)`)
@@ -1091,7 +1091,7 @@ func (s *testSuite9) TestAutoRandomIDAllowZero(c *C) {
 	firstValue, err = strconv.Atoi(rs.Rows()[0][0].(string))
 	c.Assert(err, IsNil)
 	c.Assert(firstValue, Greater, 0)
-	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(fmt.Sprintf("%d", firstValue)))
+	tk.MustQuery(`select last_insert_id()`).Check(testkit.Rows(strconv.Itoa(firstValue)))
 
 	tk.MustExec(`drop table ar`)
 }
