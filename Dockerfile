@@ -12,7 +12,7 @@
 # limitations under the License.
 
 # Builder image
-FROM golang:1.13-alpine as builder
+FROM golang as builder
 
 RUN apk add --no-cache \
     wget \
