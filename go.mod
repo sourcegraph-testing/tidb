@@ -62,3 +62,7 @@ require (
 )
 
 go 1.13
+
+replace (
+	go.uber.org/zap => github.com/sourcegraph-testing/zap v1.14.1
+)
