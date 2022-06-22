@@ -119,3 +119,4 @@ The `run` command supports the following arguments:
 
 * `cpuprofile` (default: "")
   Turn on the CPU profile
+Hello World
