@@ -15,7 +15,6 @@ package variable
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -114,9 +113,9 @@ func GetSessionOnlySysVars(s *SessionVars, key string) (string, bool, error) {
 	// For virtual system variables:
 	switch sysVar.Name {
 	case TiDBCurrentTS:
-		return fmt.Sprintf("%d", s.TxnCtx.StartTS), true, nil
+		return strconv.Itoa(s.TxnCtx.StartTS), true, nil
 	case TiDBGeneralLog:
-		return fmt.Sprintf("%d", atomic.LoadUint32(&ProcessGeneralLog)), true, nil
+		return strconv.Itoa(atomic.LoadUint32(&ProcessGeneralLog)), true, nil
 	case TiDBPProfSQLCPU:
 		val := "0"
 		if EnablePProfSQLCPU.Load() {
@@ -124,7 +123,7 @@ func GetSessionOnlySysVars(s *SessionVars, key string) (string, bool, error) {
 		}
 		return val, true, nil
 	case TiDBExpensiveQueryTimeThreshold:
-		return fmt.Sprintf("%d", atomic.LoadUint64(&ExpensiveQueryTimeThreshold)), true, nil
+		return strconv.Itoa(atomic.LoadUint64(&ExpensiveQueryTimeThreshold)), true, nil
 	case TiDBConfig:
 		conf := config.GetGlobalConfig()
 		j, err := json.MarshalIndent(conf, "", "\t")
@@ -249,7 +248,7 @@ func checkUInt64SystemVar(name, value string, min, max uint64, vars *SessionVars
 			return value, ErrWrongTypeForVar.GenWithStackByArgs(name)
 		}
 		vars.StmtCtx.AppendWarning(ErrTruncatedWrongValue.GenWithStackByArgs(name, value))
-		return fmt.Sprintf("%d", min), nil
+		return strconv.Itoa(min), nil
 	}
 	val, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
@@ -257,11 +256,11 @@ func checkUInt64SystemVar(name, value string, min, max uint64, vars *SessionVars
 	}
 	if val < min {
 		vars.StmtCtx.AppendWarning(ErrTruncatedWrongValue.GenWithStackByArgs(name, value))
-		return fmt.Sprintf("%d", min), nil
+		return strconv.Itoa(min), nil
 	}
 	if val > max {
 		vars.StmtCtx.AppendWarning(ErrTruncatedWrongValue.GenWithStackByArgs(name, value))
-		return fmt.Sprintf("%d", max), nil
+		return strconv.Itoa(max), nil
 	}
 	return value, nil
 }
@@ -273,11 +272,11 @@ func checkInt64SystemVar(name, value string, min, max int64, vars *SessionVars) 
 	}
 	if val < min {
 		vars.StmtCtx.AppendWarning(ErrTruncatedWrongValue.GenWithStackByArgs(name, value))
-		return fmt.Sprintf("%d", min), nil
+		return strconv.Itoa(min), nil
 	}
 	if val > max {
 		vars.StmtCtx.AppendWarning(ErrTruncatedWrongValue.GenWithStackByArgs(name, value))
-		return fmt.Sprintf("%d", max), nil
+		return strconv.Itoa(max), nil
 	}
 	return value, nil
 }
