@@ -462,7 +462,7 @@ func (w *worker) handleDDLJobQueue(d *ddlCtx) error {
 			// and retry later if the job is not cancelled.
 			tidbutil.WithRecovery(func() {
 				schemaVer, runJobErr = w.runDDLJob(d, t, job)
-			}, func(r interface{}) {
+			}, func(r any) {
 				if r != nil {
 					// If run ddl job panic, just cancel the ddl jobs.
 					job.State = model.JobStateCancelling

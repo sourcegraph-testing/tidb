@@ -199,8 +199,9 @@ func IsEQCondFromIn(expr Expression) bool {
 
 // HandleOverflowOnSelection handles Overflow errors when evaluating selection filters.
 // We should ignore overflow errors when evaluating selection conditions:
-//		INSERT INTO t VALUES ("999999999999999999");
-//		SELECT * FROM t WHERE v;
+//
+//	INSERT INTO t VALUES ("999999999999999999");
+//	SELECT * FROM t WHERE v;
 func HandleOverflowOnSelection(sc *stmtctx.StatementContext, val int64, err error) (int64, error) {
 	if sc.InSelectStmt && err != nil && types.ErrOverflow.Equal(err) {
 		return -1, nil
@@ -253,12 +254,12 @@ func EvalBool(ctx sessionctx.Context, exprList CNFExprs, row chunk.Row) (bool, b
 var (
 	defaultChunkSize = 1024
 	selPool          = sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return make([]int, defaultChunkSize)
 		},
 	}
 	zeroPool = sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return make([]int8, defaultChunkSize)
 		},
 	}

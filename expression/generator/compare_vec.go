@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build ignore
 // +build ignore
 
 package main
@@ -327,7 +328,7 @@ func generateDotGo(fileName string, compares []CompareContext, types []TypeConte
 	w.WriteString(newLine)
 	w.WriteString(builtinCompareImports)
 
-	var ctx = make(map[string]interface{})
+	var ctx = make(map[string]any)
 	for _, compareCtx := range compares {
 		for _, typeCtx := range types {
 			ctx["compare"] = compareCtx

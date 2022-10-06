@@ -683,7 +683,7 @@ func (s *testStateChangeSuiteBase) runTestInSchemaState(c *C, state model.Schema
 	}
 }
 
-func (s *testStateChangeSuiteBase) execQuery(tk *testkit.TestKit, sql string, args ...interface{}) (*testkit.Result, error) {
+func (s *testStateChangeSuiteBase) execQuery(tk *testkit.TestKit, sql string, args ...any) (*testkit.Result, error) {
 	comment := Commentf("sql:%s, args:%v", sql, args)
 	rs, err := tk.Exec(sql, args...)
 	if err != nil {
@@ -693,7 +693,7 @@ func (s *testStateChangeSuiteBase) execQuery(tk *testkit.TestKit, sql string, ar
 	return result, nil
 }
 
-func checkResult(result *testkit.Result, expected [][]interface{}) error {
+func checkResult(result *testkit.Result, expected [][]any) error {
 	got := fmt.Sprintf("%s", result.Rows())
 	need := fmt.Sprintf("%s", expected)
 	if got != need {
@@ -702,7 +702,7 @@ func checkResult(result *testkit.Result, expected [][]interface{}) error {
 	return nil
 }
 
-func (s *testStateChangeSuiteBase) CheckResult(tk *testkit.TestKit, sql string, args ...interface{}) (*testkit.Result, error) {
+func (s *testStateChangeSuiteBase) CheckResult(tk *testkit.TestKit, sql string, args ...any) (*testkit.Result, error) {
 	comment := Commentf("sql:%s, args:%v", sql, args)
 	rs, err := tk.Exec(sql, args...)
 	if err != nil {

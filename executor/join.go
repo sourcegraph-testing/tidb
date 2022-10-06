@@ -327,7 +327,7 @@ func (e *HashJoinExec) fetchAndProbeHashTable(ctx context.Context) {
 	go util.WithRecovery(e.waitJoinWorkersAndCloseResultChan, nil)
 }
 
-func (e *HashJoinExec) handleProbeSideFetcherPanic(r interface{}) {
+func (e *HashJoinExec) handleProbeSideFetcherPanic(r any) {
 	for i := range e.probeResultChs {
 		close(e.probeResultChs[i])
 	}
@@ -337,7 +337,7 @@ func (e *HashJoinExec) handleProbeSideFetcherPanic(r interface{}) {
 	e.joinWorkerWaitGroup.Done()
 }
 
-func (e *HashJoinExec) handleJoinWorkerPanic(r interface{}) {
+func (e *HashJoinExec) handleJoinWorkerPanic(r any) {
 	if r != nil {
 		e.joinResultCh <- &hashjoinWorkerResult{err: errors.Errorf("%v", r)}
 	}
@@ -661,7 +661,7 @@ func (e *HashJoinExec) Next(ctx context.Context, req *chunk.Chunk) (err error) {
 	return nil
 }
 
-func (e *HashJoinExec) handleFetchAndBuildHashTablePanic(r interface{}) {
+func (e *HashJoinExec) handleFetchAndBuildHashTablePanic(r any) {
 	if r != nil {
 		e.buildFinished <- errors.Errorf("%v", r)
 	}
@@ -675,7 +675,7 @@ func (e *HashJoinExec) fetchAndBuildHashTable(ctx context.Context) {
 	fetchBuildSideRowsOk := make(chan error, 1)
 	go util.WithRecovery(
 		func() { e.fetchBuildSideRows(ctx, buildSideResultCh, doneCh) },
-		func(r interface{}) {
+		func(r any) {
 			if r != nil {
 				fetchBuildSideRowsOk <- errors.Errorf("%v", r)
 			}

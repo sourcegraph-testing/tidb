@@ -37,8 +37,8 @@ func (s *testEvaluatorSuite) TestBitCount(c *C) {
 	}()
 	fc := funcs[ast.BitCount]
 	var bitCountCases = []struct {
-		origin interface{}
-		count  interface{}
+		origin any
+		count  any
 	}{
 		{int64(8), int64(1)},
 		{int64(29), int64(4)},
@@ -92,31 +92,31 @@ func (s *testEvaluatorSuite) TestInFunc(c *C) {
 	json3 := json.CreateBinary("123.2")
 	json4 := json.CreateBinary("123.3")
 	testCases := []struct {
-		args []interface{}
-		res  interface{}
+		args []any
+		res  any
 	}{
-		{[]interface{}{1, 1, 2, 3}, int64(1)},
-		{[]interface{}{1, 0, 2, 3}, int64(0)},
-		{[]interface{}{1, nil, 2, 3}, nil},
-		{[]interface{}{nil, nil, 2, 3}, nil},
-		{[]interface{}{uint64(0), 0, 2, 3}, int64(1)},
-		{[]interface{}{uint64(math.MaxUint64), uint64(math.MaxUint64), 2, 3}, int64(1)},
-		{[]interface{}{-1, uint64(math.MaxUint64), 2, 3}, int64(0)},
-		{[]interface{}{uint64(math.MaxUint64), -1, 2, 3}, int64(0)},
-		{[]interface{}{1, 0, 2, 3}, int64(0)},
-		{[]interface{}{1.1, 1.2, 1.3}, int64(0)},
-		{[]interface{}{1.1, 1.1, 1.2, 1.3}, int64(1)},
-		{[]interface{}{decimal1, decimal2, decimal3, decimal4}, int64(0)},
-		{[]interface{}{decimal1, decimal2, decimal3, decimal1}, int64(1)},
-		{[]interface{}{"1.1", "1.1", "1.2", "1.3"}, int64(1)},
-		{[]interface{}{"1.1", hack.Slice("1.1"), "1.2", "1.3"}, int64(1)},
-		{[]interface{}{hack.Slice("1.1"), "1.1", "1.2", "1.3"}, int64(1)},
-		{[]interface{}{time1, time2, time3, time1}, int64(1)},
-		{[]interface{}{time1, time2, time3, time4}, int64(0)},
-		{[]interface{}{duration1, duration2, duration3, duration4}, int64(0)},
-		{[]interface{}{duration1, duration2, duration1, duration4}, int64(1)},
-		{[]interface{}{json1, json2, json3, json4}, int64(0)},
-		{[]interface{}{json1, json1, json3, json4}, int64(1)},
+		{[]any{1, 1, 2, 3}, int64(1)},
+		{[]any{1, 0, 2, 3}, int64(0)},
+		{[]any{1, nil, 2, 3}, nil},
+		{[]any{nil, nil, 2, 3}, nil},
+		{[]any{uint64(0), 0, 2, 3}, int64(1)},
+		{[]any{uint64(math.MaxUint64), uint64(math.MaxUint64), 2, 3}, int64(1)},
+		{[]any{-1, uint64(math.MaxUint64), 2, 3}, int64(0)},
+		{[]any{uint64(math.MaxUint64), -1, 2, 3}, int64(0)},
+		{[]any{1, 0, 2, 3}, int64(0)},
+		{[]any{1.1, 1.2, 1.3}, int64(0)},
+		{[]any{1.1, 1.1, 1.2, 1.3}, int64(1)},
+		{[]any{decimal1, decimal2, decimal3, decimal4}, int64(0)},
+		{[]any{decimal1, decimal2, decimal3, decimal1}, int64(1)},
+		{[]any{"1.1", "1.1", "1.2", "1.3"}, int64(1)},
+		{[]any{"1.1", hack.Slice("1.1"), "1.2", "1.3"}, int64(1)},
+		{[]any{hack.Slice("1.1"), "1.1", "1.2", "1.3"}, int64(1)},
+		{[]any{time1, time2, time3, time1}, int64(1)},
+		{[]any{time1, time2, time3, time4}, int64(0)},
+		{[]any{duration1, duration2, duration3, duration4}, int64(0)},
+		{[]any{duration1, duration2, duration1, duration4}, int64(1)},
+		{[]any{json1, json2, json3, json4}, int64(0)},
+		{[]any{json1, json1, json3, json4}, int64(1)},
 	}
 	for _, tc := range testCases {
 		fn, err := fc.getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(tc.args...)))
@@ -145,21 +145,21 @@ func (s *testEvaluatorSuite) TestInFunc(c *C) {
 
 func (s *testEvaluatorSuite) TestRowFunc(c *C) {
 	fc := funcs[ast.RowFunc]
-	_, err := fc.getFunction(s.ctx, s.datumsToConstants(types.MakeDatums([]interface{}{"1", 1.2, true, 120}...)))
+	_, err := fc.getFunction(s.ctx, s.datumsToConstants(types.MakeDatums([]any{"1", 1.2, true, 120}...)))
 	c.Assert(err, IsNil)
 }
 
 func (s *testEvaluatorSuite) TestSetVar(c *C) {
 	fc := funcs[ast.SetVar]
 	testCases := []struct {
-		args []interface{}
-		res  interface{}
+		args []any
+		res  any
 	}{
-		{[]interface{}{"a", "12"}, "12"},
-		{[]interface{}{"b", "34"}, "34"},
-		{[]interface{}{"c", nil}, ""},
-		{[]interface{}{"c", "ABC"}, "ABC"},
-		{[]interface{}{"c", "dEf"}, "dEf"},
+		{[]any{"a", "12"}, "12"},
+		{[]any{"b", "34"}, "34"},
+		{[]any{"c", nil}, ""},
+		{[]any{"c", "ABC"}, "ABC"},
+		{[]any{"c", "dEf"}, "dEf"},
 	}
 	for _, tc := range testCases {
 		fn, err := fc.getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(tc.args...)))
@@ -195,13 +195,13 @@ func (s *testEvaluatorSuite) TestGetVar(c *C) {
 	}
 
 	testCases := []struct {
-		args []interface{}
-		res  interface{}
+		args []any
+		res  any
 	}{
-		{[]interface{}{"a"}, "中"},
-		{[]interface{}{"b"}, "文字符chuan"},
-		{[]interface{}{"c"}, ""},
-		{[]interface{}{"d"}, ""},
+		{[]any{"a"}, "中"},
+		{[]any{"b"}, "文字符chuan"},
+		{[]any{"c"}, ""},
+		{[]any{"d"}, ""},
 	}
 	for _, tc := range testCases {
 		fn, err := fc.getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(tc.args...)))

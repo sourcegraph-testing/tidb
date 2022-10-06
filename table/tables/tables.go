@@ -1236,7 +1236,7 @@ func (s *sequenceCommon) GetSequenceBaseEndRound() (int64, int64, int64) {
 // GetSequenceNextVal implements util.SequenceTable GetSequenceNextVal interface.
 // Caching the sequence value in table, we can easily be notified with the cache empty,
 // and write the binlogInfo in table level rather than in allocator.
-func (t *TableCommon) GetSequenceNextVal(ctx interface{}, dbName, seqName string) (nextVal int64, err error) {
+func (t *TableCommon) GetSequenceNextVal(ctx any, dbName, seqName string) (nextVal int64, err error) {
 	seq := t.sequence
 	if seq == nil {
 		// TODO: refine the error.
@@ -1319,7 +1319,7 @@ func (t *TableCommon) GetSequenceNextVal(ctx interface{}, dbName, seqName string
 
 // SetSequenceVal implements util.SequenceTable SetSequenceVal interface.
 // The returned bool indicates the newVal is already under the base.
-func (t *TableCommon) SetSequenceVal(ctx interface{}, newVal int64, dbName, seqName string) (int64, bool, error) {
+func (t *TableCommon) SetSequenceVal(ctx any, newVal int64, dbName, seqName string) (int64, bool, error) {
 	seq := t.sequence
 	if seq == nil {
 		// TODO: refine the error.

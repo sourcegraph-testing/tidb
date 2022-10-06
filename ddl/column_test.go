@@ -61,7 +61,7 @@ func (s *testColumnSuite) TearDownSuite(c *C) {
 }
 
 func buildCreateColumnJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, colName string,
-	pos *ast.ColumnPosition, defaultValue interface{}) *model.Job {
+	pos *ast.ColumnPosition, defaultValue any) *model.Job {
 	col := &model.ColumnInfo{
 		Name:               model.NewCIStr(colName),
 		Offset:             len(tblInfo.Columns),
@@ -76,13 +76,13 @@ func buildCreateColumnJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, colNam
 		TableID:    tblInfo.ID,
 		Type:       model.ActionAddColumn,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{col, pos, 0},
+		Args:       []any{col, pos, 0},
 	}
 	return job
 }
 
 func testCreateColumn(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, tblInfo *model.TableInfo,
-	colName string, pos *ast.ColumnPosition, defaultValue interface{}) *model.Job {
+	colName string, pos *ast.ColumnPosition, defaultValue any) *model.Job {
 	job := buildCreateColumnJob(dbInfo, tblInfo, colName, pos, defaultValue)
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -92,7 +92,7 @@ func testCreateColumn(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo
 }
 
 func buildCreateColumnsJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, colNames []string,
-	positions []*ast.ColumnPosition, defaultValue interface{}) *model.Job {
+	positions []*ast.ColumnPosition, defaultValue any) *model.Job {
 	colInfos := make([]*model.ColumnInfo, len(colNames))
 	offsets := make([]int, len(colNames))
 	ifNotExists := make([]bool, len(colNames))
@@ -113,13 +113,13 @@ func buildCreateColumnsJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, colNa
 		TableID:    tblInfo.ID,
 		Type:       model.ActionAddColumns,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{colInfos, positions, offsets, ifNotExists},
+		Args:       []any{colInfos, positions, offsets, ifNotExists},
 	}
 	return job
 }
 
 func testCreateColumns(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, tblInfo *model.TableInfo,
-	colNames []string, positions []*ast.ColumnPosition, defaultValue interface{}) *model.Job {
+	colNames []string, positions []*ast.ColumnPosition, defaultValue any) *model.Job {
 	job := buildCreateColumnsJob(dbInfo, tblInfo, colNames, positions, defaultValue)
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -134,7 +134,7 @@ func buildDropColumnJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, colName 
 		TableID:    tblInfo.ID,
 		Type:       model.ActionDropColumn,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{model.NewCIStr(colName)},
+		Args:       []any{model.NewCIStr(colName)},
 	}
 }
 
@@ -162,7 +162,7 @@ func buildDropColumnsJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, colName
 		TableID:    tblInfo.ID,
 		Type:       model.ActionDropColumns,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{columnNames, ifExists},
+		Args:       []any{columnNames, ifExists},
 	}
 	return job
 }
@@ -339,7 +339,7 @@ func (s *testColumnSuite) TestColumn(c *C) {
 	testDropTable(c, ctx, d, s.dbInfo, tblInfo)
 }
 
-func (s *testColumnSuite) checkColumnKVExist(ctx sessionctx.Context, t table.Table, handle kv.Handle, col *table.Column, columnValue interface{}, isExist bool) error {
+func (s *testColumnSuite) checkColumnKVExist(ctx sessionctx.Context, t table.Table, handle kv.Handle, col *table.Column, columnValue any, isExist bool) error {
 	err := ctx.NewTxn(context.Background())
 	if err != nil {
 		return errors.Trace(err)
@@ -382,7 +382,7 @@ func (s *testColumnSuite) checkColumnKVExist(ctx sessionctx.Context, t table.Tab
 	return nil
 }
 
-func (s *testColumnSuite) checkNoneColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, col *table.Column, columnValue interface{}) error {
+func (s *testColumnSuite) checkNoneColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, col *table.Column, columnValue any) error {
 	t, err := testGetTableWithError(d, s.dbInfo.ID, tblInfo.ID)
 	if err != nil {
 		return errors.Trace(err)
@@ -398,7 +398,7 @@ func (s *testColumnSuite) checkNoneColumn(ctx sessionctx.Context, d *ddl, tblInf
 	return nil
 }
 
-func (s *testColumnSuite) checkDeleteOnlyColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, col *table.Column, row []types.Datum, columnValue interface{}) error {
+func (s *testColumnSuite) checkDeleteOnlyColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, col *table.Column, row []types.Datum, columnValue any) error {
 	t, err := testGetTableWithError(d, s.dbInfo.ID, tblInfo.ID)
 	if err != nil {
 		return errors.Trace(err)
@@ -499,7 +499,7 @@ func (s *testColumnSuite) checkDeleteOnlyColumn(ctx sessionctx.Context, d *ddl, 
 	return nil
 }
 
-func (s *testColumnSuite) checkWriteOnlyColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, col *table.Column, row []types.Datum, columnValue interface{}) error {
+func (s *testColumnSuite) checkWriteOnlyColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, col *table.Column, row []types.Datum, columnValue any) error {
 	t, err := testGetTableWithError(d, s.dbInfo.ID, tblInfo.ID)
 	if err != nil {
 		return errors.Trace(err)
@@ -604,7 +604,7 @@ func (s *testColumnSuite) checkWriteOnlyColumn(ctx sessionctx.Context, d *ddl, t
 	return nil
 }
 
-func (s *testColumnSuite) checkReorganizationColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, col *table.Column, row []types.Datum, columnValue interface{}) error {
+func (s *testColumnSuite) checkReorganizationColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, col *table.Column, row []types.Datum, columnValue any) error {
 	t, err := testGetTableWithError(d, s.dbInfo.ID, tblInfo.ID)
 	if err != nil {
 		return errors.Trace(err)
@@ -700,7 +700,7 @@ func (s *testColumnSuite) checkReorganizationColumn(ctx sessionctx.Context, d *d
 	return nil
 }
 
-func (s *testColumnSuite) checkPublicColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, newCol *table.Column, oldRow []types.Datum, columnValue interface{}) error {
+func (s *testColumnSuite) checkPublicColumn(ctx sessionctx.Context, d *ddl, tblInfo *model.TableInfo, newCol *table.Column, oldRow []types.Datum, columnValue any) error {
 	t, err := testGetTableWithError(d, s.dbInfo.ID, tblInfo.ID)
 	if err != nil {
 		return errors.Trace(err)
@@ -794,7 +794,7 @@ func (s *testColumnSuite) checkPublicColumn(ctx sessionctx.Context, d *ddl, tblI
 	return nil
 }
 
-func (s *testColumnSuite) checkAddColumn(state model.SchemaState, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, newCol *table.Column, oldRow []types.Datum, columnValue interface{}) error {
+func (s *testColumnSuite) checkAddColumn(state model.SchemaState, d *ddl, tblInfo *model.TableInfo, handle kv.Handle, newCol *table.Column, oldRow []types.Datum, columnValue any) error {
 	ctx := testNewContext(d)
 	var err error
 	switch state {

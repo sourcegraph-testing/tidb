@@ -173,7 +173,7 @@ func (s *testIndexChangeSuite) TestIndexChange(c *C) {
 	c.Check(errors.ErrorStack(checkErr), Equals, "")
 }
 
-func checkIndexExists(ctx sessionctx.Context, tbl table.Table, indexValue interface{}, handle int64, exists bool) error {
+func checkIndexExists(ctx sessionctx.Context, tbl table.Table, indexValue any, handle int64, exists bool) error {
 	idx := tbl.Indices()[0]
 	txn, err := ctx.Txn(true)
 	if err != nil {

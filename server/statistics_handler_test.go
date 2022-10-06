@@ -228,7 +228,7 @@ func (ds *testDumpStatsSuite) checkData(c *C, path string) {
 	dbt.Check(rows.Next(), IsTrue, Commentf("unexpected data"))
 	var dbName, tableName string
 	var modifyCount, count int64
-	var other interface{}
+	var other any
 	err = rows.Scan(&dbName, &tableName, &other, &other, &modifyCount, &count)
 	dbt.Check(err, IsNil)
 	dbt.Check(dbName, Equals, "tidb")

@@ -35,11 +35,11 @@ type Pool struct {
 func NewPool(initCap int) *Pool {
 	return &Pool{
 		initCap:         initCap,
-		varLenColPool:   &sync.Pool{New: func() interface{} { return newVarLenColumn(initCap, nil) }},
-		fixLenColPool4:  &sync.Pool{New: func() interface{} { return newFixedLenColumn(4, initCap) }},
-		fixLenColPool8:  &sync.Pool{New: func() interface{} { return newFixedLenColumn(8, initCap) }},
-		fixLenColPool16: &sync.Pool{New: func() interface{} { return newFixedLenColumn(16, initCap) }},
-		fixLenColPool40: &sync.Pool{New: func() interface{} { return newFixedLenColumn(40, initCap) }},
+		varLenColPool:   &sync.Pool{New: func() any { return newVarLenColumn(initCap, nil) }},
+		fixLenColPool4:  &sync.Pool{New: func() any { return newFixedLenColumn(4, initCap) }},
+		fixLenColPool8:  &sync.Pool{New: func() any { return newFixedLenColumn(8, initCap) }},
+		fixLenColPool16: &sync.Pool{New: func() any { return newFixedLenColumn(16, initCap) }},
+		fixLenColPool40: &sync.Pool{New: func() any { return newFixedLenColumn(40, initCap) }},
 	}
 }
 

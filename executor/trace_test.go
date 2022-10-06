@@ -51,7 +51,7 @@ func (s *testSuite1) TestTraceExec(c *C) {
 	c.Assert(len(rows), GreaterEqual, 1)
 }
 
-func rowsOrdered(rows [][]interface{}) bool {
+func rowsOrdered(rows [][]any) bool {
 	for idx := range rows {
 		if _, ok := rows[idx][1].(string); !ok {
 			return false

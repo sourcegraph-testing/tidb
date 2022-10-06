@@ -1038,8 +1038,8 @@ func (s *testGCWorkerSuite) TestMergeLockScanner(c *C) {
 	// Shortcuts to make the following test code simpler
 
 	// Get stores by index, and get their store IDs.
-	makeIDSet := func(storeIDs []uint64, indices ...uint64) map[uint64]interface{} {
-		res := make(map[uint64]interface{})
+	makeIDSet := func(storeIDs []uint64, indices ...uint64) map[uint64]any {
+		res := make(map[uint64]any)
 		for _, i := range indices {
 			res[storeIDs[i]] = nil
 		}
@@ -1381,7 +1381,7 @@ func (s *testGCWorkerSuite) TestPhyscailScanLockDeadlock(c *C) {
 		c.Assert(failpoint.Disable("github.com/pingcap/tidb/store/tikv/gcworker/resolveLocksAcrossRegionsErr"), IsNil)
 	}()
 
-	done := make(chan interface{})
+	done := make(chan any)
 	go func() {
 		defer close(done)
 		storesMap := map[uint64]*metapb.Store{stores[0].Id: stores[0]}

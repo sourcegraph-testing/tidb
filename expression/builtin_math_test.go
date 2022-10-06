@@ -30,8 +30,8 @@ import (
 
 func (s *testEvaluatorSuite) TestAbs(c *C) {
 	tbl := []struct {
-		Arg interface{}
-		Ret interface{}
+		Arg any
+		Ret any
 	}{
 		{nil, nil},
 		{int64(1), int64(1)},
@@ -62,8 +62,8 @@ func (s *testEvaluatorSuite) TestCeil(c *C) {
 	}()
 
 	type testCase struct {
-		arg    interface{}
-		expect interface{}
+		arg    any
+		expect any
 		isNil  bool
 		getErr bool
 	}
@@ -91,7 +91,7 @@ func (s *testEvaluatorSuite) TestCeil(c *C) {
 
 	runCasesOn := func(funcName string, cases []testCase, exps []Expression) {
 		for _, test := range cases {
-			f, err := newFunctionForTest(s.ctx, funcName, s.primitiveValsToConstants([]interface{}{test.arg})...)
+			f, err := newFunctionForTest(s.ctx, funcName, s.primitiveValsToConstants([]any{test.arg})...)
 			c.Assert(err, IsNil)
 
 			result, err := f.Eval(chunk.Row{})
@@ -119,7 +119,7 @@ func (s *testEvaluatorSuite) TestCeil(c *C) {
 
 func (s *testEvaluatorSuite) TestExp(c *C) {
 	tests := []struct {
-		args   interface{}
+		args   any
 		expect float64
 		isNil  bool
 		getErr bool
@@ -140,7 +140,7 @@ func (s *testEvaluatorSuite) TestExp(c *C) {
 	}
 
 	for _, test := range tests {
-		f, err := newFunctionForTest(s.ctx, ast.Exp, s.primitiveValsToConstants([]interface{}{test.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Exp, s.primitiveValsToConstants([]any{test.args})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})
@@ -184,8 +184,8 @@ func (s *testEvaluatorSuite) TestFloor(c *C) {
 	}
 
 	for _, test := range []struct {
-		arg    interface{}
-		expect interface{}
+		arg    any
+		expect any
 		isNil  bool
 		getErr bool
 	}{
@@ -201,7 +201,7 @@ func (s *testEvaluatorSuite) TestFloor(c *C) {
 		{genDuration(0, 12, 34), float64(1234), false, false},
 		{genTime(2017, 7, 19), float64(20170719000000), false, false},
 	} {
-		f, err := newFunctionForTest(s.ctx, ast.Floor, s.primitiveValsToConstants([]interface{}{test.arg})...)
+		f, err := newFunctionForTest(s.ctx, ast.Floor, s.primitiveValsToConstants([]any{test.arg})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})
@@ -234,21 +234,21 @@ func (s *testEvaluatorSuite) TestFloor(c *C) {
 
 func (s *testEvaluatorSuite) TestLog(c *C) {
 	tests := []struct {
-		args   []interface{}
+		args   []any
 		expect float64
 		isNil  bool
 		getErr bool
 	}{
-		{[]interface{}{nil}, 0, true, false},
-		{[]interface{}{nil, nil}, 0, true, false},
-		{[]interface{}{int64(100)}, 4.605170185988092, false, false},
-		{[]interface{}{float64(100)}, 4.605170185988092, false, false},
-		{[]interface{}{int64(10), int64(100)}, 2, false, false},
-		{[]interface{}{float64(10), float64(100)}, 2, false, false},
-		{[]interface{}{float64(-1)}, 0, true, false},
-		{[]interface{}{float64(1), float64(2)}, 0, true, false},
-		{[]interface{}{float64(0.5), float64(0.25)}, 2, false, false},
-		{[]interface{}{"abc"}, 0, false, true},
+		{[]any{nil}, 0, true, false},
+		{[]any{nil, nil}, 0, true, false},
+		{[]any{int64(100)}, 4.605170185988092, false, false},
+		{[]any{float64(100)}, 4.605170185988092, false, false},
+		{[]any{int64(10), int64(100)}, 2, false, false},
+		{[]any{float64(10), float64(100)}, 2, false, false},
+		{[]any{float64(-1)}, 0, true, false},
+		{[]any{float64(1), float64(2)}, 0, true, false},
+		{[]any{float64(0.5), float64(0.25)}, 2, false, false},
+		{[]any{"abc"}, 0, false, true},
 	}
 
 	for _, test := range tests {
@@ -274,7 +274,7 @@ func (s *testEvaluatorSuite) TestLog(c *C) {
 
 func (s *testEvaluatorSuite) TestLog2(c *C) {
 	tests := []struct {
-		args   interface{}
+		args   any
 		expect float64
 		isNil  bool
 		getErr bool
@@ -288,7 +288,7 @@ func (s *testEvaluatorSuite) TestLog2(c *C) {
 	}
 
 	for _, test := range tests {
-		f, err := newFunctionForTest(s.ctx, ast.Log2, s.primitiveValsToConstants([]interface{}{test.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Log2, s.primitiveValsToConstants([]any{test.args})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})
@@ -310,7 +310,7 @@ func (s *testEvaluatorSuite) TestLog2(c *C) {
 
 func (s *testEvaluatorSuite) TestLog10(c *C) {
 	tests := []struct {
-		args   interface{}
+		args   any
 		expect float64
 		isNil  bool
 		getErr bool
@@ -324,7 +324,7 @@ func (s *testEvaluatorSuite) TestLog10(c *C) {
 	}
 
 	for _, test := range tests {
-		f, err := newFunctionForTest(s.ctx, ast.Log10, s.primitiveValsToConstants([]interface{}{test.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Log10, s.primitiveValsToConstants([]any{test.args})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})
@@ -366,13 +366,13 @@ func (s *testEvaluatorSuite) TestRand(c *C) {
 
 func (s *testEvaluatorSuite) TestPow(c *C) {
 	tbl := []struct {
-		Arg []interface{}
+		Arg []any
 		Ret float64
 	}{
-		{[]interface{}{1, 3}, 1},
-		{[]interface{}{2, 2}, 4},
-		{[]interface{}{4, 0.5}, 2},
-		{[]interface{}{4, -2}, 0.0625},
+		{[]any{1, 3}, 1},
+		{[]any{2, 2}, 4},
+		{[]any{4, 0.5}, 2},
+		{[]any{4, -2}, 0.0625},
 	}
 
 	Dtbl := tblToDtbl(tbl)
@@ -387,11 +387,11 @@ func (s *testEvaluatorSuite) TestPow(c *C) {
 	}
 
 	errTbl := []struct {
-		Arg []interface{}
+		Arg []any
 	}{
-		{[]interface{}{"test", "test"}},
-		{[]interface{}{1, "test"}},
-		{[]interface{}{10, 700}}, // added overflow test
+		{[]any{"test", "test"}},
+		{[]any{1, "test"}},
+		{[]any{10, 700}}, // added overflow test
 	}
 
 	errDtbl := tblToDtbl(errTbl)
@@ -407,26 +407,26 @@ func (s *testEvaluatorSuite) TestPow(c *C) {
 func (s *testEvaluatorSuite) TestRound(c *C) {
 	newDec := types.NewDecFromStringForTest
 	tbl := []struct {
-		Arg []interface{}
-		Ret interface{}
+		Arg []any
+		Ret any
 	}{
-		{[]interface{}{-1.23}, -1},
-		{[]interface{}{-1.23, 0}, -1},
-		{[]interface{}{-1.58}, -2},
-		{[]interface{}{1.58}, 2},
-		{[]interface{}{1.298, 1}, 1.3},
-		{[]interface{}{1.298}, 1},
-		{[]interface{}{1.298, 0}, 1},
-		{[]interface{}{23.298, -1}, 20},
-		{[]interface{}{newDec("-1.23")}, newDec("-1")},
-		{[]interface{}{newDec("-1.23"), 1}, newDec("-1.2")},
-		{[]interface{}{newDec("-1.58")}, newDec("-2")},
-		{[]interface{}{newDec("1.58")}, newDec("2")},
-		{[]interface{}{newDec("1.58"), 1}, newDec("1.6")},
-		{[]interface{}{newDec("23.298"), -1}, newDec("20")},
-		{[]interface{}{nil, 2}, nil},
-		{[]interface{}{1, -2012}, 0},
-		{[]interface{}{1, -201299999999999}, 0},
+		{[]any{-1.23}, -1},
+		{[]any{-1.23, 0}, -1},
+		{[]any{-1.58}, -2},
+		{[]any{1.58}, 2},
+		{[]any{1.298, 1}, 1.3},
+		{[]any{1.298}, 1},
+		{[]any{1.298, 0}, 1},
+		{[]any{23.298, -1}, 20},
+		{[]any{newDec("-1.23")}, newDec("-1")},
+		{[]any{newDec("-1.23"), 1}, newDec("-1.2")},
+		{[]any{newDec("-1.58")}, newDec("-2")},
+		{[]any{newDec("1.58")}, newDec("2")},
+		{[]any{newDec("1.58"), 1}, newDec("1.6")},
+		{[]any{newDec("23.298"), -1}, newDec("20")},
+		{[]any{nil, 2}, nil},
+		{[]any{1, -2012}, 0},
+		{[]any{1, -201299999999999}, 0},
 	}
 
 	Dtbl := tblToDtbl(tbl)
@@ -458,31 +458,31 @@ func (s *testEvaluatorSuite) TestRound(c *C) {
 func (s *testEvaluatorSuite) TestTruncate(c *C) {
 	newDec := types.NewDecFromStringForTest
 	tbl := []struct {
-		Arg []interface{}
-		Ret interface{}
+		Arg []any
+		Ret any
 	}{
-		{[]interface{}{-1.23, 0}, -1},
-		{[]interface{}{1.58, 0}, 1},
-		{[]interface{}{1.298, 1}, 1.2},
-		{[]interface{}{123.2, -1}, 120},
-		{[]interface{}{123.2, 100}, 123.2},
-		{[]interface{}{123.2, -100}, 0},
-		{[]interface{}{123.2, -100}, 0},
-		{[]interface{}{1.797693134862315708145274237317043567981e+308, 2},
+		{[]any{-1.23, 0}, -1},
+		{[]any{1.58, 0}, 1},
+		{[]any{1.298, 1}, 1.2},
+		{[]any{123.2, -1}, 120},
+		{[]any{123.2, 100}, 123.2},
+		{[]any{123.2, -100}, 0},
+		{[]any{123.2, -100}, 0},
+		{[]any{1.797693134862315708145274237317043567981e+308, 2},
 			1.797693134862315708145274237317043567981e+308},
-		{[]interface{}{newDec("-1.23"), 0}, newDec("-1")},
-		{[]interface{}{newDec("-1.23"), 1}, newDec("-1.2")},
-		{[]interface{}{newDec("-11.23"), -1}, newDec("-10")},
-		{[]interface{}{newDec("1.58"), 0}, newDec("1")},
-		{[]interface{}{newDec("1.58"), 1}, newDec("1.5")},
-		{[]interface{}{newDec("11.58"), -1}, newDec("10")},
-		{[]interface{}{newDec("23.298"), -1}, newDec("20")},
-		{[]interface{}{newDec("23.298"), -100}, newDec("0")},
-		{[]interface{}{newDec("23.298"), 100}, newDec("23.298")},
-		{[]interface{}{nil, 2}, nil},
-		{[]interface{}{uint64(9223372036854775808), -10}, 9223372030000000000},
-		{[]interface{}{9223372036854775807, -7}, 9223372036850000000},
-		{[]interface{}{uint64(18446744073709551615), -10}, uint64(18446744070000000000)},
+		{[]any{newDec("-1.23"), 0}, newDec("-1")},
+		{[]any{newDec("-1.23"), 1}, newDec("-1.2")},
+		{[]any{newDec("-11.23"), -1}, newDec("-10")},
+		{[]any{newDec("1.58"), 0}, newDec("1")},
+		{[]any{newDec("1.58"), 1}, newDec("1.5")},
+		{[]any{newDec("11.58"), -1}, newDec("10")},
+		{[]any{newDec("23.298"), -1}, newDec("20")},
+		{[]any{newDec("23.298"), -100}, newDec("0")},
+		{[]any{newDec("23.298"), 100}, newDec("23.298")},
+		{[]any{nil, 2}, nil},
+		{[]any{uint64(9223372036854775808), -10}, 9223372030000000000},
+		{[]any{9223372036854775807, -7}, 9223372036850000000},
+		{[]any{uint64(18446744073709551615), -10}, uint64(18446744070000000000)},
 	}
 
 	Dtbl := tblToDtbl(tbl)
@@ -500,16 +500,16 @@ func (s *testEvaluatorSuite) TestTruncate(c *C) {
 
 func (s *testEvaluatorSuite) TestCRC32(c *C) {
 	tbl := []struct {
-		Arg []interface{}
-		Ret interface{}
+		Arg []any
+		Ret any
 	}{
-		{[]interface{}{nil}, nil},
-		{[]interface{}{""}, 0},
-		{[]interface{}{-1}, 808273962},
-		{[]interface{}{"-1"}, 808273962},
-		{[]interface{}{"mysql"}, 2501908538},
-		{[]interface{}{"MySQL"}, 3259397556},
-		{[]interface{}{"hello"}, 907060870},
+		{[]any{nil}, nil},
+		{[]any{""}, 0},
+		{[]any{-1}, 808273962},
+		{[]any{"-1"}, 808273962},
+		{[]any{"mysql"}, 2501908538},
+		{[]any{"MySQL"}, 3259397556},
+		{[]any{"hello"}, 907060870},
 	}
 
 	Dtbl := tblToDtbl(tbl)
@@ -526,25 +526,25 @@ func (s *testEvaluatorSuite) TestCRC32(c *C) {
 
 func (s *testEvaluatorSuite) TestConv(c *C) {
 	cases := []struct {
-		args     []interface{}
-		expected interface{}
+		args     []any
+		expected any
 		isNil    bool
 		getErr   bool
 	}{
-		{[]interface{}{"a", 16, 2}, "1010", false, false},
-		{[]interface{}{"6E", 18, 8}, "172", false, false},
-		{[]interface{}{"-17", 10, -18}, "-H", false, false},
-		{[]interface{}{"-17", 10, 18}, "2D3FGB0B9CG4BD1H", false, false},
-		{[]interface{}{nil, 10, 10}, "0", true, false},
-		{[]interface{}{"+18aZ", 7, 36}, "1", false, false},
-		{[]interface{}{"18446744073709551615", -10, 16}, "7FFFFFFFFFFFFFFF", false, false},
-		{[]interface{}{"12F", -10, 16}, "C", false, false},
-		{[]interface{}{"  FF ", 16, 10}, "255", false, false},
-		{[]interface{}{"TIDB", 10, 8}, "0", false, false},
-		{[]interface{}{"aa", 10, 2}, "0", false, false},
-		{[]interface{}{" A", -10, 16}, "0", false, false},
-		{[]interface{}{"a6a", 10, 8}, "0", false, false},
-		{[]interface{}{"a6a", 1, 8}, "0", true, false},
+		{[]any{"a", 16, 2}, "1010", false, false},
+		{[]any{"6E", 18, 8}, "172", false, false},
+		{[]any{"-17", 10, -18}, "-H", false, false},
+		{[]any{"-17", 10, 18}, "2D3FGB0B9CG4BD1H", false, false},
+		{[]any{nil, 10, 10}, "0", true, false},
+		{[]any{"+18aZ", 7, 36}, "1", false, false},
+		{[]any{"18446744073709551615", -10, 16}, "7FFFFFFFFFFFFFFF", false, false},
+		{[]any{"12F", -10, 16}, "C", false, false},
+		{[]any{"  FF ", 16, 10}, "255", false, false},
+		{[]any{"TIDB", 10, 8}, "0", false, false},
+		{[]any{"aa", 10, 2}, "0", false, false},
+		{[]any{" A", -10, 16}, "0", false, false},
+		{[]any{"a6a", 10, 8}, "0", false, false},
+		{[]any{"a6a", 1, 8}, "0", true, false},
 	}
 
 	for _, t := range cases {
@@ -596,21 +596,21 @@ func (s *testEvaluatorSuite) TestSign(c *C) {
 	}()
 
 	for _, t := range []struct {
-		num []interface{}
-		ret interface{}
+		num []any
+		ret any
 	}{
-		{[]interface{}{nil}, nil},
-		{[]interface{}{1}, int64(1)},
-		{[]interface{}{0}, int64(0)},
-		{[]interface{}{-1}, int64(-1)},
-		{[]interface{}{0.4}, int64(1)},
-		{[]interface{}{-0.4}, int64(-1)},
-		{[]interface{}{"1"}, int64(1)},
-		{[]interface{}{"-1"}, int64(-1)},
-		{[]interface{}{"1a"}, int64(1)},
-		{[]interface{}{"-1a"}, int64(-1)},
-		{[]interface{}{"a"}, int64(0)},
-		{[]interface{}{uint64(9223372036854775808)}, int64(1)},
+		{[]any{nil}, nil},
+		{[]any{1}, int64(1)},
+		{[]any{0}, int64(0)},
+		{[]any{-1}, int64(-1)},
+		{[]any{0.4}, int64(1)},
+		{[]any{-0.4}, int64(-1)},
+		{[]any{"1"}, int64(1)},
+		{[]any{"-1"}, int64(-1)},
+		{[]any{"1a"}, int64(1)},
+		{[]any{"-1a"}, int64(-1)},
+		{[]any{"a"}, int64(0)},
+		{[]any{uint64(9223372036854775808)}, int64(1)},
 	} {
 		fc := funcs[ast.Sign]
 		f, err := fc.getFunction(s.ctx, s.primitiveValsToConstants(t.num))
@@ -625,7 +625,7 @@ func (s *testEvaluatorSuite) TestDegrees(c *C) {
 	sc := s.ctx.GetSessionVars().StmtCtx
 	sc.IgnoreTruncate = false
 	cases := []struct {
-		args     interface{}
+		args     any
 		expected float64
 		isNil    bool
 		getErr   bool
@@ -643,7 +643,7 @@ func (s *testEvaluatorSuite) TestDegrees(c *C) {
 	}
 
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.Degrees, s.primitiveValsToConstants([]interface{}{t.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Degrees, s.primitiveValsToConstants([]any{t.args})...)
 		c.Assert(err, IsNil)
 		d, err := f.Eval(chunk.Row{})
 		if t.getErr {
@@ -663,15 +663,15 @@ func (s *testEvaluatorSuite) TestDegrees(c *C) {
 
 func (s *testEvaluatorSuite) TestSqrt(c *C) {
 	tbl := []struct {
-		Arg []interface{}
-		Ret interface{}
+		Arg []any
+		Ret any
 	}{
-		{[]interface{}{nil}, nil},
-		{[]interface{}{int64(1)}, float64(1)},
-		{[]interface{}{float64(4)}, float64(2)},
-		{[]interface{}{"4"}, float64(2)},
-		{[]interface{}{"9"}, float64(3)},
-		{[]interface{}{"-16"}, nil},
+		{[]any{nil}, nil},
+		{[]any{int64(1)}, float64(1)},
+		{[]any{float64(4)}, float64(2)},
+		{[]any{"4"}, float64(2)},
+		{[]any{"9"}, float64(3)},
+		{[]any{"-16"}, nil},
 	}
 
 	for _, t := range tbl {
@@ -695,8 +695,8 @@ func (s *testEvaluatorSuite) TestPi(c *C) {
 
 func (s *testEvaluatorSuite) TestRadians(c *C) {
 	tbl := []struct {
-		Arg interface{}
-		Ret interface{}
+		Arg any
+		Ret any
 	}{
 		{nil, nil},
 		{0, float64(0)},
@@ -726,7 +726,7 @@ func (s *testEvaluatorSuite) TestRadians(c *C) {
 
 func (s *testEvaluatorSuite) TestSin(c *C) {
 	cases := []struct {
-		args     interface{}
+		args     any
 		expected float64
 		isNil    bool
 		getErr   bool
@@ -745,7 +745,7 @@ func (s *testEvaluatorSuite) TestSin(c *C) {
 	}
 
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.Sin, s.primitiveValsToConstants([]interface{}{t.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Sin, s.primitiveValsToConstants([]any{t.args})...)
 		c.Assert(err, IsNil)
 
 		d, err := f.Eval(chunk.Row{})
@@ -767,7 +767,7 @@ func (s *testEvaluatorSuite) TestSin(c *C) {
 
 func (s *testEvaluatorSuite) TestCos(c *C) {
 	cases := []struct {
-		args     interface{}
+		args     any
 		expected float64
 		isNil    bool
 		getErr   bool
@@ -783,7 +783,7 @@ func (s *testEvaluatorSuite) TestCos(c *C) {
 	}
 
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.Cos, s.primitiveValsToConstants([]interface{}{t.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Cos, s.primitiveValsToConstants([]any{t.args})...)
 		c.Assert(err, IsNil)
 
 		d, err := f.Eval(chunk.Row{})
@@ -805,7 +805,7 @@ func (s *testEvaluatorSuite) TestCos(c *C) {
 
 func (s *testEvaluatorSuite) TestAcos(c *C) {
 	tests := []struct {
-		args   interface{}
+		args   any
 		expect float64
 		isNil  bool
 		getErr bool
@@ -819,7 +819,7 @@ func (s *testEvaluatorSuite) TestAcos(c *C) {
 	}
 
 	for _, test := range tests {
-		f, err := newFunctionForTest(s.ctx, ast.Acos, s.primitiveValsToConstants([]interface{}{test.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Acos, s.primitiveValsToConstants([]any{test.args})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})
@@ -841,7 +841,7 @@ func (s *testEvaluatorSuite) TestAcos(c *C) {
 
 func (s *testEvaluatorSuite) TestAsin(c *C) {
 	tests := []struct {
-		args   interface{}
+		args   any
 		expect float64
 		isNil  bool
 		getErr bool
@@ -855,7 +855,7 @@ func (s *testEvaluatorSuite) TestAsin(c *C) {
 	}
 
 	for _, test := range tests {
-		f, err := newFunctionForTest(s.ctx, ast.Asin, s.primitiveValsToConstants([]interface{}{test.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Asin, s.primitiveValsToConstants([]any{test.args})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})
@@ -877,17 +877,17 @@ func (s *testEvaluatorSuite) TestAsin(c *C) {
 
 func (s *testEvaluatorSuite) TestAtan(c *C) {
 	tests := []struct {
-		args   []interface{}
+		args   []any
 		expect float64
 		isNil  bool
 		getErr bool
 	}{
-		{[]interface{}{nil}, 0, true, false},
-		{[]interface{}{nil, nil}, 0, true, false},
-		{[]interface{}{float64(1)}, 0.7853981633974483, false, false},
-		{[]interface{}{float64(-1)}, -0.7853981633974483, false, false},
-		{[]interface{}{float64(0), float64(-2)}, float64(math.Pi), false, false},
-		{[]interface{}{"tidb"}, 0, false, true},
+		{[]any{nil}, 0, true, false},
+		{[]any{nil, nil}, 0, true, false},
+		{[]any{float64(1)}, 0.7853981633974483, false, false},
+		{[]any{float64(-1)}, -0.7853981633974483, false, false},
+		{[]any{float64(0), float64(-2)}, float64(math.Pi), false, false},
+		{[]any{"tidb"}, 0, false, true},
 	}
 
 	for _, test := range tests {
@@ -913,7 +913,7 @@ func (s *testEvaluatorSuite) TestAtan(c *C) {
 
 func (s *testEvaluatorSuite) TestTan(c *C) {
 	cases := []struct {
-		args     interface{}
+		args     any
 		expected float64
 		isNil    bool
 		getErr   bool
@@ -928,7 +928,7 @@ func (s *testEvaluatorSuite) TestTan(c *C) {
 	}
 
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.Tan, s.primitiveValsToConstants([]interface{}{t.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Tan, s.primitiveValsToConstants([]any{t.args})...)
 		c.Assert(err, IsNil)
 
 		d, err := f.Eval(chunk.Row{})
@@ -950,7 +950,7 @@ func (s *testEvaluatorSuite) TestTan(c *C) {
 
 func (s *testEvaluatorSuite) TestCot(c *C) {
 	tests := []struct {
-		args   interface{}
+		args   any
 		expect float64
 		isNil  bool
 		getErr bool
@@ -967,7 +967,7 @@ func (s *testEvaluatorSuite) TestCot(c *C) {
 	}
 
 	for _, test := range tests {
-		f, err := newFunctionForTest(s.ctx, ast.Cot, s.primitiveValsToConstants([]interface{}{test.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.Cot, s.primitiveValsToConstants([]any{test.args})...)
 		c.Assert(err, IsNil)
 
 		result, err := f.Eval(chunk.Row{})

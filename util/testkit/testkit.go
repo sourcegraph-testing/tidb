@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !codes
 // +build !codes
 
 package testkit
@@ -50,7 +51,7 @@ type Result struct {
 }
 
 // Check asserts the result equals the expected results.
-func (res *Result) Check(expected [][]interface{}) {
+func (res *Result) Check(expected [][]any) {
 	resBuff := bytes.NewBufferString("")
 	for _, row := range res.rows {
 		fmt.Fprintf(resBuff, "%s\n", row)
@@ -63,7 +64,7 @@ func (res *Result) Check(expected [][]interface{}) {
 }
 
 // CheckAt asserts the result of selected columns equals the expected results.
-func (res *Result) CheckAt(cols []int, expected [][]interface{}) {
+func (res *Result) CheckAt(cols []int, expected [][]any) {
 	for _, e := range expected {
 		res.c.Assert(len(cols), check.Equals, len(e))
 	}
@@ -82,10 +83,10 @@ func (res *Result) CheckAt(cols []int, expected [][]interface{}) {
 }
 
 // Rows returns the result data.
-func (res *Result) Rows() [][]interface{} {
-	ifacesSlice := make([][]interface{}, len(res.rows))
+func (res *Result) Rows() [][]any {
+	ifacesSlice := make([][]any, len(res.rows))
 	for i := range res.rows {
-		ifaces := make([]interface{}, len(res.rows[i]))
+		ifaces := make([]any, len(res.rows[i]))
 		for j := range res.rows[i] {
 			ifaces[j] = res.rows[i][j]
 		}
@@ -130,7 +131,7 @@ func NewTestKitWithInit(c *check.C, store kv.Storage) *TestKit {
 var connectionID uint64
 
 // Exec executes a sql statement.
-func (tk *TestKit) Exec(sql string, args ...interface{}) (sqlexec.RecordSet, error) {
+func (tk *TestKit) Exec(sql string, args ...any) (sqlexec.RecordSet, error) {
 	var err error
 	if tk.Se == nil {
 		tk.Se, err = session.CreateSession4Test(tk.store)
@@ -178,7 +179,7 @@ func (tk *TestKit) CheckLastMessage(msg string) {
 }
 
 // MustExec executes a sql statement and asserts nil error.
-func (tk *TestKit) MustExec(sql string, args ...interface{}) {
+func (tk *TestKit) MustExec(sql string, args ...any) {
 	res, err := tk.Exec(sql, args...)
 	tk.c.Assert(err, check.IsNil, check.Commentf("sql:%s, %v, error stack %v", sql, args, errors.ErrorStack(err)))
 	if res != nil {
@@ -187,7 +188,7 @@ func (tk *TestKit) MustExec(sql string, args ...interface{}) {
 }
 
 // HasPlan checks if the result execution plan contains specific plan.
-func (tk *TestKit) HasPlan(sql string, plan string, args ...interface{}) bool {
+func (tk *TestKit) HasPlan(sql string, plan string, args ...any) bool {
 	rs := tk.MustQuery("explain "+sql, args...)
 	for i := range rs.rows {
 		if strings.Contains(rs.rows[i][0], plan) {
@@ -198,7 +199,7 @@ func (tk *TestKit) HasPlan(sql string, plan string, args ...interface{}) bool {
 }
 
 // MustUseIndex checks if the result execution plan contains specific index(es).
-func (tk *TestKit) MustUseIndex(sql string, index string, args ...interface{}) bool {
+func (tk *TestKit) MustUseIndex(sql string, index string, args ...any) bool {
 	rs := tk.MustQuery("explain "+sql, args...)
 	for i := range rs.rows {
 		if strings.Contains(rs.rows[i][3], "index:"+index) {
@@ -209,19 +210,19 @@ func (tk *TestKit) MustUseIndex(sql string, index string, args ...interface{}) b
 }
 
 // MustIndexLookup checks whether the plan for the sql is IndexLookUp.
-func (tk *TestKit) MustIndexLookup(sql string, args ...interface{}) *Result {
+func (tk *TestKit) MustIndexLookup(sql string, args ...any) *Result {
 	tk.c.Assert(tk.HasPlan(sql, "IndexLookUp", args...), check.IsTrue)
 	return tk.MustQuery(sql, args...)
 }
 
 // MustTableDual checks whether the plan for the sql is TableDual.
-func (tk *TestKit) MustTableDual(sql string, args ...interface{}) *Result {
+func (tk *TestKit) MustTableDual(sql string, args ...any) *Result {
 	tk.c.Assert(tk.HasPlan(sql, "TableDual", args...), check.IsTrue)
 	return tk.MustQuery(sql, args...)
 }
 
 // MustPointGet checks whether the plan for the sql is Point_Get.
-func (tk *TestKit) MustPointGet(sql string, args ...interface{}) *Result {
+func (tk *TestKit) MustPointGet(sql string, args ...any) *Result {
 	rs := tk.MustQuery("explain "+sql, args...)
 	tk.c.Assert(len(rs.rows), check.Equals, 1)
 	tk.c.Assert(strings.Contains(rs.rows[0][0], "Point_Get"), check.IsTrue, check.Commentf("plan %v", rs.rows[0][0]))
@@ -230,7 +231,7 @@ func (tk *TestKit) MustPointGet(sql string, args ...interface{}) *Result {
 
 // MustQuery query the statements and returns result rows.
 // If expected result is set it asserts the query result equals expected result.
-func (tk *TestKit) MustQuery(sql string, args ...interface{}) *Result {
+func (tk *TestKit) MustQuery(sql string, args ...any) *Result {
 	comment := check.Commentf("sql:%s, args:%v", sql, args)
 	rs, err := tk.Exec(sql, args...)
 	tk.c.Assert(errors.ErrorStack(err), check.Equals, "", comment)
@@ -239,7 +240,7 @@ func (tk *TestKit) MustQuery(sql string, args ...interface{}) *Result {
 }
 
 // QueryToErr executes a sql statement and discard results.
-func (tk *TestKit) QueryToErr(sql string, args ...interface{}) error {
+func (tk *TestKit) QueryToErr(sql string, args ...any) error {
 	comment := check.Commentf("sql:%s, args:%v", sql, args)
 	res, err := tk.Exec(sql, args...)
 	tk.c.Assert(errors.ErrorStack(err), check.Equals, "", comment)
@@ -250,7 +251,7 @@ func (tk *TestKit) QueryToErr(sql string, args ...interface{}) error {
 }
 
 // ExecToErr executes a sql statement and discard results.
-func (tk *TestKit) ExecToErr(sql string, args ...interface{}) error {
+func (tk *TestKit) ExecToErr(sql string, args ...any) error {
 	res, err := tk.Exec(sql, args...)
 	if res != nil {
 		tk.c.Assert(res.Close(), check.IsNil)
@@ -290,7 +291,7 @@ func (tk *TestKit) ResultSetToResultWithCtx(ctx context.Context, rs sqlexec.Reco
 }
 
 // Rows is similar to RowsWithSep, use white space as separator string.
-func Rows(args ...string) [][]interface{} {
+func Rows(args ...string) [][]any {
 	return testutil.RowsWithSep(" ", args...)
 }
 

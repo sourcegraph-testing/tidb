@@ -123,7 +123,7 @@ func (s *testConfigSuite) TestAtomicWriteConfig(c *C) {
 }
 
 func (s *testConfigSuite) TestFlattenConfig(c *C) {
-	toJSONStr := func(v interface{}) string {
+	toJSONStr := func(v any) string {
 		str, err := json.Marshal(v)
 		c.Assert(err, IsNil)
 		return string(str)
@@ -139,7 +139,7 @@ func (s *testConfigSuite) TestFlattenConfig(c *C) {
 		"k4-2": [5, 6, 7, 8],
 		"k4-3": [666]
 	}}`
-	nested := make(map[string]interface{})
+	nested := make(map[string]any)
 	c.Assert(json.Unmarshal([]byte(jsonConf), &nested), IsNil)
 	flatMap := FlattenConfigItems(nested)
 	c.Assert(len(flatMap), Equals, 7)
@@ -159,7 +159,7 @@ format='text'
 [isolation-read]
 engines = ["tikv", "tiflash", "tidb"]
 `
-	nested = make(map[string]interface{})
+	nested = make(map[string]any)
 	c.Assert(toml.Unmarshal([]byte(tomlConf), &nested), IsNil)
 	flatMap = FlattenConfigItems(nested)
 	c.Assert(len(flatMap), Equals, 4)

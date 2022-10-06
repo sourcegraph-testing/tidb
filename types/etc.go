@@ -135,6 +135,7 @@ func KindStr(kind byte) (r string) {
 // It is used for converting Text to Blob,
 // or converting Char to Binary.
 // Args:
+//
 //	tp: type enum
 //	cs: charset
 var TypeToStr = ast.TypeToStr
@@ -149,12 +150,12 @@ func EOFAsNil(err error) error {
 }
 
 // InvOp2 returns an invalid operation error.
-func InvOp2(x, y interface{}, o opcode.Op) (interface{}, error) {
+func InvOp2(x, y any, o opcode.Op) (any, error) {
 	return nil, errors.Errorf("Invalid operation: %v %v %v (mismatched types %T and %T)", x, o, y, x, y)
 }
 
 // overflow returns an overflowed error.
-func overflow(v interface{}, tp byte) error {
+func overflow(v any, tp byte) error {
 	return ErrOverflow.GenWithStack("constant %v overflows %s", v, TypeStr(tp))
 }
 

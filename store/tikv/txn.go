@@ -186,7 +186,7 @@ func (txn *tikvTxn) Delete(k kv.Key) error {
 	return txn.us.Delete(k)
 }
 
-func (txn *tikvTxn) SetOption(opt kv.Option, val interface{}) {
+func (txn *tikvTxn) SetOption(opt kv.Option, val any) {
 	txn.us.SetOption(opt, val)
 	switch opt {
 	case kv.Priority:

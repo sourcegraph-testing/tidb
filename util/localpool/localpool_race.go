@@ -11,16 +11,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build race
 // +build race
 
 package localpool
 
 // Get gets an object from the pool.
-func (p *LocalPool) Get() interface{} {
+func (p *LocalPool) Get() any {
 	return p.newFn()
 }
 
 // Put puts an object back to the pool.
-func (p *LocalPool) Put(obj interface{}) bool {
+func (p *LocalPool) Put(obj any) bool {
 	return false
 }

@@ -46,11 +46,11 @@ type requiredRowsDataSource struct {
 	expectedRowsRet []int
 	numNextCalled   int
 
-	generator func(valType *types.FieldType) interface{}
+	generator func(valType *types.FieldType) any
 }
 
 func newRequiredRowsDataSourceWithGenerator(ctx sessionctx.Context, totalRows int, expectedRowsRet []int,
-	gen func(valType *types.FieldType) interface{}) *requiredRowsDataSource {
+	gen func(valType *types.FieldType) any) *requiredRowsDataSource {
 	ds := newRequiredRowsDataSource(ctx, totalRows, expectedRowsRet)
 	ds.generator = gen
 	return ds
@@ -102,7 +102,7 @@ func (r *requiredRowsDataSource) genOneRow() chunk.Row {
 	return row.ToRow()
 }
 
-func defaultGenerator(valType *types.FieldType) interface{} {
+func defaultGenerator(valType *types.FieldType) any {
 	switch valType.Tp {
 	case mysql.TypeLong, mysql.TypeLonglong:
 		return int64(rand.Int())
@@ -393,9 +393,9 @@ func buildTopNExec(ctx sessionctx.Context, offset, count int, byItems []*planner
 }
 
 func (s *testExecSuite) TestSelectionRequiredRows(c *C) {
-	gen01 := func() func(valType *types.FieldType) interface{} {
+	gen01 := func() func(valType *types.FieldType) any {
 		closureCount := 0
-		return func(valType *types.FieldType) interface{} {
+		return func(valType *types.FieldType) any {
 			switch valType.Tp {
 			case mysql.TypeLong, mysql.TypeLonglong:
 				ret := int64(closureCount % 2)
@@ -416,7 +416,7 @@ func (s *testExecSuite) TestSelectionRequiredRows(c *C) {
 		requiredRows   []int
 		expectedRows   []int
 		expectedRowsDS []int
-		gen            func(valType *types.FieldType) interface{}
+		gen            func(valType *types.FieldType) any
 	}{
 		{
 			totalRows:      20,
@@ -599,10 +599,10 @@ func buildProjectionExec(ctx sessionctx.Context, exprs []expression.Expression, 
 	}
 }
 
-func divGenerator(factor int) func(valType *types.FieldType) interface{} {
+func divGenerator(factor int) func(valType *types.FieldType) any {
 	closureCountInt := 0
 	closureCountDouble := 0
-	return func(valType *types.FieldType) interface{} {
+	return func(valType *types.FieldType) any {
 		switch valType.Tp {
 		case mysql.TypeLong, mysql.TypeLonglong:
 			ret := int64(closureCountInt / factor)
@@ -626,7 +626,7 @@ func (s *testExecSuite) TestStreamAggRequiredRows(c *C) {
 		requiredRows   []int
 		expectedRows   []int
 		expectedRowsDS []int
-		gen            func(valType *types.FieldType) interface{}
+		gen            func(valType *types.FieldType) any
 	}{
 		{
 			totalRows:      1000000,
@@ -678,7 +678,7 @@ func (s *testExecSuite) TestStreamAggRequiredRows(c *C) {
 }
 
 func (s *testExecSuite) TestMergeJoinRequiredRows(c *C) {
-	justReturn1 := func(valType *types.FieldType) interface{} {
+	justReturn1 := func(valType *types.FieldType) any {
 		switch valType.Tp {
 		case mysql.TypeLong, mysql.TypeLonglong:
 			return int64(1)

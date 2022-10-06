@@ -111,7 +111,7 @@ func (s *testDDLSuite) TestSchemaError(c *C) {
 	defer d.Stop()
 	ctx := testNewContext(d)
 
-	doDDLJobErr(c, 1, 0, model.ActionCreateSchema, []interface{}{1}, ctx, d)
+	doDDLJobErr(c, 1, 0, model.ActionCreateSchema, []any{1}, ctx, d)
 }
 
 func (s *testDDLSuite) TestTableError(c *C) {
@@ -150,12 +150,12 @@ func (s *testDDLSuite) TestTableError(c *C) {
 	c.Assert(err, IsNil)
 
 	// Args is wrong, so creating table is failed.
-	doDDLJobErr(c, 1, 1, model.ActionCreateTable, []interface{}{1}, ctx, d)
+	doDDLJobErr(c, 1, 1, model.ActionCreateTable, []any{1}, ctx, d)
 	// Schema ID is wrong, so creating table is failed.
-	doDDLJobErr(c, -1, tblInfo.ID, model.ActionCreateTable, []interface{}{tblInfo}, ctx, d)
+	doDDLJobErr(c, -1, tblInfo.ID, model.ActionCreateTable, []any{tblInfo}, ctx, d)
 	// Table exists, so creating table is failed.
 	tblInfo.ID = tblInfo.ID + 1
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionCreateTable, []interface{}{tblInfo}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionCreateTable, []any{tblInfo}, ctx, d)
 
 }
 
@@ -178,12 +178,12 @@ func (s *testDDLSuite) TestViewError(c *C) {
 	testCreateView(c, ctx, d, dbInfo, tblInfo)
 
 	// Args is wrong, so creating view is failed.
-	doDDLJobErr(c, 1, 1, model.ActionCreateView, []interface{}{1}, ctx, d)
+	doDDLJobErr(c, 1, 1, model.ActionCreateView, []any{1}, ctx, d)
 	// Schema ID is wrong and orReplace is false, so creating view is failed.
-	doDDLJobErr(c, -1, tblInfo.ID, model.ActionCreateView, []interface{}{tblInfo, false}, ctx, d)
+	doDDLJobErr(c, -1, tblInfo.ID, model.ActionCreateView, []any{tblInfo, false}, ctx, d)
 	// View exists and orReplace is false, so creating view is failed.
 	tblInfo.ID = tblInfo.ID + 1
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionCreateView, []interface{}{tblInfo, false}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionCreateView, []any{tblInfo, false}, ctx, d)
 
 }
 
@@ -203,7 +203,7 @@ func (s *testDDLSuite) TestInvalidDDLJob(c *C) {
 		TableID:    0,
 		Type:       model.ActionNone,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{},
+		Args:       []any{},
 	}
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err.Error(), Equals, "[ddl:8204]invalid ddl job type: none")
@@ -228,7 +228,7 @@ func (s *testDDLSuite) TestForeignKeyError(c *C) {
 	tblInfo := testTableInfo(c, d, "t", 3)
 	testCreateSchema(c, ctx, d, dbInfo)
 	testCreateTable(c, ctx, d, dbInfo, tblInfo)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropForeignKey, []interface{}{model.NewCIStr("c1_foreign_key")}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropForeignKey, []any{model.NewCIStr("c1_foreign_key")}, ctx, d)
 }
 
 func (s *testDDLSuite) TestIndexError(c *C) {
@@ -253,22 +253,22 @@ func (s *testDDLSuite) TestIndexError(c *C) {
 	testCreateTable(c, ctx, d, dbInfo, tblInfo)
 
 	// for adding index
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddIndex, []interface{}{1}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddIndex, []any{1}, ctx, d)
 	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddIndex,
-		[]interface{}{false, model.NewCIStr("t"), 1,
+		[]any{false, model.NewCIStr("t"), 1,
 			[]*ast.IndexPartSpecification{{Column: &ast.ColumnName{Name: model.NewCIStr("c")}, Length: 256}}}, ctx, d)
 	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddIndex,
-		[]interface{}{false, model.NewCIStr("c1_index"), 1,
+		[]any{false, model.NewCIStr("c1_index"), 1,
 			[]*ast.IndexPartSpecification{{Column: &ast.ColumnName{Name: model.NewCIStr("c")}, Length: 256}}}, ctx, d)
 	testCreateIndex(c, ctx, d, dbInfo, tblInfo, false, "c1_index", "c1")
 	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddIndex,
-		[]interface{}{false, model.NewCIStr("c1_index"), 1,
+		[]any{false, model.NewCIStr("c1_index"), 1,
 			[]*ast.IndexPartSpecification{{Column: &ast.ColumnName{Name: model.NewCIStr("c1")}, Length: 256}}}, ctx, d)
 
 	// for dropping index
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropIndex, []interface{}{1}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropIndex, []any{1}, ctx, d)
 	testDropIndex(c, ctx, d, dbInfo, tblInfo, "c1_index")
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropIndex, []interface{}{model.NewCIStr("c1_index")}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropIndex, []any{model.NewCIStr("c1_index")}, ctx, d)
 }
 
 func (s *testDDLSuite) TestColumnError(c *C) {
@@ -299,28 +299,28 @@ func (s *testDDLSuite) TestColumnError(c *C) {
 	positions := &[]*ast.ColumnPosition{pos}
 
 	// for adding column
-	doDDLJobErr(c, -1, tblInfo.ID, model.ActionAddColumn, []interface{}{col, pos, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, -1, model.ActionAddColumn, []interface{}{col, pos, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumn, []interface{}{0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumn, []interface{}{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, -1, tblInfo.ID, model.ActionAddColumn, []any{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, -1, model.ActionAddColumn, []any{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumn, []any{0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumn, []any{col, pos, 0}, ctx, d)
 
 	// for dropping column
-	doDDLJobErr(c, -1, tblInfo.ID, model.ActionDropColumn, []interface{}{col, pos, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, -1, model.ActionDropColumn, []interface{}{col, pos, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumn, []interface{}{0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumn, []interface{}{model.NewCIStr("c5")}, ctx, d)
+	doDDLJobErr(c, -1, tblInfo.ID, model.ActionDropColumn, []any{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, -1, model.ActionDropColumn, []any{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumn, []any{0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumn, []any{model.NewCIStr("c5")}, ctx, d)
 
 	// for adding columns
-	doDDLJobErr(c, -1, tblInfo.ID, model.ActionAddColumns, []interface{}{cols, positions, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, -1, model.ActionAddColumns, []interface{}{cols, positions, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumns, []interface{}{0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumns, []interface{}{cols, positions, 0}, ctx, d)
+	doDDLJobErr(c, -1, tblInfo.ID, model.ActionAddColumns, []any{cols, positions, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, -1, model.ActionAddColumns, []any{cols, positions, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumns, []any{0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionAddColumns, []any{cols, positions, 0}, ctx, d)
 
 	// for dropping columns
-	doDDLJobErr(c, -1, tblInfo.ID, model.ActionDropColumns, []interface{}{col, pos, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, -1, model.ActionDropColumns, []interface{}{col, pos, 0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumns, []interface{}{0}, ctx, d)
-	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumns, []interface{}{[]model.CIStr{model.NewCIStr("c5"), model.NewCIStr("c6")}, make([]bool, 2)}, ctx, d)
+	doDDLJobErr(c, -1, tblInfo.ID, model.ActionDropColumns, []any{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, -1, model.ActionDropColumns, []any{col, pos, 0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumns, []any{0}, ctx, d)
+	doDDLJobErr(c, dbInfo.ID, tblInfo.ID, model.ActionDropColumns, []any{[]model.CIStr{model.NewCIStr("c5"), model.NewCIStr("c6")}, make([]bool, 2)}, ctx, d)
 }
 
 func testCheckOwner(c *C, d *ddl, expectedVal bool) {
@@ -357,7 +357,7 @@ func testCheckJobCancelled(c *C, d *ddl, job *model.Job, state *model.SchemaStat
 }
 
 func doDDLJobErrWithSchemaState(ctx sessionctx.Context, d *ddl, c *C, schemaID, tableID int64, tp model.ActionType,
-	args []interface{}, state *model.SchemaState) *model.Job {
+	args []any, state *model.SchemaState) *model.Job {
 	job := &model.Job{
 		SchemaID:   schemaID,
 		TableID:    tableID,
@@ -374,7 +374,7 @@ func doDDLJobErrWithSchemaState(ctx sessionctx.Context, d *ddl, c *C, schemaID, 
 }
 
 func doDDLJobSuccess(ctx sessionctx.Context, d *ddl, c *C, schemaID, tableID int64, tp model.ActionType,
-	args []interface{}) {
+	args []any) {
 	job := &model.Job{
 		SchemaID:   schemaID,
 		TableID:    tableID,
@@ -386,7 +386,7 @@ func doDDLJobSuccess(ctx sessionctx.Context, d *ddl, c *C, schemaID, tableID int
 	c.Assert(err, IsNil)
 }
 
-func doDDLJobErr(c *C, schemaID, tableID int64, tp model.ActionType, args []interface{},
+func doDDLJobErr(c *C, schemaID, tableID int64, tp model.ActionType, args []any,
 	ctx sessionctx.Context, d *ddl) *model.Job {
 	return doDDLJobErrWithSchemaState(ctx, d, c, schemaID, tableID, tp, args, nil)
 }
@@ -619,7 +619,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 	// for adding index
 	updateTest(&tests[0])
 	idxOrigName := "idx"
-	validArgs := []interface{}{false, model.NewCIStr(idxOrigName),
+	validArgs := []any{false, model.NewCIStr(idxOrigName),
 		[]*ast.IndexPartSpecification{{
 			Column: &ast.ColumnName{Name: model.NewCIStr("c1")},
 			Length: -1,
@@ -658,7 +658,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 	col, _, err := buildColumnAndConstraint(ctx, 2, newColumnDef, nil, chs, coll)
 	c.Assert(err, IsNil)
 
-	addColumnArgs := []interface{}{col, &ast.ColumnPosition{Tp: ast.ColumnPositionNone}, 0}
+	addColumnArgs := []any{col, &ast.ColumnPosition{Tp: ast.ColumnPositionNone}, 0}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, model.ActionAddColumn, addColumnArgs, &cancelState)
 	c.Check(errors.ErrorStack(checkErr), Equals, "")
 	s.checkAddColumns(c, d, dbInfo.ID, tblInfo.ID, []string{addingColName}, false)
@@ -681,14 +681,14 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 	// for create table
 	tblInfo1 := testTableInfo(c, d, "t1", 2)
 	updateTest(&tests[8])
-	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo1.ID, model.ActionCreateTable, []interface{}{tblInfo1}, &cancelState)
+	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo1.ID, model.ActionCreateTable, []any{tblInfo1}, &cancelState)
 	c.Check(checkErr, IsNil)
 	testCheckTableState(c, d, dbInfo, tblInfo1, model.StateNone)
 
 	// for create database
 	dbInfo1 := testSchemaInfo(c, d, "test_cancel_job1")
 	updateTest(&tests[9])
-	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo1.ID, 0, model.ActionCreateSchema, []interface{}{dbInfo1}, &cancelState)
+	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo1.ID, 0, model.ActionCreateSchema, []any{dbInfo1}, &cancelState)
 	c.Check(checkErr, IsNil)
 	testCheckSchemaState(c, d, dbInfo1, model.StateNone)
 
@@ -716,7 +716,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// cancel rebase auto id
 	updateTest(&tests[13])
-	rebaseIDArgs := []interface{}{int64(200)}
+	rebaseIDArgs := []any{int64(200)}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, model.ActionRebaseAutoID, rebaseIDArgs, &cancelState)
 	c.Check(errors.ErrorStack(checkErr), Equals, "")
 	changedTable := testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -724,7 +724,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// cancel shard bits
 	updateTest(&tests[14])
-	shardRowIDArgs := []interface{}{uint64(7)}
+	shardRowIDArgs := []any{uint64(7)}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, model.ActionShardRowID, shardRowIDArgs, &cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -733,7 +733,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 	// modify column
 	col.DefaultValue = "1"
 	updateTest(&tests[15])
-	modifyColumnArgs := []interface{}{col, col.Name, &ast.ColumnPosition{}, byte(0)}
+	modifyColumnArgs := []any{col, col.Name, &ast.ColumnPosition{}, byte(0)}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, test.act, modifyColumnArgs, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -742,7 +742,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// Test add foreign key failed cause by canceled.
 	updateTest(&tests[16])
-	addForeignKeyArgs := []interface{}{model.FKInfo{Name: model.NewCIStr("fk1")}}
+	addForeignKeyArgs := []any{model.FKInfo{Name: model.NewCIStr("fk1")}}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, test.act, addForeignKeyArgs, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -758,7 +758,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// Test drop foreign key failed cause by canceled.
 	updateTest(&tests[18])
-	dropForeignKeyArgs := []interface{}{addForeignKeyArgs[0].(model.FKInfo).Name}
+	dropForeignKeyArgs := []any{addForeignKeyArgs[0].(model.FKInfo).Name}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, test.act, dropForeignKeyArgs, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -774,7 +774,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// test rename table failed caused by canceled.
 	test = &tests[20]
-	renameTableArgs := []interface{}{dbInfo.ID, model.NewCIStr("t2")}
+	renameTableArgs := []any{dbInfo.ID, model.NewCIStr("t2")}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, test.act, renameTableArgs, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -789,7 +789,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// test modify table charset failed caused by canceled.
 	test = &tests[22]
-	modifyTableCharsetArgs := []interface{}{"utf8mb4", "utf8mb4_bin"}
+	modifyTableCharsetArgs := []any{"utf8mb4", "utf8mb4_bin"}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, test.act, modifyTableCharsetArgs, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, tblInfo.ID)
@@ -806,7 +806,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// test truncate table partition failed caused by canceled.
 	test = &tests[24]
-	truncateTblPartitionArgs := []interface{}{partitionTblInfo.Partition.Definitions[0].ID}
+	truncateTblPartitionArgs := []any{partitionTblInfo.Partition.Definitions[0].ID}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, partitionTblInfo.ID, test.act, truncateTblPartitionArgs, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	changedTable = testGetTable(c, d, dbInfo.ID, partitionTblInfo.ID)
@@ -821,7 +821,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 
 	// test modify schema charset failed caused by canceled.
 	test = &tests[26]
-	charsetAndCollate := []interface{}{"utf8mb4", "utf8mb4_bin"}
+	charsetAndCollate := []any{"utf8mb4", "utf8mb4_bin"}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, test.act, charsetAndCollate, &test.cancelState)
 	c.Check(checkErr, IsNil)
 	dbInfo, err = testGetSchemaInfoWithError(d, dbInfo.ID)
@@ -842,7 +842,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 	tblInfo = changedTable.Meta()
 	updateTest(&tests[28])
 	idxOrigName = "primary"
-	validArgs = []interface{}{false, model.NewCIStr(idxOrigName),
+	validArgs = []any{false, model.NewCIStr(idxOrigName),
 		[]*ast.IndexPartSpecification{{
 			Column: &ast.ColumnName{Name: model.NewCIStr("c1")},
 			Length: -1,
@@ -898,7 +898,7 @@ func (s *testDDLSuite) TestCancelJob(c *C) {
 	}
 	ifNotExists := make([]bool, len(cols))
 
-	addColumnArgs = []interface{}{cols, positions, offsets, ifNotExists}
+	addColumnArgs = []any{cols, positions, offsets, ifNotExists}
 	doDDLJobErrWithSchemaState(ctx, d, c, dbInfo.ID, tblInfo.ID, model.ActionAddColumns, addColumnArgs, &cancelState)
 	c.Check(errors.ErrorStack(checkErr), Equals, "")
 	s.checkAddColumns(c, d, dbInfo.ID, tblInfo.ID, addingColNames, false)
@@ -979,7 +979,7 @@ func (s *testDDLSuite) TestBuildJobDependence(c *C) {
 	job6 := &model.Job{ID: 6, TableID: 1, Type: model.ActionDropTable}
 	job7 := &model.Job{ID: 7, TableID: 2, Type: model.ActionModifyColumn}
 	job9 := &model.Job{ID: 9, SchemaID: 111, Type: model.ActionDropSchema}
-	job11 := &model.Job{ID: 11, TableID: 2, Type: model.ActionRenameTable, Args: []interface{}{int64(111), "old db name"}}
+	job11 := &model.Job{ID: 11, TableID: 2, Type: model.ActionRenameTable, Args: []any{int64(111), "old db name"}}
 	kv.RunInNewTxn(store, false, func(txn kv.Transaction) error {
 		t := meta.NewMeta(txn)
 		err := t.EnQueueDDLJob(job1)

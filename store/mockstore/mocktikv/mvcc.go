@@ -135,7 +135,7 @@ func (mh *marshalHelper) WriteSlice(buf io.Writer, slice []byte) {
 	}
 }
 
-func (mh *marshalHelper) WriteNumber(buf io.Writer, n interface{}) {
+func (mh *marshalHelper) WriteNumber(buf io.Writer, n any) {
 	if mh.err != nil {
 		return
 	}
@@ -157,7 +157,7 @@ func writeFull(w io.Writer, slice []byte) error {
 	return nil
 }
 
-func (mh *marshalHelper) ReadNumber(r io.Reader, n interface{}) {
+func (mh *marshalHelper) ReadNumber(r io.Reader, n any) {
 	if mh.err != nil {
 		return
 	}

@@ -372,7 +372,7 @@ func isRetryError(err error) bool {
 	return false
 }
 
-func (s *TestDDLSuite) exec(query string, args ...interface{}) (sql.Result, error) {
+func (s *TestDDLSuite) exec(query string, args ...any) (sql.Result, error) {
 	for {
 		server := s.getServer()
 		r, err := server.db.Exec(query, args...)
@@ -385,7 +385,7 @@ func (s *TestDDLSuite) exec(query string, args ...interface{}) (sql.Result, erro
 	}
 }
 
-func (s *TestDDLSuite) mustExec(c *C, query string, args ...interface{}) sql.Result {
+func (s *TestDDLSuite) mustExec(c *C, query string, args ...any) sql.Result {
 	r, err := s.exec(query, args...)
 	if err != nil {
 		log.Fatalf("[mustExec fail]query - %v %v, error - %v", query, args, err)
@@ -394,7 +394,7 @@ func (s *TestDDLSuite) mustExec(c *C, query string, args ...interface{}) sql.Res
 	return r
 }
 
-func (s *TestDDLSuite) execInsert(c *C, query string, args ...interface{}) sql.Result {
+func (s *TestDDLSuite) execInsert(c *C, query string, args ...any) sql.Result {
 	for {
 		r, err := s.exec(query, args...)
 		if err == nil {
@@ -413,7 +413,7 @@ func (s *TestDDLSuite) execInsert(c *C, query string, args ...interface{}) sql.R
 	}
 }
 
-func (s *TestDDLSuite) query(query string, args ...interface{}) (*sql.Rows, error) {
+func (s *TestDDLSuite) query(query string, args ...any) (*sql.Rows, error) {
 	for {
 		server := s.getServer()
 		r, err := server.db.Query(query, args...)
@@ -464,20 +464,20 @@ func (s *TestDDLSuite) getTable(c *C, name string) table.Table {
 	return tbl
 }
 
-func dumpRows(c *C, rows *sql.Rows) [][]interface{} {
+func dumpRows(c *C, rows *sql.Rows) [][]any {
 	cols, err := rows.Columns()
 	c.Assert(err, IsNil)
-	var ay [][]interface{}
+	var ay [][]any
 	for rows.Next() {
-		v := make([]interface{}, len(cols))
+		v := make([]any, len(cols))
 		for i := range v {
-			v[i] = new(interface{})
+			v[i] = new(any)
 		}
 		err = rows.Scan(v...)
 		c.Assert(err, IsNil)
 
 		for i := range v {
-			v[i] = *(v[i].(*interface{}))
+			v[i] = *(v[i].(*any))
 		}
 		ay = append(ay, v)
 	}
@@ -487,7 +487,7 @@ func dumpRows(c *C, rows *sql.Rows) [][]interface{} {
 	return ay
 }
 
-func matchRows(c *C, rows *sql.Rows, expected [][]interface{}) {
+func matchRows(c *C, rows *sql.Rows, expected [][]any) {
 	ay := dumpRows(c, rows)
 	c.Assert(len(ay), Equals, len(expected), Commentf("%v", expected))
 	for i := range ay {
@@ -495,7 +495,7 @@ func matchRows(c *C, rows *sql.Rows, expected [][]interface{}) {
 	}
 }
 
-func match(c *C, row []interface{}, expected ...interface{}) {
+func match(c *C, row []any, expected ...any) {
 	c.Assert(len(row), Equals, len(expected))
 	for i := range row {
 		if row[i] == nil {
@@ -563,7 +563,7 @@ func (s *TestDDLSuite) TestSimple(c *C) {
 
 	rows, err := s.query("select c1 from test_simple limit 1")
 	c.Assert(err, IsNil)
-	matchRows(c, rows, [][]interface{}{{1}})
+	matchRows(c, rows, [][]any{{1}})
 
 	done = s.runDDL("drop table if exists test_simple")
 	err = <-done

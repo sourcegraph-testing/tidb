@@ -130,10 +130,10 @@ type stmtFuture struct {
 type TransactionContext struct {
 	forUpdateTS   uint64
 	stmtFuture    oracle.Future
-	DirtyDB       interface{}
-	Binlog        interface{}
-	InfoSchema    interface{}
-	History       interface{}
+	DirtyDB       any
+	Binlog        any
+	InfoSchema    any
+	History       any
 	SchemaVersion int64
 	StartTS       uint64
 	Shard         *int64
@@ -306,7 +306,7 @@ type SessionVars struct {
 	// SysErrorCount is the system variable "error_count", because it is on the hot path, so we extract it from the systems
 	SysErrorCount uint16
 	// PreparedStmts stores prepared statement.
-	PreparedStmts        map[uint32]interface{}
+	PreparedStmts        map[uint32]any
 	PreparedStmtNameToID map[string]uint32
 	// preparedStmtID is id of prepared statement.
 	preparedStmtID uint32
@@ -367,7 +367,7 @@ type SessionVars struct {
 
 	// SnapshotInfoschema is used with SnapshotTS, when the schema version at snapshotTS less than current schema
 	// version, we load an old version schema for query.
-	SnapshotInfoschema interface{}
+	SnapshotInfoschema any
 
 	// BinlogClient is used to write binlog.
 	BinlogClient *pumpcli.PumpsClient
@@ -636,7 +636,7 @@ func NewSessionVars() *SessionVars {
 	vars := &SessionVars{
 		Users:                       make(map[string]types.Datum),
 		systems:                     make(map[string]string),
-		PreparedStmts:               make(map[uint32]interface{}),
+		PreparedStmts:               make(map[uint32]any),
 		PreparedStmtNameToID:        make(map[string]uint32),
 		PreparedParams:              make([]types.Datum, 0, 10),
 		TxnCtx:                      &TransactionContext{},
@@ -945,7 +945,7 @@ func (s *SessionVars) setDDLReorgPriority(val string) {
 }
 
 // AddPreparedStmt adds prepareStmt to current session and count in global.
-func (s *SessionVars) AddPreparedStmt(stmtID uint32, stmt interface{}) error {
+func (s *SessionVars) AddPreparedStmt(stmtID uint32, stmt any) error {
 	if _, exists := s.PreparedStmts[stmtID]; !exists {
 		valStr, _ := s.GetSystemVar(MaxPreparedStmtCount)
 		maxPreparedStmtCount, err := strconv.ParseInt(valStr, 10, 64)

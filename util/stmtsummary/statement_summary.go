@@ -833,7 +833,7 @@ func formatSQL(sql string) string {
 }
 
 // Format the backoffType map to a string or nil.
-func formatBackoffTypes(backoffMap map[fmt.Stringer]int) interface{} {
+func formatBackoffTypes(backoffMap map[fmt.Stringer]int) any {
 	type backoffStat struct {
 		backoffType fmt.Stringer
 		count       int
@@ -878,7 +878,7 @@ func avgFloat(sum int64, count int64) float64 {
 	return 0
 }
 
-func convertEmptyToNil(str string) interface{} {
+func convertEmptyToNil(str string) any {
 	if str == "" {
 		return nil
 	}

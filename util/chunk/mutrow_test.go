@@ -137,7 +137,7 @@ func BenchmarkMutRowFromDatums(b *testing.B) {
 
 func BenchmarkMutRowFromValues(b *testing.B) {
 	b.ReportAllocs()
-	values := []interface{}{1, "abc"}
+	values := []any{1, "abc"}
 	for i := 0; i < b.N; i++ {
 		MutRowFromValues(values)
 	}

@@ -307,7 +307,7 @@ func (sf *ScalarFunction) Decorrelate(schema *Schema) Expression {
 // Eval implements Expression interface.
 func (sf *ScalarFunction) Eval(row chunk.Row) (d types.Datum, err error) {
 	var (
-		res    interface{}
+		res    any
 		isNull bool
 	)
 	switch tp, evalType := sf.GetType(), sf.GetType().EvalType(); evalType {

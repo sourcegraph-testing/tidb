@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !race
 // +build !race
 
 package localpool
@@ -41,7 +42,7 @@ func (s *testPoolSuite) TestPool(c *C) {
 	numWorkers := runtime.GOMAXPROCS(0)
 	wg := new(sync.WaitGroup)
 	wg.Add(numWorkers)
-	pool := NewLocalPool(16, func() interface{} {
+	pool := NewLocalPool(16, func() any {
 		return new(Obj)
 	}, nil)
 	n := 1000
@@ -66,7 +67,7 @@ func (s *testPoolSuite) TestPool(c *C) {
 }
 
 func GetAndPut(pool *LocalPool) {
-	objs := make([]interface{}, rand.Intn(4)+1)
+	objs := make([]any, rand.Intn(4)+1)
 	for i := 0; i < len(objs); i++ {
 		objs[i] = pool.Get()
 	}

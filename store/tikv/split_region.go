@@ -75,7 +75,7 @@ func (s *tikvStore) splitBatchRegionsReq(bo *Backoffer, keys [][]byte, scatter b
 				case <-bo.ctx.Done():
 					ch <- singleBatchResp{err: bo.ctx.Err()}
 				}
-			}, func(r interface{}) {
+			}, func(r any) {
 				if r != nil {
 					ch <- singleBatchResp{err: errors.Errorf("%v", r)}
 				}

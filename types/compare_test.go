@@ -31,8 +31,8 @@ type testCompareSuite struct {
 func (s *testCompareSuite) TestCompare(c *C) {
 	defer testleak.AfterTest(c)()
 	cmpTbl := []struct {
-		lhs interface{}
-		rhs interface{}
+		lhs any
+		rhs any
 		ret int // 0, 1, -1
 	}{
 		{float64(1), float64(1), 0},
@@ -150,7 +150,7 @@ func (s *testCompareSuite) TestCompare(c *C) {
 	}
 }
 
-func compareForTest(a, b interface{}) (int, error) {
+func compareForTest(a, b any) (int, error) {
 	sc := new(stmtctx.StatementContext)
 	sc.IgnoreTruncate = true
 	aDatum := NewDatum(a)

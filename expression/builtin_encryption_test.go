@@ -30,9 +30,9 @@ import (
 )
 
 var cryptTests = []struct {
-	origin   interface{}
-	password interface{}
-	crypt    interface{}
+	origin   any
+	password any
+	crypt    any
 }{
 	{"", "", ""},
 	{"pingcap", "1234567890123456", "2C35B5A4ADF391"},
@@ -81,40 +81,40 @@ func (s *testEvaluatorSuite) TestSQLEncode(c *C) {
 
 var aesTests = []struct {
 	mode   string
-	origin interface{}
-	params []interface{}
-	crypt  interface{}
+	origin any
+	params []any
+	crypt  any
 }{
 	// test for ecb
-	{"aes-128-ecb", "pingcap", []interface{}{"1234567890123456"}, "697BFE9B3F8C2F289DD82C88C7BC95C4"},
-	{"aes-128-ecb", "pingcap123", []interface{}{"1234567890123456"}, "CEC348F4EF5F84D3AA6C4FA184C65766"},
-	{"aes-128-ecb", "pingcap", []interface{}{"123456789012345678901234"}, "6F1589686860C8E8C7A40A78B25FF2C0"},
-	{"aes-128-ecb", "pingcap", []interface{}{"123"}, "996E0CA8688D7AD20819B90B273E01C6"},
-	{"aes-128-ecb", "pingcap", []interface{}{123}, "996E0CA8688D7AD20819B90B273E01C6"},
-	{"aes-128-ecb", nil, []interface{}{123}, nil},
-	{"aes-192-ecb", "pingcap", []interface{}{"1234567890123456"}, "9B139FD002E6496EA2D5C73A2265E661"},
-	{"aes-256-ecb", "pingcap", []interface{}{"1234567890123456"}, "F80DCDEDDBE5663BDB68F74AEDDB8EE3"},
+	{"aes-128-ecb", "pingcap", []any{"1234567890123456"}, "697BFE9B3F8C2F289DD82C88C7BC95C4"},
+	{"aes-128-ecb", "pingcap123", []any{"1234567890123456"}, "CEC348F4EF5F84D3AA6C4FA184C65766"},
+	{"aes-128-ecb", "pingcap", []any{"123456789012345678901234"}, "6F1589686860C8E8C7A40A78B25FF2C0"},
+	{"aes-128-ecb", "pingcap", []any{"123"}, "996E0CA8688D7AD20819B90B273E01C6"},
+	{"aes-128-ecb", "pingcap", []any{123}, "996E0CA8688D7AD20819B90B273E01C6"},
+	{"aes-128-ecb", nil, []any{123}, nil},
+	{"aes-192-ecb", "pingcap", []any{"1234567890123456"}, "9B139FD002E6496EA2D5C73A2265E661"},
+	{"aes-256-ecb", "pingcap", []any{"1234567890123456"}, "F80DCDEDDBE5663BDB68F74AEDDB8EE3"},
 	// test for cbc
-	{"aes-128-cbc", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "2ECA0077C5EA5768A0485AA522774792"},
-	{"aes-128-cbc", "pingcap", []interface{}{"123456789012345678901234", "1234567890123456"}, "483788634DA8817423BA0934FD2C096E"},
-	{"aes-192-cbc", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "516391DB38E908ECA93AAB22870EC787"},
-	{"aes-256-cbc", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "5D0E22C1E77523AEF5C3E10B65653C8F"},
-	{"aes-256-cbc", "pingcap", []interface{}{"12345678901234561234567890123456", "1234567890123456"}, "A26BA27CA4BE9D361D545AA84A17002D"},
-	{"aes-256-cbc", "pingcap", []interface{}{"1234567890123456", "12345678901234561234567890123456"}, "5D0E22C1E77523AEF5C3E10B65653C8F"},
+	{"aes-128-cbc", "pingcap", []any{"1234567890123456", "1234567890123456"}, "2ECA0077C5EA5768A0485AA522774792"},
+	{"aes-128-cbc", "pingcap", []any{"123456789012345678901234", "1234567890123456"}, "483788634DA8817423BA0934FD2C096E"},
+	{"aes-192-cbc", "pingcap", []any{"1234567890123456", "1234567890123456"}, "516391DB38E908ECA93AAB22870EC787"},
+	{"aes-256-cbc", "pingcap", []any{"1234567890123456", "1234567890123456"}, "5D0E22C1E77523AEF5C3E10B65653C8F"},
+	{"aes-256-cbc", "pingcap", []any{"12345678901234561234567890123456", "1234567890123456"}, "A26BA27CA4BE9D361D545AA84A17002D"},
+	{"aes-256-cbc", "pingcap", []any{"1234567890123456", "12345678901234561234567890123456"}, "5D0E22C1E77523AEF5C3E10B65653C8F"},
 	// test for ofb
-	{"aes-128-ofb", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "0515A36BBF3DE0"},
-	{"aes-128-ofb", "pingcap", []interface{}{"123456789012345678901234", "1234567890123456"}, "C2A93A93818546"},
-	{"aes-192-ofb", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "FE09DCCF14D458"},
-	{"aes-256-ofb", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "2E70FCAC0C0834"},
-	{"aes-256-ofb", "pingcap", []interface{}{"12345678901234561234567890123456", "1234567890123456"}, "83E2B30A71F011"},
-	{"aes-256-ofb", "pingcap", []interface{}{"1234567890123456", "12345678901234561234567890123456"}, "2E70FCAC0C0834"},
+	{"aes-128-ofb", "pingcap", []any{"1234567890123456", "1234567890123456"}, "0515A36BBF3DE0"},
+	{"aes-128-ofb", "pingcap", []any{"123456789012345678901234", "1234567890123456"}, "C2A93A93818546"},
+	{"aes-192-ofb", "pingcap", []any{"1234567890123456", "1234567890123456"}, "FE09DCCF14D458"},
+	{"aes-256-ofb", "pingcap", []any{"1234567890123456", "1234567890123456"}, "2E70FCAC0C0834"},
+	{"aes-256-ofb", "pingcap", []any{"12345678901234561234567890123456", "1234567890123456"}, "83E2B30A71F011"},
+	{"aes-256-ofb", "pingcap", []any{"1234567890123456", "12345678901234561234567890123456"}, "2E70FCAC0C0834"},
 	// test for cfb
-	{"aes-128-cfb", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "0515A36BBF3DE0"},
-	{"aes-128-cfb", "pingcap", []interface{}{"123456789012345678901234", "1234567890123456"}, "C2A93A93818546"},
-	{"aes-192-cfb", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "FE09DCCF14D458"},
-	{"aes-256-cfb", "pingcap", []interface{}{"1234567890123456", "1234567890123456"}, "2E70FCAC0C0834"},
-	{"aes-256-cfb", "pingcap", []interface{}{"12345678901234561234567890123456", "1234567890123456"}, "83E2B30A71F011"},
-	{"aes-256-cfb", "pingcap", []interface{}{"1234567890123456", "12345678901234561234567890123456"}, "2E70FCAC0C0834"},
+	{"aes-128-cfb", "pingcap", []any{"1234567890123456", "1234567890123456"}, "0515A36BBF3DE0"},
+	{"aes-128-cfb", "pingcap", []any{"123456789012345678901234", "1234567890123456"}, "C2A93A93818546"},
+	{"aes-192-cfb", "pingcap", []any{"1234567890123456", "1234567890123456"}, "FE09DCCF14D458"},
+	{"aes-256-cfb", "pingcap", []any{"1234567890123456", "1234567890123456"}, "2E70FCAC0C0834"},
+	{"aes-256-cfb", "pingcap", []any{"12345678901234561234567890123456", "1234567890123456"}, "83E2B30A71F011"},
+	{"aes-256-cfb", "pingcap", []any{"1234567890123456", "12345678901234561234567890123456"}, "2E70FCAC0C0834"},
 }
 
 func (s *testEvaluatorSuite) TestAESEncrypt(c *C) {
@@ -208,7 +208,7 @@ func toHex(d types.Datum) (h types.Datum) {
 	return
 }
 
-func fromHex(str interface{}) (d types.Datum) {
+func fromHex(str any) (d types.Datum) {
 	if str == nil {
 		return
 	}
@@ -220,7 +220,7 @@ func fromHex(str interface{}) (d types.Datum) {
 }
 
 var sha1Tests = []struct {
-	origin interface{}
+	origin any
 	crypt  string
 }{
 	{"test", "a94a8fe5ccb19ba61c4c0873d391e987982fbbd3"},
@@ -251,9 +251,9 @@ func (s *testEvaluatorSuite) TestSha1Hash(c *C) {
 }
 
 var sha2Tests = []struct {
-	origin     interface{}
-	hashLength interface{}
-	crypt      interface{}
+	origin     any
+	hashLength any
+	crypt      any
 	validCase  bool
 }{
 	{"pingcap", 0, "2871823be240f8ecd1d72f24c99eaa2e58af18b4b8ba99a4fc2823ba5c43930a", true},
@@ -292,7 +292,7 @@ func (s *testEvaluatorSuite) TestSha2Hash(c *C) {
 
 func (s *testEvaluatorSuite) TestMD5Hash(c *C) {
 	cases := []struct {
-		args     interface{}
+		args     any
 		expected string
 		isNil    bool
 		getErr   bool
@@ -307,7 +307,7 @@ func (s *testEvaluatorSuite) TestMD5Hash(c *C) {
 		{nil, "", true, false},
 	}
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.MD5, s.primitiveValsToConstants([]interface{}{t.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.MD5, s.primitiveValsToConstants([]any{t.args})...)
 		c.Assert(err, IsNil)
 		d, err := f.Eval(chunk.Row{})
 		if t.getErr {
@@ -364,8 +364,8 @@ func decodeHex(str string) []byte {
 
 func (s *testEvaluatorSuite) TestCompress(c *C) {
 	tests := []struct {
-		in     interface{}
-		expect interface{}
+		in     any
+		expect any
 	}{
 		{"hello world", string(decodeHex("0B000000789CCA48CDC9C95728CF2FCA4901040000FFFF1A0B045D"))},
 		{"", ""},
@@ -389,8 +389,8 @@ func (s *testEvaluatorSuite) TestCompress(c *C) {
 
 func (s *testEvaluatorSuite) TestUncompress(c *C) {
 	tests := []struct {
-		in     interface{}
-		expect interface{}
+		in     any
+		expect any
 	}{
 		{decodeHex("0B000000789CCB48CDC9C95728CF2FCA4901001A0B045D"), "hello world"},         // zlib result from MySQL
 		{decodeHex("0B000000789CCA48CDC9C95728CF2FCA4901040000FFFF1A0B045D"), "hello world"}, // zlib result from TiDB
@@ -423,8 +423,8 @@ func (s *testEvaluatorSuite) TestUncompress(c *C) {
 
 func (s *testEvaluatorSuite) TestUncompressLength(c *C) {
 	tests := []struct {
-		in     interface{}
-		expect interface{}
+		in     any
+		expect any
 	}{
 		{decodeHex("0B000000789CCB48CDC9C95728CF2FCA4901001A0B045D"), int64(11)},         // zlib result from MySQL
 		{decodeHex("0B000000789CCA48CDC9C95728CF2FCA4901040000FFFF1A0B045D"), int64(11)}, // zlib result from TiDB
@@ -452,7 +452,7 @@ func (s *testEvaluatorSuite) TestUncompressLength(c *C) {
 
 func (s *testEvaluatorSuite) TestPassword(c *C) {
 	cases := []struct {
-		args     interface{}
+		args     any
 		expected string
 		isNil    bool
 		getErr   bool
@@ -468,7 +468,7 @@ func (s *testEvaluatorSuite) TestPassword(c *C) {
 
 	warnCount := len(s.ctx.GetSessionVars().StmtCtx.GetWarnings())
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.PasswordFunc, s.primitiveValsToConstants([]interface{}{t.args})...)
+		f, err := newFunctionForTest(s.ctx, ast.PasswordFunc, s.primitiveValsToConstants([]any{t.args})...)
 		c.Assert(err, IsNil)
 		d, err := f.Eval(chunk.Row{})
 		c.Assert(err, IsNil)

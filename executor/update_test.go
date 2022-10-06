@@ -101,7 +101,7 @@ func (s *testUpdateSuite) TestUpdateWithAutoidSchema(c *C) {
 	tests := []struct {
 		exec   string
 		query  string
-		result [][]interface{}
+		result [][]any
 	}{
 		{
 			`insert into t1 set n = 1`,

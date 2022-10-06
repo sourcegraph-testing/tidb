@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !codes
 // +build !codes
 
 package testkit
@@ -86,7 +87,7 @@ func (tk *CTestKit) CloseSession(ctx context.Context) {
 }
 
 // Exec executes a sql statement.
-func (tk *CTestKit) Exec(ctx context.Context, sql string, args ...interface{}) (sqlexec.RecordSet, error) {
+func (tk *CTestKit) Exec(ctx context.Context, sql string, args ...any) (sqlexec.RecordSet, error) {
 	var err error
 	tk.c.Assert(getSession(ctx), check.NotNil)
 	if len(args) == 0 {
@@ -124,7 +125,7 @@ func (tk *CTestKit) CheckExecResult(ctx context.Context, affectedRows, insertID 
 }
 
 // MustExec executes a sql statement and asserts nil error.
-func (tk *CTestKit) MustExec(ctx context.Context, sql string, args ...interface{}) {
+func (tk *CTestKit) MustExec(ctx context.Context, sql string, args ...any) {
 	res, err := tk.Exec(ctx, sql, args...)
 	tk.c.Assert(err, check.IsNil, check.Commentf("sql:%s, %v, error stack %v", sql, args, errors.ErrorStack(err)))
 	if res != nil {
@@ -134,7 +135,7 @@ func (tk *CTestKit) MustExec(ctx context.Context, sql string, args ...interface{
 
 // MustQuery query the statements and returns result rows.
 // If expected result is set it asserts the query result equals expected result.
-func (tk *CTestKit) MustQuery(ctx context.Context, sql string, args ...interface{}) *Result {
+func (tk *CTestKit) MustQuery(ctx context.Context, sql string, args ...any) *Result {
 	comment := check.Commentf("sql:%s, args:%v", sql, args)
 	rs, err := tk.Exec(ctx, sql, args...)
 	tk.c.Assert(errors.ErrorStack(err), check.Equals, "", comment)
@@ -175,17 +176,17 @@ func (tk *CTestKit) resultSetToResult(ctx context.Context, rs sqlexec.RecordSet,
 // works like create table better be put in front of this method calling.
 // see more example at TestBatchInsertWithOnDuplicate
 func (tk *CTestKit) ConcurrentRun(c *check.C, concurrent int, loops int,
-	prepareFunc func(ctx context.Context, tk *CTestKit, concurrent int, currentLoop int) [][][]interface{},
-	writeFunc func(ctx context.Context, tk *CTestKit, input [][]interface{}),
+	prepareFunc func(ctx context.Context, tk *CTestKit, concurrent int, currentLoop int) [][][]any,
+	writeFunc func(ctx context.Context, tk *CTestKit, input [][]any),
 	checkFunc func(ctx context.Context, tk *CTestKit)) {
 	var (
-		channel = make([]chan [][]interface{}, concurrent)
+		channel = make([]chan [][]any, concurrent)
 		ctxs    = make([]context.Context, concurrent)
 		dones   = make([]context.CancelFunc, concurrent)
 	)
 	for i := 0; i < concurrent; i++ {
 		w := i
-		channel[w] = make(chan [][]interface{}, 1)
+		channel[w] = make(chan [][]any, 1)
 		ctxs[w], dones[w] = context.WithCancel(context.Background())
 		ctxs[w] = tk.OpenSessionWithDB(ctxs[w], "test")
 		go func() {
@@ -229,9 +230,9 @@ func (tk *CTestKit) ConcurrentRun(c *check.C, concurrent int, loops int,
 }
 
 // PermInt returns, as a slice of n ints, a pseudo-random permutation of the integers [0,n).
-func (tk *CTestKit) PermInt(n int) []interface{} {
+func (tk *CTestKit) PermInt(n int) []any {
 	randPermSlice := rand.Perm(n)
-	v := make([]interface{}, 0, len(randPermSlice))
+	v := make([]any, 0, len(randPermSlice))
 	for _, i := range randPermSlice {
 		v = append(v, i)
 	}

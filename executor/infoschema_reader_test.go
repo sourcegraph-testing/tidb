@@ -172,7 +172,7 @@ func (s *testInfoschemaTableSuite) TestSchemataTables(c *C) {
 	}, nil, nil), IsTrue)
 	schemataTester.MustQuery("select count(*) from information_schema.SCHEMATA;").Check(testkit.Rows("1"))
 	schemataTester.MustQuery("select * from information_schema.SCHEMATA where schema_name='mysql';").Check(
-		[][]interface{}{})
+		[][]any{})
 	schemataTester.MustQuery("select * from information_schema.SCHEMATA where schema_name='INFORMATION_SCHEMA';").Check(
 		testkit.Rows("def INFORMATION_SCHEMA utf8mb4 utf8mb4_bin <nil>"))
 
@@ -261,7 +261,7 @@ func (s *testInfoschemaTableSuite) TestDDLJobs(c *C) {
 
 	// Test the privilege of user for information_schema.ddl_jobs.
 	DDLJobsTester.MustQuery("select DB_NAME, TABLE_NAME from information_schema.DDL_JOBS where DB_NAME = 'test_ddl_jobs' and TABLE_NAME = 't';").Check(
-		[][]interface{}{})
+		[][]any{})
 	tk.MustExec("CREATE ROLE r_priv;")
 	tk.MustExec("GRANT ALL PRIVILEGES ON test_ddl_jobs.* TO r_priv;")
 	tk.MustExec("GRANT r_priv TO DDL_JOBS_tester;")
@@ -284,7 +284,7 @@ func (s *testInfoschemaTableSuite) TestKeyColumnUsage(c *C) {
 		Username: "key_column_tester",
 		Hostname: "127.0.0.1",
 	}, nil, nil), IsTrue)
-	keyColumnTester.MustQuery("select * from information_schema.KEY_COLUMN_USAGE;").Check([][]interface{}{})
+	keyColumnTester.MustQuery("select * from information_schema.KEY_COLUMN_USAGE;").Check([][]any{})
 
 	//test the privilege of user with privilege of mysql.gc_delete_range for information_schema.table_constraints
 	tk.MustExec("CREATE ROLE r_stats_meta ;")
@@ -304,7 +304,7 @@ func (s *testInfoschemaTableSuite) TestUserPrivileges(c *C) {
 		Username: "constraints_tester",
 		Hostname: "127.0.0.1",
 	}, nil, nil), IsTrue)
-	constraintsTester.MustQuery("select * from information_schema.TABLE_CONSTRAINTS;").Check([][]interface{}{})
+	constraintsTester.MustQuery("select * from information_schema.TABLE_CONSTRAINTS;").Check([][]any{})
 
 	//test the privilege of user with privilege of mysql.gc_delete_range for information_schema.table_constraints
 	tk.MustExec("CREATE ROLE r_gc_delete_range ;")
@@ -312,7 +312,7 @@ func (s *testInfoschemaTableSuite) TestUserPrivileges(c *C) {
 	tk.MustExec("GRANT r_gc_delete_range TO constraints_tester;")
 	constraintsTester.MustExec("set role r_gc_delete_range")
 	c.Assert(len(constraintsTester.MustQuery("select * from information_schema.TABLE_CONSTRAINTS where TABLE_NAME='gc_delete_range';").Rows()), Greater, 0)
-	constraintsTester.MustQuery("select * from information_schema.TABLE_CONSTRAINTS where TABLE_NAME='tables_priv';").Check([][]interface{}{})
+	constraintsTester.MustQuery("select * from information_schema.TABLE_CONSTRAINTS where TABLE_NAME='tables_priv';").Check([][]any{})
 
 	//test the privilege of new user for information_schema
 	tk.MustExec("create user tester1")
@@ -322,7 +322,7 @@ func (s *testInfoschemaTableSuite) TestUserPrivileges(c *C) {
 		Username: "tester1",
 		Hostname: "127.0.0.1",
 	}, nil, nil), IsTrue)
-	tk1.MustQuery("select * from information_schema.STATISTICS;").Check([][]interface{}{})
+	tk1.MustQuery("select * from information_schema.STATISTICS;").Check([][]any{})
 
 	//test the privilege of user with some privilege for information_schema
 	tk.MustExec("create user tester2")
@@ -339,7 +339,7 @@ func (s *testInfoschemaTableSuite) TestUserPrivileges(c *C) {
 	result := tk2.MustQuery("select * from information_schema.STATISTICS where TABLE_NAME='columns_priv' and COLUMN_NAME='Host';")
 	c.Assert(len(result.Rows()), Greater, 0)
 	tk2.MustQuery("select * from information_schema.STATISTICS where TABLE_NAME='tables_priv' and COLUMN_NAME='Host';").Check(
-		[][]interface{}{})
+		[][]any{})
 
 	//test the privilege of user with all privilege for information_schema
 	tk.MustExec("create user tester3")
@@ -487,7 +487,7 @@ func (s *testInfoschemaTableSuite) TestForAnalyzeStatus(c *C) {
 	tk.MustExec("create table analyze_test (a int, b int, index idx(a))")
 	tk.MustExec("insert into analyze_test values (1,2),(3,4)")
 
-	tk.MustQuery("select distinct TABLE_NAME from information_schema.analyze_status where TABLE_NAME='analyze_test'").Check([][]interface{}{})
+	tk.MustQuery("select distinct TABLE_NAME from information_schema.analyze_status where TABLE_NAME='analyze_test'").Check([][]any{})
 	tk.MustExec("analyze table analyze_test")
 	tk.MustQuery("select distinct TABLE_NAME from information_schema.analyze_status where TABLE_NAME='analyze_test'").Check(testkit.Rows("analyze_test"))
 
@@ -499,8 +499,8 @@ func (s *testInfoschemaTableSuite) TestForAnalyzeStatus(c *C) {
 		Username: "analyze_tester",
 		Hostname: "127.0.0.1",
 	}, nil, nil), IsTrue)
-	analyzeTester.MustQuery("show analyze status").Check([][]interface{}{})
-	analyzeTester.MustQuery("select * from information_schema.ANALYZE_STATUS;").Check([][]interface{}{})
+	analyzeTester.MustQuery("show analyze status").Check([][]any{})
+	analyzeTester.MustQuery("select * from information_schema.ANALYZE_STATUS;").Check([][]any{})
 
 	//test the privilege of user with privilege of test.t1 for information_schema.analyze_status
 	tk.MustExec("create table t1 (a int, b int, index idx(a))")
@@ -617,7 +617,7 @@ func (s *testInfoschemaClusterTableSuite) setUpMockPDHTTPServer() (*httptest.Ser
 	}))
 	// mock PD API
 	router.Handle(pdapi.ClusterVersion, fn.Wrap(func() (string, error) { return "4.0.0-alpha", nil }))
-	router.Handle(pdapi.Status, fn.Wrap(func() (interface{}, error) {
+	router.Handle(pdapi.Status, fn.Wrap(func() (any, error) {
 		return struct {
 			GitHash        string `json:"git_hash"`
 			StartTimestamp int64  `json:"start_timestamp"`
@@ -626,14 +626,14 @@ func (s *testInfoschemaClusterTableSuite) setUpMockPDHTTPServer() (*httptest.Ser
 			StartTimestamp: s.startTime.Unix(),
 		}, nil
 	}))
-	var mockConfig = func() (map[string]interface{}, error) {
-		configuration := map[string]interface{}{
+	var mockConfig = func() (map[string]any, error) {
+		configuration := map[string]any{
 			"key1": "value1",
 			"key2": map[string]string{
 				"nest1": "n-value1",
 				"nest2": "n-value2",
 			},
-			"key3": map[string]interface{}{
+			"key3": map[string]any{
 				"nest1": "n-value1",
 				"nest2": "n-value2",
 				"key4": map[string]string{

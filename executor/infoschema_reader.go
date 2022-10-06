@@ -445,7 +445,7 @@ func (e *memtableRetriever) setDataFromTables(ctx sessionctx.Context, schemas []
 				if table.GetPartitionInfo() != nil {
 					createOptions = "partitioned"
 				}
-				var autoIncID interface{}
+				var autoIncID any
 				hasAutoIncID, _ := infoschema.HasAutoIncrementColumn(table)
 				if hasAutoIncID {
 					autoIncID, err = getAutoIncrementID(ctx, schema, table)
@@ -561,7 +561,7 @@ func (e *memtableRetriever) dataForColumnsInTable(schema *model.DBInfo, tbl *mod
 		if col.Hidden {
 			continue
 		}
-		var charMaxLen, charOctLen, numericPrecision, numericScale, datetimePrecision interface{}
+		var charMaxLen, charOctLen, numericPrecision, numericScale, datetimePrecision any
 		colLen, decimal := col.Flen, col.Decimal
 		defaultFlen, defaultDecimal := mysql.GetDefaultFieldLengthAndDecimal(col.Tp)
 		if decimal == types.UnspecifiedLength {
@@ -610,7 +610,7 @@ func (e *memtableRetriever) dataForColumnsInTable(schema *model.DBInfo, tbl *mod
 		}
 		columnType := col.FieldType.InfoSchemaStr()
 		columnDesc := table.NewColDesc(table.ToColumn(col))
-		var columnDefault interface{}
+		var columnDefault any
 		if columnDesc.DefaultValue != nil {
 			columnDefault = fmt.Sprintf("%v", columnDesc.DefaultValue)
 		}
@@ -784,7 +784,7 @@ func (e *memtableRetriever) setDataFromIndexes(ctx sessionctx.Context, schemas [
 					if idxInfo.Unique {
 						nonUniq = 0
 					}
-					var subPart interface{}
+					var subPart any
 					if col.Length != types.UnspecifiedLength {
 						subPart = col.Length
 					}
@@ -1452,7 +1452,7 @@ func dataForAnalyzeStatusHelper(sctx sessionctx.Context) (rows [][]types.Datum) 
 	checker := privilege.GetPrivilegeManager(sctx)
 	for _, job := range statistics.GetAllAnalyzeJobs() {
 		job.Lock()
-		var startTime interface{}
+		var startTime any
 		if job.StartTime.IsZero() {
 			startTime = nil
 		} else {

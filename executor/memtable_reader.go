@@ -207,7 +207,7 @@ func fetchClusterConfig(sctx sessionctx.Context, nodeTypes, nodeAddrs set.String
 					ch <- result{err: errors.Errorf("request %s failed: %s", url, resp.Status)}
 					return
 				}
-				var nested map[string]interface{}
+				var nested map[string]any
 				if err = json.NewDecoder(resp.Body).Decode(&nested); err != nil {
 					ch <- result{err: errors.Trace(err)}
 					return
@@ -454,11 +454,11 @@ func (h logResponseHeap) Swap(i, j int) {
 	h[i], h[j] = h[j], h[i]
 }
 
-func (h *logResponseHeap) Push(x interface{}) {
+func (h *logResponseHeap) Push(x any) {
 	*h = append(*h, x.(logStreamResult))
 }
 
-func (h *logResponseHeap) Pop() interface{} {
+func (h *logResponseHeap) Pop() any {
 	old := *h
 	n := len(old)
 	x := old[n-1]

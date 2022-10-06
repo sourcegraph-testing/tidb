@@ -25,12 +25,12 @@ import (
 type LocalPool struct {
 	sizePerProc int
 	slots       []*slot
-	newFn       func() interface{}
-	resetFn     func(obj interface{})
+	newFn       func() any
+	resetFn     func(obj any)
 }
 
 type slot struct {
-	objs    []interface{}
+	objs    []any
 	getHit  int
 	getMiss int
 	putHit  int
@@ -42,11 +42,11 @@ type slot struct {
 // It can only be used when the GOMAXPROCS never change after the pool created.
 // newFn is the function to create a new object.
 // resetFn is the function called before put back to the pool, it can be nil.
-func NewLocalPool(sizePerProc int, newFn func() interface{}, resetFn func(obj interface{})) *LocalPool {
+func NewLocalPool(sizePerProc int, newFn func() any, resetFn func(obj any)) *LocalPool {
 	slots := make([]*slot, runtime.GOMAXPROCS(0))
 	for i := 0; i < len(slots); i++ {
 		slots[i] = &slot{
-			objs: make([]interface{}, 0, sizePerProc),
+			objs: make([]any, 0, sizePerProc),
 		}
 	}
 	return &LocalPool{

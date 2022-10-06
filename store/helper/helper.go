@@ -616,7 +616,7 @@ func (h *Helper) GetRegionInfoByID(regionID uint64) (*RegionInfo, error) {
 }
 
 // request PD API, decode the response body into res
-func (h *Helper) requestPD(method, uri string, body io.Reader, res interface{}) error {
+func (h *Helper) requestPD(method, uri string, body io.Reader, res any) error {
 	etcd, ok := h.Store.(tikv.EtcdBackend)
 	if !ok {
 		return errors.WithStack(errors.New("not implemented"))

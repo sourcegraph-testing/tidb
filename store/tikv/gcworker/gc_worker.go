@@ -1174,7 +1174,7 @@ func (w *GCWorker) registerLockObservers(ctx context.Context, safePoint uint64, 
 
 // checkLockObservers checks the state of each store's lock observer. If any lock collected by the observers, resolve
 // them. Returns ids of clean stores.
-func (w *GCWorker) checkLockObservers(ctx context.Context, safePoint uint64, stores map[uint64]*metapb.Store) (map[uint64]interface{}, error) {
+func (w *GCWorker) checkLockObservers(ctx context.Context, safePoint uint64, stores map[uint64]*metapb.Store) (map[uint64]any, error) {
 	logutil.Logger(ctx).Info("[gc worker] checking lock observers",
 		zap.String("uuid", w.uuid),
 		zap.Uint64("safePoint", safePoint))
@@ -1182,7 +1182,7 @@ func (w *GCWorker) checkLockObservers(ctx context.Context, safePoint uint64, sto
 	req := tikvrpc.NewRequest(tikvrpc.CmdCheckLockObserver, &kvrpcpb.CheckLockObserverRequest{
 		MaxTs: safePoint,
 	})
-	cleanStores := make(map[uint64]interface{}, len(stores))
+	cleanStores := make(map[uint64]any, len(stores))
 
 	logError := func(store *metapb.Store, err error) {
 		logutil.Logger(ctx).Error("[gc worker] failed to check lock observer for store",
@@ -1280,7 +1280,7 @@ func (w *GCWorker) removeLockObservers(ctx context.Context, safePoint uint64, st
 }
 
 // physicalScanAndResolveLocks performs physical scan lock and resolves these locks. Returns successful stores
-func (w *GCWorker) physicalScanAndResolveLocks(ctx context.Context, safePoint uint64, stores map[uint64]*metapb.Store) (map[uint64]interface{}, error) {
+func (w *GCWorker) physicalScanAndResolveLocks(ctx context.Context, safePoint uint64, stores map[uint64]*metapb.Store) (map[uint64]any, error) {
 	ctx, cancel := context.WithCancel(ctx)
 	// Cancel all spawned goroutines for lock scanning and resolving.
 	defer cancel()
@@ -1891,11 +1891,11 @@ func (r mergeReceiver) Swap(i, j int) {
 	r[i], r[j] = r[j], r[i]
 }
 
-func (r *mergeReceiver) Push(x interface{}) {
+func (r *mergeReceiver) Push(x any) {
 	*r = append(*r, x.(*receiver))
 }
 
-func (r *mergeReceiver) Pop() interface{} {
+func (r *mergeReceiver) Pop() any {
 	receivers := *r
 	res := receivers[len(receivers)-1]
 	*r = receivers[:len(receivers)-1]
@@ -1981,8 +1981,8 @@ func (s *mergeLockScanner) NextBatch(batchSize int) []*tikv.Lock {
 }
 
 // GetSucceededStores gets a set of successfully scanned stores. Only call this after finishing scanning all locks.
-func (s *mergeLockScanner) GetSucceededStores() map[uint64]interface{} {
-	stores := make(map[uint64]interface{}, len(s.receivers))
+func (s *mergeLockScanner) GetSucceededStores() map[uint64]any {
+	stores := make(map[uint64]any, len(s.receivers))
 	for _, receiver := range s.receivers {
 		if receiver.Err == nil {
 			stores[receiver.StoreID] = nil

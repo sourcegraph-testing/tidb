@@ -63,16 +63,16 @@ func encodeInt(n int) []byte {
 
 type MockContext struct {
 	prefix int
-	values map[fmt.Stringer]interface{}
+	values map[fmt.Stringer]any
 	kv.Storage
 	txn kv.Transaction
 }
 
-func (c *MockContext) SetValue(key fmt.Stringer, value interface{}) {
+func (c *MockContext) SetValue(key fmt.Stringer, value any) {
 	c.values[key] = value
 }
 
-func (c *MockContext) Value(key fmt.Stringer) interface{} {
+func (c *MockContext) Value(key fmt.Stringer) any {
 	value := c.values[key]
 	return value
 }
@@ -116,7 +116,7 @@ func (c *MockContext) CommitTxn() error {
 }
 
 func (s *testPrefixSuite) TestPrefix(c *C) {
-	ctx := &MockContext{10000000, make(map[fmt.Stringer]interface{}), s.s, nil}
+	ctx := &MockContext{10000000, make(map[fmt.Stringer]any), s.s, nil}
 	ctx.fillTxn()
 	txn, err := ctx.GetTxn(false)
 	c.Assert(err, IsNil)

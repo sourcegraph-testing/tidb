@@ -76,9 +76,10 @@ func GetStack() []byte {
 
 // WithRecovery wraps goroutine startup call with force recovery.
 // it will dump current goroutine stack into log if catch any recover result.
-//   exec:      execute logic function.
-//   recoverFn: handler will be called after recover and before dump stack, passing `nil` means noop.
-func WithRecovery(exec func(), recoverFn func(r interface{})) {
+//
+//	exec:      execute logic function.
+//	recoverFn: handler will be called after recover and before dump stack, passing `nil` means noop.
+func WithRecovery(exec func(), recoverFn func(r any)) {
 	defer func() {
 		r := recover()
 		if recoverFn != nil {
@@ -351,8 +352,8 @@ type SequenceSchema interface {
 // Otherwise calling table will cause import cycle problem.
 type SequenceTable interface {
 	GetSequenceID() int64
-	GetSequenceNextVal(ctx interface{}, dbName, seqName string) (int64, error)
-	SetSequenceVal(ctx interface{}, newVal int64, dbName, seqName string) (int64, bool, error)
+	GetSequenceNextVal(ctx any, dbName, seqName string) (int64, error)
+	SetSequenceVal(ctx any, newVal int64, dbName, seqName string) (int64, bool, error)
 }
 
 // LoadTLSCertificates loads CA/KEY/CERT for special paths.

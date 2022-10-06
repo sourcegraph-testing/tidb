@@ -40,15 +40,15 @@ func (s *testSuite) TestBatchInsertWithOnDuplicate(c *C) {
 
 	tk.ConcurrentRun(c, 3, 2, // concurrent: 3, loops: 2,
 		// prepare data for each loop.
-		func(ctx context.Context, tk *testkit.CTestKit, concurrent int, currentLoop int) [][][]interface{} {
-			var ii [][][]interface{}
+		func(ctx context.Context, tk *testkit.CTestKit, concurrent int, currentLoop int) [][][]any {
+			var ii [][][]any
 			for i := 0; i < concurrent; i++ {
-				ii = append(ii, [][]interface{}{tk.PermInt(7)})
+				ii = append(ii, [][]any{tk.PermInt(7)})
 			}
 			return ii
 		},
 		// concurrent execute logic.
-		func(ctx context.Context, tk *testkit.CTestKit, input [][]interface{}) {
+		func(ctx context.Context, tk *testkit.CTestKit, input [][]any) {
 			tk.MustExec(ctx, "set @@session.tidb_batch_insert=1")
 			tk.MustExec(ctx, "set @@session.tidb_dml_batch_size=1")
 			_, err := tk.Exec(ctx, "insert ignore into duplicate_test(k1) values (?),(?),(?),(?),(?),(?),(?)", input[0]...)

@@ -25,7 +25,7 @@ import (
 )
 
 var encoderPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &planEncoder{}
 	},
 }
@@ -86,7 +86,7 @@ func (pn *planEncoder) encodePlan(p PhysicalPlan, isRoot bool, depth int) {
 }
 
 var digesterPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &planDigester{
 			hasher: sha256.New(),
 		}

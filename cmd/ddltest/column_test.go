@@ -31,7 +31,7 @@ import (
 )
 
 // After add column finished, check the records in the table.
-func (s *TestDDLSuite) checkAddColumn(c *C, rowID int64, defaultVal interface{}, updatedVal interface{}) {
+func (s *TestDDLSuite) checkAddColumn(c *C, rowID int64, defaultVal any, updatedVal any) {
 	ctx := s.ctx
 	err := ctx.NewTxn(goctx.Background())
 	c.Assert(err, IsNil)
@@ -81,7 +81,7 @@ func (s *TestDDLSuite) checkAddColumn(c *C, rowID int64, defaultVal interface{},
 	c.Assert(deleteCount, Greater, int64(0))
 }
 
-func (s *TestDDLSuite) checkDropColumn(c *C, rowID int64, alterColumn *table.Column, updateDefault interface{}) {
+func (s *TestDDLSuite) checkDropColumn(c *C, rowID int64, alterColumn *table.Column, updateDefault any) {
 	ctx := s.ctx
 	err := ctx.NewTxn(goctx.Background())
 	c.Assert(err, IsNil)
@@ -134,7 +134,7 @@ func (s *TestDDLSuite) TestColumn(c *C) {
 		Query      string
 		ColumnName string
 		Add        bool
-		Default    interface{}
+		Default    any
 	}{
 		{"alter table test_column add column c3 int default -1", "c3", true, int64(-1)},
 		{"alter table test_column drop column c3", "c3", false, nil},

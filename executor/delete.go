@@ -163,7 +163,7 @@ func (e *DeleteExec) deleteMultiTablesByChunk(ctx context.Context) error {
 func (e *DeleteExec) removeRowsInTblRowMap(tblRowMap tableRowMapType) error {
 	for id, rowMap := range tblRowMap {
 		var err error
-		rowMap.Range(func(h kv.Handle, val interface{}) bool {
+		rowMap.Range(func(h kv.Handle, val any) bool {
 			err = e.removeRow(e.ctx, e.tblID2Table[id], h, val.([]types.Datum))
 			if err != nil {
 				return false

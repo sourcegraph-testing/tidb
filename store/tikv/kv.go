@@ -388,7 +388,7 @@ func (s *tikvStore) Describe() string {
 	return "TiKV is a distributed transactional key-value database"
 }
 
-func (s *tikvStore) ShowStatus(ctx context.Context, key string) (interface{}, error) {
+func (s *tikvStore) ShowStatus(ctx context.Context, key string) (any, error) {
 	return nil, kv.ErrNotImplemented
 }
 

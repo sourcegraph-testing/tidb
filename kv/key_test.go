@@ -167,7 +167,7 @@ func (s *testKeySuite) TestHandleMap(c *C) {
 	m.Set(ch3, "c")
 	c.Assert(m.Len(), Equals, 3)
 	cnt := 0
-	m.Range(func(h Handle, val interface{}) bool {
+	m.Range(func(h Handle, val any) bool {
 		cnt++
 		if h.Equal(ch) {
 			c.Assert(val, Equals, "a")
@@ -184,7 +184,7 @@ func (s *testKeySuite) TestHandleMap(c *C) {
 	c.Assert(cnt, Equals, 2)
 }
 
-func mustNewCommonHandle(c *C, values ...interface{}) *CommonHandle {
+func mustNewCommonHandle(c *C, values ...any) *CommonHandle {
 	encoded, err := codec.EncodeKey(new(stmtctx.StatementContext), nil, types.MakeDatums(values...)...)
 	c.Assert(err, IsNil)
 	ch, err := NewCommonHandle(encoded)

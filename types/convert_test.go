@@ -38,7 +38,7 @@ type invalidMockType struct {
 }
 
 // Convert converts the val with type tp.
-func Convert(val interface{}, target *FieldType) (v interface{}, err error) {
+func Convert(val any, target *FieldType) (v any, err error) {
 	d := NewDatum(val)
 	sc := new(stmtctx.StatementContext)
 	sc.TimeZone = time.UTC
@@ -306,7 +306,7 @@ func (s *testTypeConvertSuite) TestConvertType(c *C) {
 	c.Assert(err, NotNil)
 }
 
-func testToString(c *C, val interface{}, expect string) {
+func testToString(c *C, val any, expect string) {
 	b, err := ToString(val)
 	c.Assert(err, IsNil)
 	c.Assert(b, Equals, expect)
@@ -503,7 +503,7 @@ func (s *testTypeConvertSuite) TestFieldTypeToStr(c *C) {
 	c.Assert(v, Equals, "binary")
 }
 
-func accept(c *C, tp byte, value interface{}, unsigned bool, expected string) {
+func accept(c *C, tp byte, value any, unsigned bool, expected string) {
 	ft := NewFieldType(tp)
 	if unsigned {
 		ft.Flag |= mysql.UnsignedFlag
@@ -523,15 +523,15 @@ func accept(c *C, tp byte, value interface{}, unsigned bool, expected string) {
 	}
 }
 
-func unsignedAccept(c *C, tp byte, value interface{}, expected string) {
+func unsignedAccept(c *C, tp byte, value any, expected string) {
 	accept(c, tp, value, true, expected)
 }
 
-func signedAccept(c *C, tp byte, value interface{}, expected string) {
+func signedAccept(c *C, tp byte, value any, expected string) {
 	accept(c, tp, value, false, expected)
 }
 
-func deny(c *C, tp byte, value interface{}, unsigned bool, expected string) {
+func deny(c *C, tp byte, value any, unsigned bool, expected string) {
 	ft := NewFieldType(tp)
 	if unsigned {
 		ft.Flag |= mysql.UnsignedFlag
@@ -549,15 +549,15 @@ func deny(c *C, tp byte, value interface{}, unsigned bool, expected string) {
 	}
 }
 
-func unsignedDeny(c *C, tp byte, value interface{}, expected string) {
+func unsignedDeny(c *C, tp byte, value any, expected string) {
 	deny(c, tp, value, true, expected)
 }
 
-func signedDeny(c *C, tp byte, value interface{}, expected string) {
+func signedDeny(c *C, tp byte, value any, expected string) {
 	deny(c, tp, value, false, expected)
 }
 
-func strvalue(v interface{}) string {
+func strvalue(v any) string {
 	return fmt.Sprintf("%v", v)
 }
 
@@ -972,12 +972,12 @@ func (s *testTypeConvertSuite) TestConvertJSONToInt(c *C) {
 
 func (s *testTypeConvertSuite) TestConvertJSONToFloat(c *C) {
 	var tests = []struct {
-		In  interface{}
+		In  any
 		Out float64
 		ty  json.TypeCode
 	}{
-		{make(map[string]interface{}), 0, json.TypeCodeObject},
-		{make([]interface{}, 0), 0, json.TypeCodeArray},
+		{make(map[string]any), 0, json.TypeCodeObject},
+		{make([]any, 0), 0, json.TypeCodeArray},
 		{int64(3), 3, json.TypeCodeInt64},
 		{int64(-3), -3, json.TypeCodeInt64},
 		{uint64(1 << 63), 1 << 63, json.TypeCodeUint64},
