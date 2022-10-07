@@ -145,7 +145,7 @@ func (s *testClusterTableSuite) setUpMockPDHTTPServer() (*httptest.Server, strin
 	}))
 	// mock PD API
 	router.Handle(pdapi.ClusterVersion, fn.Wrap(func() (string, error) { return "4.0.0-alpha", nil }))
-	router.Handle(pdapi.Status, fn.Wrap(func() (interface{}, error) {
+	router.Handle(pdapi.Status, fn.Wrap(func() (any, error) {
 		return struct {
 			GitHash        string `json:"git_hash"`
 			StartTimestamp int64  `json:"start_timestamp"`
@@ -154,14 +154,14 @@ func (s *testClusterTableSuite) setUpMockPDHTTPServer() (*httptest.Server, strin
 			StartTimestamp: s.startTime.Unix(),
 		}, nil
 	}))
-	var mockConfig = func() (map[string]interface{}, error) {
-		configuration := map[string]interface{}{
+	var mockConfig = func() (map[string]any, error) {
+		configuration := map[string]any{
 			"key1": "value1",
 			"key2": map[string]string{
 				"nest1": "n-value1",
 				"nest2": "n-value2",
 			},
-			"key3": map[string]interface{}{
+			"key3": map[string]any{
 				"nest1": "n-value1",
 				"nest2": "n-value2",
 				"key4": map[string]string{
@@ -540,7 +540,7 @@ func (s *testTableSuite) TestTableRowIDShardingInfo(c *C) {
 	tk.MustExec("DROP DATABASE IF EXISTS `sharding_info_test_db`")
 	tk.MustExec("CREATE DATABASE `sharding_info_test_db`")
 
-	assertShardingInfo := func(tableName string, expectInfo interface{}) {
+	assertShardingInfo := func(tableName string, expectInfo any) {
 		querySQL := fmt.Sprintf("select tidb_row_id_sharding_info from information_schema.tables where table_schema = 'sharding_info_test_db' and table_name = '%s'", tableName)
 		info := tk.MustQuery(querySQL).Rows()[0][0]
 		if expectInfo == nil {
@@ -561,7 +561,7 @@ func (s *testTableSuite) TestTableRowIDShardingInfo(c *C) {
 	tk.MustExec("CREATE VIEW `sharding_info_test_db`.`tv` AS select 1")
 	assertShardingInfo("tv", nil)
 
-	testFunc := func(dbName string, expectInfo interface{}) {
+	testFunc := func(dbName string, expectInfo any) {
 		dbInfo := model.DBInfo{Name: model.NewCIStr(dbName)}
 		tableInfo := model.TableInfo{}
 

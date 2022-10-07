@@ -33,7 +33,7 @@ func (s *pkgTestSuite) TestJoinExec(c *C) {
 		opt1 := mockDataSourceParameters{
 			rows: casTest.rows,
 			ctx:  casTest.ctx,
-			genDataFunc: func(row int, typ *types.FieldType) interface{} {
+			genDataFunc: func(row int, typ *types.FieldType) any {
 				switch typ.Tp {
 				case mysql.TypeLong, mysql.TypeLonglong:
 					return int64(row)

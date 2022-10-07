@@ -205,7 +205,7 @@ func (b nullableBool) MarshalText() ([]byte, error) {
 
 func (b *nullableBool) UnmarshalJSON(data []byte) error {
 	var err error
-	var v interface{}
+	var v any
 	if err = json.Unmarshal(data, &v); err != nil {
 		return err
 	}

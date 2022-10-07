@@ -61,13 +61,13 @@ const (
 // Datum is a data box holds different kind of data.
 // It has better performance and is easier to use than `interface{}`.
 type Datum struct {
-	k         byte        // datum kind.
-	collation string      // collation hold the collation information for string value.
-	decimal   uint16      // decimal can hold uint16 values.
-	length    uint32      // length can hold uint32 values.
-	i         int64       // i can hold int64 uint64 float64 values.
-	b         []byte      // b can hold string or []byte values.
-	x         interface{} // x hold all other types.
+	k         byte   // datum kind.
+	collation string // collation hold the collation information for string value.
+	decimal   uint16 // decimal can hold uint16 values.
+	length    uint32 // length can hold uint32 values.
+	i         int64  // i can hold int64 uint64 float64 values.
+	b         []byte // b can hold string or []byte values.
+	x         any    // x hold all other types.
 }
 
 // Clone create a deep copy of the Datum.
@@ -210,12 +210,12 @@ func (d *Datum) SetBytesAsString(b []byte, collation string, length uint32) {
 }
 
 // GetInterface gets interface value.
-func (d *Datum) GetInterface() interface{} {
+func (d *Datum) GetInterface() any {
 	return d.x
 }
 
 // SetInterface sets interface to datum.
-func (d *Datum) SetInterface(x interface{}) {
+func (d *Datum) SetInterface(x any) {
 	d.k = KindInterface
 	d.x = x
 }
@@ -395,7 +395,7 @@ func (d Datum) String() string {
 }
 
 // GetValue gets the value of the datum of any kind.
-func (d *Datum) GetValue() interface{} {
+func (d *Datum) GetValue() any {
 	switch d.k {
 	case KindInt64:
 		return d.GetInt64()
@@ -429,7 +429,7 @@ func (d *Datum) GetValue() interface{} {
 }
 
 // SetValueWithDefaultCollation sets any kind of value.
-func (d *Datum) SetValueWithDefaultCollation(val interface{}) {
+func (d *Datum) SetValueWithDefaultCollation(val any) {
 	switch x := val.(type) {
 	case nil:
 		d.SetNull()
@@ -477,7 +477,7 @@ func (d *Datum) SetValueWithDefaultCollation(val interface{}) {
 }
 
 // SetValue sets any kind of value.
-func (d *Datum) SetValue(val interface{}, tp *types.FieldType) {
+func (d *Datum) SetValue(val any, tp *types.FieldType) {
 	switch x := val.(type) {
 	case nil:
 		d.SetNull()
@@ -1689,7 +1689,7 @@ func (d *Datum) ToBytes() ([]byte, error) {
 // ToMysqlJSON is similar to convertToMysqlJSON, except the
 // latter parses from string, but the former uses it as primitive.
 func (d *Datum) ToMysqlJSON() (j json.BinaryJSON, err error) {
-	var in interface{}
+	var in any
 	switch d.Kind() {
 	case KindMysqlJSON:
 		j = d.GetMysqlJSON()
@@ -1724,9 +1724,9 @@ func invalidConv(d *Datum, tp byte) (Datum, error) {
 }
 
 // NewDatum creates a new Datum from an interface{}.
-func NewDatum(in interface{}) (d Datum) {
+func NewDatum(in any) (d Datum) {
 	switch x := in.(type) {
-	case []interface{}:
+	case []any:
 		d.SetValueWithDefaultCollation(MakeDatums(x...))
 	default:
 		d.SetValueWithDefaultCollation(in)
@@ -1831,7 +1831,7 @@ func NewMysqlSetDatum(e Set, collation string) (d Datum) {
 }
 
 // MakeDatums creates datum slice from interfaces.
-func MakeDatums(args ...interface{}) []Datum {
+func MakeDatums(args ...any) []Datum {
 	datums := make([]Datum, len(args))
 	for i, v := range args {
 		datums[i] = NewDatum(v)
@@ -2050,14 +2050,17 @@ func getDatumBound(retType *FieldType, rType RoundingType) Datum {
 
 // ChangeReverseResultByUpperLowerBound is for expression's reverse evaluation.
 // Here is an example for what's effort for the function: CastRealAsInt(t.a),
-// 		if the type of column `t.a` is mysql.TypeDouble, and there is a row that t.a == MaxFloat64
-// 		then the cast function will arrive a result MaxInt64. But when we do the reverse evaluation,
-//      if the result is MaxInt64, and the rounding type is ceiling. Then we should get the MaxFloat64
-//      instead of float64(MaxInt64).
+//
+//			if the type of column `t.a` is mysql.TypeDouble, and there is a row that t.a == MaxFloat64
+//			then the cast function will arrive a result MaxInt64. But when we do the reverse evaluation,
+//	     if the result is MaxInt64, and the rounding type is ceiling. Then we should get the MaxFloat64
+//	     instead of float64(MaxInt64).
+//
 // Another example: cast(1.1 as signed) = 1,
-// 		when we get the answer 1, we can only reversely evaluate 1.0 as the column value. So in this
-// 		case, we should judge whether the rounding type are ceiling. If it is, then we should plus one for
-// 		1.0 and get the reverse result 2.0.
+//
+//	when we get the answer 1, we can only reversely evaluate 1.0 as the column value. So in this
+//	case, we should judge whether the rounding type are ceiling. If it is, then we should plus one for
+//	1.0 and get the reverse result 2.0.
 func ChangeReverseResultByUpperLowerBound(
 	sc *stmtctx.StatementContext,
 	retType *FieldType,

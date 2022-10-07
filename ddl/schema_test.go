@@ -54,7 +54,7 @@ func testCreateSchema(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo
 		SchemaID:   dbInfo.ID,
 		Type:       model.ActionCreateSchema,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{dbInfo},
+		Args:       []any{dbInfo},
 	}
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -220,7 +220,7 @@ func (s *testSchemaSuite) TestSchemaWaitJob(c *C) {
 	genIDs, err := d2.genGlobalIDs(1)
 	c.Assert(err, IsNil)
 	schemaID := genIDs[0]
-	doDDLJobErr(c, schemaID, 0, model.ActionCreateSchema, []interface{}{dbInfo}, ctx, d2)
+	doDDLJobErr(c, schemaID, 0, model.ActionCreateSchema, []any{dbInfo}, ctx, d2)
 }
 
 func testRunInterruptedJob(c *C, d *ddl, job *model.Job) {
@@ -266,7 +266,7 @@ func (s *testSchemaSuite) TestSchemaResume(c *C) {
 		SchemaID:   dbInfo.ID,
 		Type:       model.ActionCreateSchema,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{dbInfo},
+		Args:       []any{dbInfo},
 	}
 	testRunInterruptedJob(c, d1, job)
 	testCheckSchemaState(c, d1, dbInfo, model.StatePublic)

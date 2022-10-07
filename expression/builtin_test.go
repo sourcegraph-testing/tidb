@@ -28,7 +28,7 @@ import (
 
 func evalBuiltinFunc(f builtinFunc, row chunk.Row) (d types.Datum, err error) {
 	var (
-		res    interface{}
+		res    any
 		isNull bool
 	)
 	switch f.getRetTp().EvalType() {
@@ -63,7 +63,7 @@ func evalBuiltinFunc(f builtinFunc, row chunk.Row) (d types.Datum, err error) {
 }
 
 // tblToDtbl is a util function for test.
-func tblToDtbl(i interface{}) []map[string][]types.Datum {
+func tblToDtbl(i any) []map[string][]types.Datum {
 	l := reflect.ValueOf(i).Len()
 	tbl := make([]map[string][]types.Datum, l)
 	for j := 0; j < l; j++ {
@@ -80,7 +80,7 @@ func tblToDtbl(i interface{}) []map[string][]types.Datum {
 	return tbl
 }
 
-func makeDatums(i interface{}) []types.Datum {
+func makeDatums(i any) []types.Datum {
 	if i != nil {
 		t := reflect.TypeOf(i)
 		val := reflect.ValueOf(i)

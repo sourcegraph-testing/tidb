@@ -120,7 +120,7 @@ func (s *testDDLSuite) TestReorg(c *C) {
 		ID:          2,
 		SchemaID:    1,
 		Type:        model.ActionCreateSchema,
-		Args:        []interface{}{model.NewCIStr("test")},
+		Args:        []any{model.NewCIStr("test")},
 		SnapshotVer: 1, // Make sure it is not zero. So the reorgInfo's first is false.
 	}
 

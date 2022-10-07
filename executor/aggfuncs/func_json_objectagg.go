@@ -26,18 +26,18 @@ type jsonObjectAgg struct {
 }
 
 type partialResult4JsonObjectAgg struct {
-	entries map[string]interface{}
+	entries map[string]any
 }
 
 func (e *jsonObjectAgg) AllocPartialResult() PartialResult {
 	p := partialResult4JsonObjectAgg{}
-	p.entries = make(map[string]interface{})
+	p.entries = make(map[string]any)
 	return PartialResult(&p)
 }
 
 func (e *jsonObjectAgg) ResetPartialResult(pr PartialResult) {
 	p := (*partialResult4JsonObjectAgg)(pr)
-	p.entries = make(map[string]interface{})
+	p.entries = make(map[string]any)
 }
 
 func (e *jsonObjectAgg) AppendFinalResult2Chunk(sctx sessionctx.Context, pr PartialResult, chk *chunk.Chunk) error {

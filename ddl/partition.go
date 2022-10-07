@@ -478,7 +478,7 @@ func checkCreatePartitionValue(ctx sessionctx.Context, tblInfo *model.TableInfo)
 		defs = defs[:len(defs)-1]
 	}
 	isUnsignedBigint := isRangePartitionColUnsignedBigint(cols, pi)
-	var prevRangeValue interface{}
+	var prevRangeValue any
 	for i := 0; i < len(defs); i++ {
 		if strings.EqualFold(defs[i].LessThan[0], partitionMaxValue) {
 			return errors.Trace(ErrPartitionMaxvalue)
@@ -514,7 +514,7 @@ func checkCreatePartitionValue(ctx sessionctx.Context, tblInfo *model.TableInfo)
 
 // getRangeValue gets an integer from the range value string.
 // The returned boolean value indicates whether the input string is a constant expression.
-func getRangeValue(ctx sessionctx.Context, tblInfo *model.TableInfo, str string, unsignedBigint bool) (interface{}, bool, error) {
+func getRangeValue(ctx sessionctx.Context, tblInfo *model.TableInfo, str string, unsignedBigint bool) (any, bool, error) {
 	// Unsigned bigint was converted to uint64 handle.
 	if unsignedBigint {
 		if value, err := strconv.ParseUint(str, 10, 64); err == nil {
@@ -616,7 +616,7 @@ func onDropTablePartition(t *meta.Meta, job *model.Job) (ver int64, _ error) {
 	// Finish this job.
 	job.FinishTableJob(model.JobStateDone, model.StateNone, ver, tblInfo)
 	// A background job will be created to delete old partition data.
-	job.Args = []interface{}{physicalTableID}
+	job.Args = []any{physicalTableID}
 	return ver, nil
 }
 
@@ -677,7 +677,7 @@ func onTruncateTablePartition(d *ddlCtx, t *meta.Meta, job *model.Job) (int64, e
 	job.FinishTableJob(model.JobStateDone, model.StateNone, ver, tblInfo)
 	asyncNotifyEvent(d, &util.Event{Tp: model.ActionTruncateTablePartition, TableInfo: tblInfo, PartInfo: &model.PartitionInfo{Definitions: []model.PartitionDefinition{*newPartition}}})
 	// A background job will be created to delete old partition data.
-	job.Args = []interface{}{oldID}
+	job.Args = []any{oldID}
 	return ver, nil
 }
 

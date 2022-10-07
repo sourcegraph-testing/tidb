@@ -1461,7 +1461,7 @@ func (s *Store) requestLiveness(bo *Backoffer) (l livenessState) {
 		l = unknown
 		return
 	}
-	rsCh := livenessSf.DoChan(saddr, func() (interface{}, error) {
+	rsCh := livenessSf.DoChan(saddr, func() (any, error) {
 		return invokeKVStatusAPI(saddr, storeLivenessTimeout), nil
 	})
 	var ctx context.Context

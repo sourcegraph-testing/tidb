@@ -148,10 +148,10 @@ func (s *testMiscSuite) TestBasicFunc(c *C) {
 	c.Assert(len(b) < 4096, IsTrue)
 
 	// Test for WithRecovery.
-	var recover interface{}
+	var recover any
 	WithRecovery(func() {
 		panic("test")
-	}, func(r interface{}) {
+	}, func(r any) {
 		recover = r
 	})
 	c.Assert(recover, Equals, "test")

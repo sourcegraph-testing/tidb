@@ -102,42 +102,44 @@ type AfFinalResult struct {
 // and updates all the items in PartialAggFuncs.
 // The parallel execution flow is as the following graph shows:
 //
-//                            +-------------+
-//                            | Main Thread |
-//                            +------+------+
-//                                   ^
-//                                   |
-//                                   +
-//                              +-+-            +-+
-//                              | |    ......   | |  finalOutputCh
-//                              +++-            +-+
-//                               ^
-//                               |
-//                               +---------------+
-//                               |               |
-//                 +--------------+             +--------------+
-//                 | final worker |     ......  | final worker |
-//                 +------------+-+             +-+------------+
-//                              ^                 ^
-//                              |                 |
-//                             +-+  +-+  ......  +-+
-//                             | |  | |          | |
-//                             ...  ...          ...    partialOutputChs
-//                             | |  | |          | |
-//                             +++  +++          +++
-//                              ^    ^            ^
-//          +-+                 |    |            |
-//          | |        +--------o----+            |
+//	                  +-------------+
+//	                  | Main Thread |
+//	                  +------+------+
+//	                         ^
+//	                         |
+//	                         +
+//	                    +-+-            +-+
+//	                    | |    ......   | |  finalOutputCh
+//	                    +++-            +-+
+//	                     ^
+//	                     |
+//	                     +---------------+
+//	                     |               |
+//	       +--------------+             +--------------+
+//	       | final worker |     ......  | final worker |
+//	       +------------+-+             +-+------------+
+//	                    ^                 ^
+//	                    |                 |
+//	                   +-+  +-+  ......  +-+
+//	                   | |  | |          | |
+//	                   ...  ...          ...    partialOutputChs
+//	                   | |  | |          | |
+//	                   +++  +++          +++
+//	                    ^    ^            ^
+//	+-+                 |    |            |
+//	| |        +--------o----+            |
+//
 // inputCh  +-+        |        +-----------------+---+
-//          | |        |                              |
-//          ...    +---+------------+            +----+-----------+
-//          | |    | partial worker |   ......   | partial worker |
-//          +++    +--------------+-+            +-+--------------+
-//           |                     ^                ^
-//           |                     |                |
-//      +----v---------+          +++ +-+          +++
-//      | data fetcher | +------> | | | |  ......  | |   partialInputChs
-//      +--------------+          +-+ +-+          +-+
+//
+//	    | |        |                              |
+//	    ...    +---+------------+            +----+-----------+
+//	    | |    | partial worker |   ......   | partial worker |
+//	    +++    +--------------+-+            +-+--------------+
+//	     |                     ^                ^
+//	     |                     |                |
+//	+----v---------+          +++ +-+          +++
+//	| data fetcher | +------> | | | |  ......  | |   partialInputChs
+//	+--------------+          +-+ +-+          +-+
 type HashAggExec struct {
 	baseExecutor
 
@@ -355,7 +357,7 @@ func (w *HashAggPartialWorker) getChildInput() bool {
 	return true
 }
 
-func recoveryHashAgg(output chan *AfFinalResult, r interface{}) {
+func recoveryHashAgg(output chan *AfFinalResult, r any) {
 	err := errors.Errorf("%v", r)
 	output <- &AfFinalResult{err: errors.Errorf("%v", r)}
 	logutil.BgLogger().Error("parallel hash aggregation panicked", zap.Error(err), zap.Stack("stack"))

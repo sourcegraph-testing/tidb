@@ -234,7 +234,7 @@ func (e *MetricsSummaryRetriever) retrieve(_ context.Context, sctx sessionctx.Co
 			return nil, errors.Errorf("execute '%s' failed: %v", sql, err)
 		}
 		for _, row := range rows {
-			var quantile interface{}
+			var quantile any
 			if def.Quantile > 0 {
 				quantile = row.GetFloat64(row.Len() - 1)
 			}
@@ -330,7 +330,7 @@ func (e *MetricsSummaryByLabelRetriever) retrieve(ctx context.Context, sctx sess
 				}
 				labels = append(labels, val)
 			}
-			var quantile interface{}
+			var quantile any
 			if def.Quantile > 0 {
 				quantile = row.GetFloat64(row.Len() - 1) // quantile will be the last column
 			}

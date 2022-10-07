@@ -1386,7 +1386,7 @@ func (s *testSuiteP1) TestTablePKisHandleScan(c *C) {
 
 	tests := []struct {
 		sql    string
-		result [][]interface{}
+		result [][]any
 	}{
 		{
 			"select * from t",
@@ -3548,7 +3548,7 @@ func (s *testSuite3) TestForSelectScopeInUnion(c *C) {
 
 func (s *testSuite3) TestUnsignedDecimalOverflow(c *C) {
 	tests := []struct {
-		input  interface{}
+		input  any
 		hasErr bool
 		err    string
 	}{{

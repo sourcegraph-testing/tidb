@@ -75,7 +75,7 @@ func (gvc *GlobalVariableCache) LoadGlobalVariables(loadFn func() ([]chunk.Row, 
 	if succ {
 		return rows, fields, nil
 	}
-	fn := func() (interface{}, error) {
+	fn := func() (any, error) {
 		resRows, resFields, loadErr := loadFn()
 		if loadErr != nil {
 			return nil, loadErr

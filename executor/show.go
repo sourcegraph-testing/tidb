@@ -266,7 +266,7 @@ func (e *ShowExec) fetchShowBind() error {
 			if !checker.ok {
 				continue
 			}
-			e.appendRow([]interface{}{
+			e.appendRow([]any{
 				bindData.OriginalSQL,
 				hint.BindSQL,
 				bindData.Db,
@@ -317,7 +317,7 @@ func (e *ShowExec) fetchShowDatabases() error {
 		if checker != nil && !checker.DBIsVisible(e.ctx.GetSessionVars().ActiveRoles, d) {
 			continue
 		}
-		e.appendRow([]interface{}{
+		e.appendRow([]any{
 			d,
 		})
 	}
@@ -389,9 +389,9 @@ func (e *ShowExec) fetchShowTables() error {
 	sort.Strings(tableNames)
 	for _, v := range tableNames {
 		if e.Full {
-			e.appendRow([]interface{}{v, tableTypes[v]})
+			e.appendRow([]any{v, tableTypes[v]})
 		} else {
-			e.appendRow([]interface{}{v})
+			e.appendRow([]any{v})
 		}
 	}
 	return nil
@@ -476,7 +476,7 @@ func (e *ShowExec) fetchShowColumns(ctx context.Context) error {
 		}
 
 		desc := table.NewColDesc(col)
-		var columnDefault interface{}
+		var columnDefault any
 		if desc.DefaultValue != nil {
 			// SHOW COLUMNS result expects string value
 			defaultValStr := fmt.Sprintf("%v", desc.DefaultValue)
@@ -499,7 +499,7 @@ func (e *ShowExec) fetchShowColumns(ctx context.Context) error {
 		// The FULL keyword causes the output to include the column collation and comments,
 		// as well as the privileges you have for each column.
 		if e.Full {
-			e.appendRow([]interface{}{
+			e.appendRow([]any{
 				desc.Field,
 				desc.Type,
 				desc.Collation,
@@ -511,7 +511,7 @@ func (e *ShowExec) fetchShowColumns(ctx context.Context) error {
 				desc.Comment,
 			})
 		} else {
-			e.appendRow([]interface{}{
+			e.appendRow([]any{
 				desc.Field,
 				desc.Type,
 				desc.Null,
@@ -544,7 +544,7 @@ func (e *ShowExec) fetchShowIndex() error {
 				break
 			}
 		}
-		e.appendRow([]interface{}{
+		e.appendRow([]any{
 			tb.Meta().Name.O, // Table
 			0,                // Non_unique
 			"PRIMARY",        // Key_name
@@ -573,7 +573,7 @@ func (e *ShowExec) fetchShowIndex() error {
 				nonUniq = 0
 			}
 
-			var subPart interface{}
+			var subPart any
 			if col.Length != types.UnspecifiedLength {
 				subPart = col.Length
 			}
@@ -596,7 +596,7 @@ func (e *ShowExec) fetchShowIndex() error {
 				expression = fmt.Sprintf("(%s)", tblCol.GeneratedExprString)
 			}
 
-			e.appendRow([]interface{}{
+			e.appendRow([]any{
 				tb.Meta().Name.O,       // Table
 				nonUniq,                // Non_unique
 				idx.Meta().Name.O,      // Key_name
@@ -623,7 +623,7 @@ func (e *ShowExec) fetchShowIndex() error {
 func (e *ShowExec) fetchShowCharset() error {
 	descs := charset.GetSupportedCharsets()
 	for _, desc := range descs {
-		e.appendRow([]interface{}{
+		e.appendRow([]any{
 			desc.Name,
 			desc.Desc,
 			desc.DefaultCollation,
@@ -635,7 +635,7 @@ func (e *ShowExec) fetchShowCharset() error {
 
 func (e *ShowExec) fetchShowMainStatus() error {
 	tso := e.ctx.GetSessionVars().TxnCtx.StartTS
-	e.appendRow([]interface{}{"tidb-binlog", tso, "", "", ""})
+	e.appendRow([]any{"tidb-binlog", tso, "", "", ""})
 	return nil
 }
 
@@ -666,7 +666,7 @@ func (e *ShowExec) fetchShowVariables() (err error) {
 			unreachedVars = append(unreachedVars, v.Name)
 			continue
 		}
-		e.appendRow([]interface{}{v.Name, value})
+		e.appendRow([]any{v.Name, value})
 	}
 	if len(unreachedVars) != 0 {
 		systemVars, err := sessionVars.GlobalVarsAccessor.GetAllSysVars()
@@ -678,7 +678,7 @@ func (e *ShowExec) fetchShowVariables() (err error) {
 			if !ok {
 				varValue = variable.SysVars[varName].Value
 			}
-			e.appendRow([]interface{}{varName, varValue})
+			e.appendRow([]any{varName, varValue})
 		}
 	}
 	return nil
@@ -695,14 +695,14 @@ func (e *ShowExec) fetchShowStatus() error {
 			continue
 		}
 		switch v.Value.(type) {
-		case []interface{}, nil:
+		case []any, nil:
 			v.Value = fmt.Sprintf("%v", v.Value)
 		}
 		value, err := types.ToString(v.Value)
 		if err != nil {
 			return errors.Trace(err)
 		}
-		e.appendRow([]interface{}{status, value})
+		e.appendRow([]any{status, value})
 	}
 	return nil
 }
@@ -972,7 +972,7 @@ func (e *ShowExec) fetchShowCreateSequence() error {
 	}
 	var buf bytes.Buffer
 	ConstructResultOfShowCreateSequence(e.ctx, tableInfo, &buf)
-	e.appendRow([]interface{}{tableInfo.Name.O, buf.String()})
+	e.appendRow([]any{tableInfo.Name.O, buf.String()})
 	return nil
 }
 
@@ -995,7 +995,7 @@ func (e *ShowExec) fetchShowClusterConfigs(ctx context.Context) error {
 		return err
 	}
 	for _, items := range confItems {
-		row := make([]interface{}, 0, 4)
+		row := make([]any, 0, 4)
 		for _, item := range items {
 			row = append(row, item.GetString())
 		}
@@ -1018,11 +1018,11 @@ func (e *ShowExec) fetchShowCreateTable() error {
 		return err
 	}
 	if tableInfo.IsView() {
-		e.appendRow([]interface{}{tableInfo.Name.O, buf.String(), tableInfo.Charset, tableInfo.Collate})
+		e.appendRow([]any{tableInfo.Name.O, buf.String(), tableInfo.Charset, tableInfo.Collate})
 		return nil
 	}
 
-	e.appendRow([]interface{}{tableInfo.Name.O, buf.String()})
+	e.appendRow([]any{tableInfo.Name.O, buf.String()})
 	return nil
 }
 
@@ -1043,7 +1043,7 @@ func (e *ShowExec) fetchShowCreateView() error {
 
 	var buf bytes.Buffer
 	fetchShowCreateTable4View(e.ctx, tb.Meta(), &buf)
-	e.appendRow([]interface{}{tb.Meta().Name.O, buf.String(), tb.Meta().Charset, tb.Meta().Collate})
+	e.appendRow([]any{tb.Meta().Name.O, buf.String(), tb.Meta().Charset, tb.Meta().Collate})
 	return nil
 }
 
@@ -1152,7 +1152,7 @@ func (e *ShowExec) fetchShowCreateDatabase() error {
 	if err != nil {
 		return err
 	}
-	e.appendRow([]interface{}{dbInfo.Name.O, buf.String()})
+	e.appendRow([]any{dbInfo.Name.O, buf.String()})
 	return nil
 }
 
@@ -1163,7 +1163,7 @@ func (e *ShowExec) fetchShowCollation() error {
 		if v.IsDefault {
 			isDefault = "Yes"
 		}
-		e.appendRow([]interface{}{
+		e.appendRow([]any{
 			v.Name,
 			v.CharsetName,
 			v.ID,
@@ -1224,7 +1224,7 @@ func (e *ShowExec) fetchShowCreateUser() error {
 	}
 	showStr := fmt.Sprintf("CREATE USER '%s'@'%s' IDENTIFIED WITH 'mysql_native_password' AS '%s' REQUIRE %s PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK",
 		e.User.Username, e.User.Hostname, checker.GetEncodedPassword(e.User.Username, e.User.Hostname), require)
-	e.appendRow([]interface{}{showStr})
+	e.appendRow([]any{showStr})
 	return nil
 }
 
@@ -1260,44 +1260,44 @@ func (e *ShowExec) fetchShowGrants() error {
 		return errors.Trace(err)
 	}
 	for _, g := range gs {
-		e.appendRow([]interface{}{g})
+		e.appendRow([]any{g})
 	}
 	return nil
 }
 
 func (e *ShowExec) fetchShowPrivileges() error {
-	e.appendRow([]interface{}{"Alter", "Tables", "To alter the table"})
-	e.appendRow([]interface{}{"Alter", "Tables", "To alter the table"})
-	e.appendRow([]interface{}{"Alter routine", "Functions,Procedures", "To alter or drop stored functions/procedures"})
-	e.appendRow([]interface{}{"Create", "Databases,Tables,Indexes", "To create new databases and tables"})
-	e.appendRow([]interface{}{"Create routine", "Databases", "To use CREATE FUNCTION/PROCEDURE"})
-	e.appendRow([]interface{}{"Create temporary tables", "Databases", "To use CREATE TEMPORARY TABLE"})
-	e.appendRow([]interface{}{"Create view", "Tables", "To create new views"})
-	e.appendRow([]interface{}{"Create user", "Server Admin", "To create new users"})
-	e.appendRow([]interface{}{"Delete", "Tables", "To delete existing rows"})
-	e.appendRow([]interface{}{"Drop", "Databases,Tables", "To drop databases, tables, and views"})
-	e.appendRow([]interface{}{"Event", "Server Admin", "To create, alter, drop and execute events"})
-	e.appendRow([]interface{}{"Execute", "Functions,Procedures", "To execute stored routines"})
-	e.appendRow([]interface{}{"File", "File access on server", "To read and write files on the server"})
-	e.appendRow([]interface{}{"Grant option", "Databases,Tables,Functions,Procedures", "To give to other users those privileges you possess"})
-	e.appendRow([]interface{}{"Index", "Tables", "To create or drop indexes"})
-	e.appendRow([]interface{}{"Insert", "Tables", "To insert data into tables"})
-	e.appendRow([]interface{}{"Lock tables", "Databases", "To use LOCK TABLES (together with SELECT privilege)"})
-	e.appendRow([]interface{}{"Process", "Server Admin", "To view the plain text of currently executing queries"})
-	e.appendRow([]interface{}{"Proxy", "Server Admin", "To make proxy user possible"})
-	e.appendRow([]interface{}{"References", "Databases,Tables", "To have references on tables"})
-	e.appendRow([]interface{}{"Reload", "Server Admin", "To reload or refresh tables, logs and privileges"})
-	e.appendRow([]interface{}{"Replication client", "Server Admin", "To ask where the subordinate or main servers are"})
-	e.appendRow([]interface{}{"Replication subordinate", "Server Admin", "To read binary log events from the main"})
-	e.appendRow([]interface{}{"Select", "Tables", "To retrieve rows from table"})
-	e.appendRow([]interface{}{"Show databases", "Server Admin", "To see all databases with SHOW DATABASES"})
-	e.appendRow([]interface{}{"Show view", "Tables", "To see views with SHOW CREATE VIEW"})
-	e.appendRow([]interface{}{"Shutdown", "Server Admin", "To shut down the server"})
-	e.appendRow([]interface{}{"Super", "Server Admin", "To use KILL thread, SET GLOBAL, CHANGE MASTER, etc."})
-	e.appendRow([]interface{}{"Trigger", "Tables", "To use triggers"})
-	e.appendRow([]interface{}{"Create tablespace", "Server Admin", "To create/alter/drop tablespaces"})
-	e.appendRow([]interface{}{"Update", "Tables", "To update existing rows"})
-	e.appendRow([]interface{}{"Usage", "Server Admin", "No privileges - allow connect only"})
+	e.appendRow([]any{"Alter", "Tables", "To alter the table"})
+	e.appendRow([]any{"Alter", "Tables", "To alter the table"})
+	e.appendRow([]any{"Alter routine", "Functions,Procedures", "To alter or drop stored functions/procedures"})
+	e.appendRow([]any{"Create", "Databases,Tables,Indexes", "To create new databases and tables"})
+	e.appendRow([]any{"Create routine", "Databases", "To use CREATE FUNCTION/PROCEDURE"})
+	e.appendRow([]any{"Create temporary tables", "Databases", "To use CREATE TEMPORARY TABLE"})
+	e.appendRow([]any{"Create view", "Tables", "To create new views"})
+	e.appendRow([]any{"Create user", "Server Admin", "To create new users"})
+	e.appendRow([]any{"Delete", "Tables", "To delete existing rows"})
+	e.appendRow([]any{"Drop", "Databases,Tables", "To drop databases, tables, and views"})
+	e.appendRow([]any{"Event", "Server Admin", "To create, alter, drop and execute events"})
+	e.appendRow([]any{"Execute", "Functions,Procedures", "To execute stored routines"})
+	e.appendRow([]any{"File", "File access on server", "To read and write files on the server"})
+	e.appendRow([]any{"Grant option", "Databases,Tables,Functions,Procedures", "To give to other users those privileges you possess"})
+	e.appendRow([]any{"Index", "Tables", "To create or drop indexes"})
+	e.appendRow([]any{"Insert", "Tables", "To insert data into tables"})
+	e.appendRow([]any{"Lock tables", "Databases", "To use LOCK TABLES (together with SELECT privilege)"})
+	e.appendRow([]any{"Process", "Server Admin", "To view the plain text of currently executing queries"})
+	e.appendRow([]any{"Proxy", "Server Admin", "To make proxy user possible"})
+	e.appendRow([]any{"References", "Databases,Tables", "To have references on tables"})
+	e.appendRow([]any{"Reload", "Server Admin", "To reload or refresh tables, logs and privileges"})
+	e.appendRow([]any{"Replication client", "Server Admin", "To ask where the subordinate or main servers are"})
+	e.appendRow([]any{"Replication subordinate", "Server Admin", "To read binary log events from the main"})
+	e.appendRow([]any{"Select", "Tables", "To retrieve rows from table"})
+	e.appendRow([]any{"Show databases", "Server Admin", "To see all databases with SHOW DATABASES"})
+	e.appendRow([]any{"Show view", "Tables", "To see views with SHOW CREATE VIEW"})
+	e.appendRow([]any{"Shutdown", "Server Admin", "To shut down the server"})
+	e.appendRow([]any{"Super", "Server Admin", "To use KILL thread, SET GLOBAL, CHANGE MASTER, etc."})
+	e.appendRow([]any{"Trigger", "Tables", "To use triggers"})
+	e.appendRow([]any{"Create tablespace", "Server Admin", "To create/alter/drop tablespaces"})
+	e.appendRow([]any{"Update", "Tables", "To update existing rows"})
+	e.appendRow([]any{"Usage", "Server Admin", "No privileges - allow connect only"})
 	return nil
 }
 
@@ -1313,7 +1313,7 @@ func (e *ShowExec) fetchShowPlugins() error {
 	tiPlugins := plugin.GetAll()
 	for _, ps := range tiPlugins {
 		for _, p := range ps {
-			e.appendRow([]interface{}{p.Name, p.StateValue(), p.Kind.String(), p.Path, p.License, strconv.Itoa(int(p.Version))})
+			e.appendRow([]any{p.Name, p.StateValue(), p.Kind.String(), p.Path, p.License, strconv.Itoa(int(p.Version))})
 		}
 	}
 	return nil
@@ -1329,9 +1329,9 @@ func (e *ShowExec) fetchShowWarnings(errOnly bool) error {
 		switch x := warn.(type) {
 		case *terror.Error:
 			sqlErr := x.ToSQLError()
-			e.appendRow([]interface{}{w.Level, int64(sqlErr.Code), sqlErr.Message})
+			e.appendRow([]any{w.Level, int64(sqlErr.Code), sqlErr.Message})
 		default:
-			e.appendRow([]interface{}{w.Level, int64(mysql.ErrUnknown), warn.Error()})
+			e.appendRow([]any{w.Level, int64(mysql.ErrUnknown), warn.Error()})
 		}
 	}
 	return nil
@@ -1357,7 +1357,7 @@ func (e *ShowExec) fetchShowPumpOrDrainerStatus(kind string) error {
 		if n.State == node.Offline {
 			continue
 		}
-		e.appendRow([]interface{}{n.NodeID, n.Addr, n.State, n.MaxCommitTS, utils.TSOToRoughTime(n.UpdateTS).Format(types.TimeFormat)})
+		e.appendRow([]any{n.NodeID, n.Addr, n.State, n.MaxCommitTS, utils.TSOToRoughTime(n.UpdateTS).Format(types.TimeFormat)})
 	}
 
 	return nil
@@ -1410,7 +1410,7 @@ func (e *ShowExec) tableAccessDenied(access string, table string) error {
 	return ErrTableaccessDenied.GenWithStackByArgs(access, u, h, table)
 }
 
-func (e *ShowExec) appendRow(row []interface{}) {
+func (e *ShowExec) appendRow(row []any) {
 	for i, col := range row {
 		if col == nil {
 			e.result.AppendNull(i)
@@ -1565,7 +1565,7 @@ func (e *ShowExec) fillRegionsToChunk(regions []regionMeta) {
 
 func (e *ShowExec) fetchShowBuiltins() error {
 	for _, f := range expression.GetBuiltinList() {
-		e.appendRow([]interface{}{f})
+		e.appendRow([]any{f})
 	}
 	return nil
 }

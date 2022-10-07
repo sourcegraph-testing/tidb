@@ -64,8 +64,8 @@ func (s *testExpressionSuite) TestGetTimeValue(c *C) {
 	variable.SetSessionSystemVar(sessionVars, "timestamp", types.NewStringDatum("1234"))
 
 	tbl := []struct {
-		Expr interface{}
-		Ret  interface{}
+		Expr any
+		Ret  any
 	}{
 		{"2012-12-12 00:00:00", "2012-12-12 00:00:00"},
 		{ast.CurrentTimestamp, time.Unix(1234, 0).Format(types.TimeFormat)},
@@ -91,7 +91,7 @@ func (s *testExpressionSuite) TestGetTimeValue(c *C) {
 	}
 
 	errTbl := []struct {
-		Expr interface{}
+		Expr any
 	}{
 		{"2012-13-12 00:00:00"},
 		{ast.NewValueExpr("2012-13-12 00:00:00", charset.CharsetUTF8MB4, charset.CollationUTF8MB4)},

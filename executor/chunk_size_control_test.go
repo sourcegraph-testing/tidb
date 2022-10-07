@@ -226,7 +226,7 @@ func (s *testChunkSizeControlSuite) TestLimitAndIndexScan(c *C) {
 	c.Assert(cost, Not(Less), delayThreshold) // have to wait
 }
 
-func (s *testChunkSizeControlSuite) parseTimeCost(c *C, line []interface{}) time.Duration {
+func (s *testChunkSizeControlSuite) parseTimeCost(c *C, line []any) time.Duration {
 	lineStr := fmt.Sprintf("%v", line)
 	idx := strings.Index(lineStr, "time:")
 	c.Assert(idx, Not(Equals), -1)

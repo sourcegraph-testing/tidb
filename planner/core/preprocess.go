@@ -49,7 +49,7 @@ func InTxnRetry(p *preprocessor) {
 
 // Preprocess resolves table names of the node, and checks some statements validation.
 func Preprocess(ctx sessionctx.Context, node ast.Node, is infoschema.InfoSchema, preprocessOpt ...PreprocessOpt) error {
-	v := preprocessor{is: is, ctx: ctx, tableAliasInJoin: make([]map[string]interface{}, 0)}
+	v := preprocessor{is: is, ctx: ctx, tableAliasInJoin: make([]map[string]any, 0)}
 	for _, optFn := range preprocessOpt {
 		optFn(&v)
 	}
@@ -85,7 +85,7 @@ type preprocessor struct {
 
 	// tableAliasInJoin is a stack that keeps the table alias names for joins.
 	// len(tableAliasInJoin) may bigger than 1 because the left/right child of join may be subquery that contains `JOIN`
-	tableAliasInJoin []map[string]interface{}
+	tableAliasInJoin []map[string]any
 }
 
 func (p *preprocessor) Enter(in ast.Node) (out ast.Node, skipChildren bool) {
@@ -523,7 +523,7 @@ func (p *preprocessor) checkDropTableNames(tables []*ast.TableName) {
 
 func (p *preprocessor) checkNonUniqTableAlias(stmt *ast.Join) {
 	if p.flag&parentIsJoin == 0 {
-		p.tableAliasInJoin = append(p.tableAliasInJoin, make(map[string]interface{}))
+		p.tableAliasInJoin = append(p.tableAliasInJoin, make(map[string]any))
 	}
 	tableAliases := p.tableAliasInJoin[len(p.tableAliasInJoin)-1]
 	if err := isTableAliasDuplicate(stmt.Left, tableAliases); err != nil {
@@ -537,7 +537,7 @@ func (p *preprocessor) checkNonUniqTableAlias(stmt *ast.Join) {
 	p.flag |= parentIsJoin
 }
 
-func isTableAliasDuplicate(node ast.ResultSetNode, tableAliases map[string]interface{}) error {
+func isTableAliasDuplicate(node ast.ResultSetNode, tableAliases map[string]any) error {
 	if ts, ok := node.(*ast.TableSource); ok {
 		tabName := ts.AsName
 		if tabName.L == "" {

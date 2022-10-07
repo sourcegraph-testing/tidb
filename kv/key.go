@@ -38,10 +38,10 @@ func (k Key) Next() Key {
 //
 // Assume there are keys like:
 //
-//   rowkey1
-//   rowkey1_column1
-//   rowkey1_column2
-//   rowKey2
+//	rowkey1
+//	rowkey1_column1
+//	rowkey1_column2
+//	rowKey2
 //
 // If we seek 'rowkey1' Next, we will get 'rowkey1_column1'.
 // If we seek 'rowkey1' PrefixNext, we will get 'rowkey2'.
@@ -312,26 +312,26 @@ func (ch *CommonHandle) String() string {
 
 // HandleMap is the map for Handle.
 type HandleMap struct {
-	ints map[int64]interface{}
+	ints map[int64]any
 	strs map[string]strHandleVal
 }
 
 type strHandleVal struct {
 	h   Handle
-	val interface{}
+	val any
 }
 
 // NewHandleMap creates a new map for handle.
 func NewHandleMap() *HandleMap {
 	// Initialize the two maps to avoid checking nil.
 	return &HandleMap{
-		ints: map[int64]interface{}{},
+		ints: map[int64]any{},
 		strs: map[string]strHandleVal{},
 	}
 }
 
 // Get gets a value by a Handle.
-func (m *HandleMap) Get(h Handle) (v interface{}, ok bool) {
+func (m *HandleMap) Get(h Handle) (v any, ok bool) {
 	if h.IsInt() {
 		v, ok = m.ints[h.IntValue()]
 	} else {
@@ -343,7 +343,7 @@ func (m *HandleMap) Get(h Handle) (v interface{}, ok bool) {
 }
 
 // Set sets a value with a Handle.
-func (m *HandleMap) Set(h Handle, val interface{}) {
+func (m *HandleMap) Set(h Handle, val any) {
 	if h.IsInt() {
 		m.ints[h.IntValue()] = val
 	} else {
@@ -369,7 +369,7 @@ func (m *HandleMap) Len() int {
 }
 
 // Range iterates the HandleMap with fn, the fn returns true to continue, returns false to stop.
-func (m *HandleMap) Range(fn func(h Handle, val interface{}) bool) {
+func (m *HandleMap) Range(fn func(h Handle, val any) bool) {
 	for h, val := range m.ints {
 		if !fn(IntHandle(h), val) {
 			return

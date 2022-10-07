@@ -26,20 +26,20 @@ import (
 
 func (s *testEvaluatorSuite) TestCaseWhen(c *C) {
 	tbl := []struct {
-		Arg []interface{}
-		Ret interface{}
+		Arg []any
+		Ret any
 	}{
-		{[]interface{}{true, 1, true, 2, 3}, 1},
-		{[]interface{}{false, 1, true, 2, 3}, 2},
-		{[]interface{}{nil, 1, true, 2, 3}, 2},
-		{[]interface{}{false, 1, false, 2, 3}, 3},
-		{[]interface{}{nil, 1, nil, 2, 3}, 3},
-		{[]interface{}{false, 1, nil, 2, 3}, 3},
-		{[]interface{}{nil, 1, false, 2, 3}, 3},
-		{[]interface{}{1, jsonInt.GetMysqlJSON(), nil}, 3},
-		{[]interface{}{0, jsonInt.GetMysqlJSON(), nil}, nil},
-		{[]interface{}{0.1, 1, 2}, 1},
-		{[]interface{}{0.0, 1, 0.1, 2}, 2},
+		{[]any{true, 1, true, 2, 3}, 1},
+		{[]any{false, 1, true, 2, 3}, 2},
+		{[]any{nil, 1, true, 2, 3}, 2},
+		{[]any{false, 1, false, 2, 3}, 3},
+		{[]any{nil, 1, nil, 2, 3}, 3},
+		{[]any{false, 1, nil, 2, 3}, 3},
+		{[]any{nil, 1, false, 2, 3}, 3},
+		{[]any{1, jsonInt.GetMysqlJSON(), nil}, 3},
+		{[]any{0, jsonInt.GetMysqlJSON(), nil}, nil},
+		{[]any{0.1, 1, 2}, 1},
+		{[]any{0.0, 1, 0.1, 2}, 2},
 	}
 	fc := funcs[ast.Case]
 	for _, t := range tbl {
@@ -63,10 +63,10 @@ func (s *testEvaluatorSuite) TestIf(c *C) {
 		stmtCtx.IgnoreTruncate = origin
 	}()
 	tbl := []struct {
-		Arg1 interface{}
-		Arg2 interface{}
-		Arg3 interface{}
-		Ret  interface{}
+		Arg1 any
+		Arg2 any
+		Arg3 any
+		Ret  any
 	}{
 		{1, 1, 2, 1},
 		{nil, 1, 2, 2},
@@ -104,9 +104,9 @@ func (s *testEvaluatorSuite) TestIf(c *C) {
 
 func (s *testEvaluatorSuite) TestIfNull(c *C) {
 	tbl := []struct {
-		arg1     interface{}
-		arg2     interface{}
-		expected interface{}
+		arg1     any
+		arg2     any
+		expected any
 		isNil    bool
 		getErr   bool
 	}{
@@ -124,7 +124,7 @@ func (s *testEvaluatorSuite) TestIfNull(c *C) {
 	}
 
 	for _, t := range tbl {
-		f, err := newFunctionForTest(s.ctx, ast.Ifnull, s.primitiveValsToConstants([]interface{}{t.arg1, t.arg2})...)
+		f, err := newFunctionForTest(s.ctx, ast.Ifnull, s.primitiveValsToConstants([]any{t.arg1, t.arg2})...)
 		c.Assert(err, IsNil)
 		d, err := f.Eval(chunk.Row{})
 		if t.getErr {

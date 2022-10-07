@@ -21,7 +21,7 @@ import (
 
 // mockTxn is a txn that returns a retryAble error when called Commit.
 type mockTxn struct {
-	opts  map[Option]interface{}
+	opts  map[Option]any
 	valid bool
 }
 
@@ -43,7 +43,7 @@ func (t *mockTxn) LockKeys(_ context.Context, _ *LockCtx, _ ...Key) error {
 	return nil
 }
 
-func (t *mockTxn) SetOption(opt Option, val interface{}) {
+func (t *mockTxn) SetOption(opt Option, val any) {
 	t.opts[opt] = val
 }
 
@@ -51,7 +51,7 @@ func (t *mockTxn) DelOption(opt Option) {
 	delete(t.opts, opt)
 }
 
-func (t *mockTxn) GetOption(opt Option) interface{} {
+func (t *mockTxn) GetOption(opt Option) any {
 	return t.opts[opt]
 }
 
@@ -128,7 +128,7 @@ func (t *mockTxn) SetVars(vars *Variables) {
 // newMockTxn new a mockTxn.
 func newMockTxn() Transaction {
 	return &mockTxn{
-		opts:  make(map[Option]interface{}),
+		opts:  make(map[Option]any),
 		valid: true,
 	}
 }
@@ -189,7 +189,7 @@ func (s *mockStorage) Describe() string {
 	return "KVMockStorage is a mock Store implementation, only for unittests in KV package"
 }
 
-func (s *mockStorage) ShowStatus(ctx context.Context, key string) (interface{}, error) {
+func (s *mockStorage) ShowStatus(ctx context.Context, key string) (any, error) {
 	return nil, nil
 }
 
@@ -233,5 +233,5 @@ func (s *mockSnapshot) IterReverse(k Key) (Iterator, error) {
 	return s.store.IterReverse(k)
 }
 
-func (s *mockSnapshot) SetOption(opt Option, val interface{}) {}
-func (s *mockSnapshot) DelOption(opt Option)                  {}
+func (s *mockSnapshot) SetOption(opt Option, val any) {}
+func (s *mockSnapshot) DelOption(opt Option)          {}

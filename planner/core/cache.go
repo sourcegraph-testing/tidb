@@ -148,8 +148,8 @@ func NewPSTMTPlanCacheValue(plan Plan, names []*types.FieldName, srcMap map[*mod
 type CachedPrepareStmt struct {
 	PreparedAst    *ast.Prepared
 	VisitInfos     []visitInfo
-	ColumnInfos    interface{}
-	Executor       interface{}
+	ColumnInfos    any
+	Executor       any
 	NormalizedSQL  string
 	NormalizedPlan string
 	SQLDigest      string

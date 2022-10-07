@@ -349,7 +349,7 @@ func (b *Backoffer) BackoffWithMaxSleep(typ backoffType, maxSleepMs int, err err
 		}
 	}
 
-	var startTs interface{}
+	var startTs any
 	if ts := b.ctx.Value(txnStartKey); ts != nil {
 		startTs = ts
 	}

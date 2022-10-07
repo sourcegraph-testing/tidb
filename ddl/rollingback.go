@@ -54,7 +54,7 @@ func convertAddIdxJob2RollbackJob(t *meta.Meta, job *model.Job, tblInfo *model.T
 	}
 
 	// the second args will be used in onDropIndex.
-	job.Args = []interface{}{indexInfo.Name, getPartitionIDs(tblInfo)}
+	job.Args = []any{indexInfo.Name, getPartitionIDs(tblInfo)}
 	// If add index job rollbacks in write reorganization state, its need to delete all keys which has been added.
 	// Its work is the same as drop index job do.
 	// The write reorganization state in add index job that likes write only state in drop index job.
@@ -120,7 +120,7 @@ func rollingbackAddColumn(t *meta.Meta, job *model.Job) (ver int64, err error) {
 	columnInfo.State = model.StateDeleteOnly
 	job.SchemaState = model.StateDeleteOnly
 
-	job.Args = []interface{}{col.Name}
+	job.Args = []any{col.Name}
 	ver, err = updateVersionAndTableInfo(t, job, tblInfo, originalState != columnInfo.State)
 	if err != nil {
 		return ver, errors.Trace(err)
@@ -148,7 +148,7 @@ func rollingbackAddColumns(t *meta.Meta, job *model.Job) (ver int64, err error) 
 	ifExists := make([]bool, len(columnInfos))
 
 	job.SchemaState = model.StateDeleteOnly
-	job.Args = []interface{}{colNames, ifExists}
+	job.Args = []any{colNames, ifExists}
 	ver, err = updateVersionAndTableInfo(t, job, tblInfo, originalState != columnInfos[0].State)
 	if err != nil {
 		return ver, errors.Trace(err)
@@ -213,7 +213,7 @@ func rollingbackDropIndex(t *meta.Meta, job *model.Job) (ver int64, err error) {
 	}
 
 	job.SchemaState = indexInfo.State
-	job.Args = []interface{}{indexInfo.Name}
+	job.Args = []any{indexInfo.Name}
 	ver, err = updateVersionAndTableInfo(t, job, tblInfo, originalState != indexInfo.State)
 	if err != nil {
 		return ver, errors.Trace(err)

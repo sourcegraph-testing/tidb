@@ -1062,9 +1062,9 @@ LOOP:
 	keys = append(keys, otherKeys...)
 
 	// test index key
-	expectedRows := make([][]interface{}, 0, len(keys))
+	expectedRows := make([][]any, 0, len(keys))
 	for _, key := range keys {
-		expectedRows = append(expectedRows, []interface{}{key})
+		expectedRows = append(expectedRows, []any{key})
 	}
 	rows := tk.MustQuery(fmt.Sprintf("select c1 from test_add_index where c3 >= %d order by c1", start)).Rows()
 	matchRows(c, rows, expectedRows)
@@ -1626,7 +1626,7 @@ func (s *testDBSuite4) TestAddIndexWithDupCols(c *C) {
 	s.tk.MustExec("drop table test_add_index_with_dup")
 }
 
-func (s *testDBSuite) showColumns(c *C, tableName string) [][]interface{} {
+func (s *testDBSuite) showColumns(c *C, tableName string) [][]any {
 	return s.mustQuery(c, fmt.Sprintf("show columns from %s", tableName))
 }
 
@@ -1721,11 +1721,11 @@ LOOP:
 	c.Assert(count, Greater, int64(0))
 
 	rows = s.mustQuery(c, "select count(c4) from t2 where c4 = -1")
-	matchRows(c, rows, [][]interface{}{{count - int64(step)}})
+	matchRows(c, rows, [][]any{{count - int64(step)}})
 
 	for i := num; i < num+step; i++ {
 		rows = s.mustQuery(c, "select c4 from t2 where c4 = ?", i)
-		matchRows(c, rows, [][]interface{}{{i}})
+		matchRows(c, rows, [][]any{{i}})
 	}
 
 	ctx := s.s.(sessionctx.Context)
@@ -1762,7 +1762,7 @@ LOOP:
 		s.mustExec(c, "insert into t2 values (?, ?, ?, ?)", i, i, i, i)
 	}
 	rows = s.mustQuery(c, "select count(c4) from t2 where c4 = -1")
-	matchRows(c, rows, [][]interface{}{{count - int64(step)}})
+	matchRows(c, rows, [][]any{{count - int64(step)}})
 
 	// add timestamp type column
 	s.mustExec(c, "create table test_on_update_c (c1 int, c2 timestamp);")
@@ -2030,23 +2030,23 @@ func (s *testDBSuite7) TestSelectInViewFromAnotherDB(c *C) {
 	s.tk.MustExec("select test_db2.v.a from test_db2.v")
 }
 
-func (s *testDBSuite) mustExec(c *C, query string, args ...interface{}) {
+func (s *testDBSuite) mustExec(c *C, query string, args ...any) {
 	s.tk.MustExec(query, args...)
 }
 
-func (s *testDBSuite) mustQuery(c *C, query string, args ...interface{}) [][]interface{} {
+func (s *testDBSuite) mustQuery(c *C, query string, args ...any) [][]any {
 	r := s.tk.MustQuery(query, args...)
 	return r.Rows()
 }
 
-func matchRows(c *C, rows [][]interface{}, expected [][]interface{}) {
+func matchRows(c *C, rows [][]any, expected [][]any) {
 	c.Assert(len(rows), Equals, len(expected), Commentf("got %v, expected %v", rows, expected))
 	for i := range rows {
 		match(c, rows[i], expected[i]...)
 	}
 }
 
-func match(c *C, row []interface{}, expected ...interface{}) {
+func match(c *C, row []any, expected ...any) {
 	c.Assert(len(row), Equals, len(expected))
 	for i := range row {
 		got := fmt.Sprintf("%v", row[i])
@@ -4611,7 +4611,7 @@ func (s *testSerialDBSuite) TestDDLJobErrorCount(c *C) {
 		SchemaName: schema.Name.L,
 		Type:       model.ActionRenameTable,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{schema.ID, newTableName},
+		Args:       []any{schema.ID, newTableName},
 	}
 
 	c.Assert(failpoint.Enable("github.com/pingcap/tidb/ddl/mockErrEntrySizeTooLarge", `return(true)`), IsNil)

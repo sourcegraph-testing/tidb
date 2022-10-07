@@ -184,7 +184,7 @@ type Transaction interface {
 	LockKeys(ctx context.Context, lockCtx *LockCtx, keys ...Key) error
 	// SetOption sets an option with a value, when val is nil, uses the default
 	// value of this option.
-	SetOption(opt Option, val interface{})
+	SetOption(opt Option, val any)
 	// DelOption deletes an option.
 	DelOption(opt Option)
 	// IsReadOnly checks if the transaction has only performed read operations.
@@ -352,7 +352,7 @@ type Snapshot interface {
 	BatchGet(ctx context.Context, keys []Key) (map[string][]byte, error)
 	// SetOption sets an option with a value, when val is nil, uses the default
 	// value of this option. Only ReplicaRead is supported for snapshot
-	SetOption(opt Option, val interface{})
+	SetOption(opt Option, val any)
 	// DelOption deletes an option.
 	DelOption(opt Option)
 }
@@ -397,7 +397,7 @@ type Storage interface {
 	// Describe returns of brief introduction of the storage
 	Describe() string
 	// ShowStatus returns the specified status of the storage
-	ShowStatus(ctx context.Context, key string) (interface{}, error)
+	ShowStatus(ctx context.Context, key string) (any, error)
 }
 
 // FnKeyCmp is the function for iterator the keys

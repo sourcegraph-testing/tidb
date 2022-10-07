@@ -265,7 +265,7 @@ func parseStmtFetchCmd(data []byte) (uint32, uint32, error) {
 func parseExecArgs(sc *stmtctx.StatementContext, args []types.Datum, boundParams [][]byte, nullBitmap, paramTypes, paramValues []byte) (err error) {
 	pos := 0
 	var (
-		tmp    interface{}
+		tmp    any
 		v      []byte
 		n      int
 		isNull bool

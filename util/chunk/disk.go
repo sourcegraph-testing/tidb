@@ -35,11 +35,11 @@ const (
 )
 
 var bufWriterPool = sync.Pool{
-	New: func() interface{} { return bufio.NewWriterSize(nil, writeBufSize) },
+	New: func() any { return bufio.NewWriterSize(nil, writeBufSize) },
 }
 
 var bufReaderPool = sync.Pool{
-	New: func() interface{} { return bufio.NewReaderSize(nil, readBufSize) },
+	New: func() any { return bufio.NewReaderSize(nil, readBufSize) },
 }
 
 // ListInDisk represents a slice of chunks storing in temporary disk.

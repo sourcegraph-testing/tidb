@@ -86,8 +86,8 @@ func (s *testEvaluatorSuite) TestCompare(c *C) {
 	jsonVal := json.CreateBinary("123")
 	// test cases for generating function signatures.
 	tests := []struct {
-		arg0     interface{}
-		arg1     interface{}
+		arg0     any
+		arg1     any
 		funcName string
 		tp       byte
 		expected int64
@@ -134,7 +134,7 @@ func (s *testEvaluatorSuite) TestCompare(c *C) {
 	}
 
 	for _, t := range tests {
-		bf, err := funcs[t.funcName].getFunction(s.ctx, s.primitiveValsToConstants([]interface{}{t.arg0, t.arg1}))
+		bf, err := funcs[t.funcName].getFunction(s.ctx, s.primitiveValsToConstants([]any{t.arg0, t.arg1}))
 		c.Assert(err, IsNil)
 		args := bf.getArgs()
 		c.Assert(args[0].GetType().Tp, Equals, t.tp)
@@ -164,23 +164,23 @@ func (s *testEvaluatorSuite) TestCompare(c *C) {
 
 func (s *testEvaluatorSuite) TestCoalesce(c *C) {
 	cases := []struct {
-		args     []interface{}
-		expected interface{}
+		args     []any
+		expected any
 		isNil    bool
 		getErr   bool
 	}{
-		{[]interface{}{nil}, nil, true, false},
-		{[]interface{}{nil, nil}, nil, true, false},
-		{[]interface{}{nil, nil, nil}, nil, true, false},
-		{[]interface{}{nil, 1}, int64(1), false, false},
-		{[]interface{}{nil, 1.1}, float64(1.1), false, false},
-		{[]interface{}{1, 1.1}, float64(1), false, false},
-		{[]interface{}{nil, types.NewDecFromFloatForTest(123.456)}, types.NewDecFromFloatForTest(123.456), false, false},
-		{[]interface{}{1, types.NewDecFromFloatForTest(123.456)}, types.NewDecFromInt(1), false, false},
-		{[]interface{}{nil, duration}, duration, false, false},
-		{[]interface{}{nil, tm, nil}, tm, false, false},
-		{[]interface{}{nil, dt, nil}, dt, false, false},
-		{[]interface{}{tm, dt}, tm, false, false},
+		{[]any{nil}, nil, true, false},
+		{[]any{nil, nil}, nil, true, false},
+		{[]any{nil, nil, nil}, nil, true, false},
+		{[]any{nil, 1}, int64(1), false, false},
+		{[]any{nil, 1.1}, float64(1.1), false, false},
+		{[]any{1, 1.1}, float64(1), false, false},
+		{[]any{nil, types.NewDecFromFloatForTest(123.456)}, types.NewDecFromFloatForTest(123.456), false, false},
+		{[]any{1, types.NewDecFromFloatForTest(123.456)}, types.NewDecFromInt(1), false, false},
+		{[]any{nil, duration}, duration, false, false},
+		{[]any{nil, tm, nil}, tm, false, false},
+		{[]any{nil, dt, nil}, dt, false, false},
+		{[]any{tm, dt}, tm, false, false},
 	}
 
 	for _, t := range cases {
@@ -264,42 +264,42 @@ func (s *testEvaluatorSuite) TestGreatestLeastFuncs(c *C) {
 	}()
 
 	for _, t := range []struct {
-		args             []interface{}
-		expectedGreatest interface{}
-		expectedLeast    interface{}
+		args             []any
+		expectedGreatest any
+		expectedLeast    any
 		isNil            bool
 		getErr           bool
 	}{
 		{
-			[]interface{}{1, 2, 3, 4},
+			[]any{1, 2, 3, 4},
 			int64(4), int64(1), false, false,
 		},
 		{
-			[]interface{}{"a", "b", "c"},
+			[]any{"a", "b", "c"},
 			"c", "a", false, false,
 		},
 		{
-			[]interface{}{"123a", "b", "c", 12},
+			[]any{"123a", "b", "c", 12},
 			float64(123), float64(0), false, false,
 		},
 		{
-			[]interface{}{tm, "123"},
+			[]any{tm, "123"},
 			curTimeString, "123", false, false,
 		},
 		{
-			[]interface{}{tm, 123},
+			[]any{tm, 123},
 			curTimeInt, int64(123), false, false,
 		},
 		{
-			[]interface{}{duration, "123"},
+			[]any{duration, "123"},
 			"12:59:59", "123", false, false,
 		},
 		{
-			[]interface{}{"123", nil, "123"},
+			[]any{"123", nil, "123"},
 			nil, nil, true, false,
 		},
 		{
-			[]interface{}{errors.New("must error"), 123},
+			[]any{errors.New("must error"), 123},
 			nil, nil, false, true,
 		},
 	} {

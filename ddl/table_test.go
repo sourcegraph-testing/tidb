@@ -131,7 +131,7 @@ func testCreateTable(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo,
 		TableID:    tblInfo.ID,
 		Type:       model.ActionCreateTable,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{tblInfo},
+		Args:       []any{tblInfo},
 	}
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -149,7 +149,7 @@ func testCreateView(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, 
 		TableID:    tblInfo.ID,
 		Type:       model.ActionCreateView,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{tblInfo, false, 0},
+		Args:       []any{tblInfo, false, 0},
 	}
 
 	c.Assert(tblInfo.IsView(), IsTrue)
@@ -169,7 +169,7 @@ func testRenameTable(c *C, ctx sessionctx.Context, d *ddl, newSchemaID, oldSchem
 		TableID:    tblInfo.ID,
 		Type:       model.ActionRenameTable,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{oldSchemaID, tblInfo.Name},
+		Args:       []any{oldSchemaID, tblInfo.Name},
 	}
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -194,7 +194,7 @@ func testLockTable(c *C, ctx sessionctx.Context, d *ddl, newSchemaID int64, tblI
 		TableID:    tblInfo.ID,
 		Type:       model.ActionLockTable,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{arg},
+		Args:       []any{arg},
 	}
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -246,7 +246,7 @@ func testTruncateTable(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInf
 		TableID:    tblInfo.ID,
 		Type:       model.ActionTruncateTable,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{newTableID},
+		Args:       []any{newTableID},
 	}
 	err = d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
@@ -336,7 +336,7 @@ func (s *testTableSuite) TestTable(c *C) {
 
 	// Create an existing table.
 	newTblInfo := testTableInfo(c, d, "t", 3)
-	doDDLJobErr(c, s.dbInfo.ID, newTblInfo.ID, model.ActionCreateTable, []interface{}{newTblInfo}, ctx, d)
+	doDDLJobErr(c, s.dbInfo.ID, newTblInfo.ID, model.ActionCreateTable, []any{newTblInfo}, ctx, d)
 
 	count := 2000
 	tbl := testGetTable(c, d, s.dbInfo.ID, tblInfo.ID)
@@ -381,7 +381,7 @@ func (s *testTableSuite) TestTableResume(c *C) {
 		TableID:    tblInfo.ID,
 		Type:       model.ActionCreateTable,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{tblInfo},
+		Args:       []any{tblInfo},
 	}
 	testRunInterruptedJob(c, d, job)
 	testCheckTableState(c, d, s.dbInfo, tblInfo, model.StatePublic)

@@ -116,7 +116,7 @@ func (s *testEvaluatorSuite) TestSetFlenDecimal4Int(c *C) {
 
 func (s *testEvaluatorSuite) TestArithmeticPlus(c *C) {
 	// case: 1
-	args := []interface{}{int64(12), int64(1)}
+	args := []any{int64(12), int64(1)}
 
 	bf, err := funcs[ast.Plus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -131,7 +131,7 @@ func (s *testEvaluatorSuite) TestArithmeticPlus(c *C) {
 	c.Assert(intResult, Equals, int64(13))
 
 	// case 2
-	args = []interface{}{float64(1.01001), float64(-0.01)}
+	args = []any{float64(1.01001), float64(-0.01)}
 
 	bf, err = funcs[ast.Plus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -146,7 +146,7 @@ func (s *testEvaluatorSuite) TestArithmeticPlus(c *C) {
 	c.Assert(realResult, Equals, float64(1.00001))
 
 	// case 3
-	args = []interface{}{nil, float64(-0.11101)}
+	args = []any{nil, float64(-0.11101)}
 
 	bf, err = funcs[ast.Plus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -161,7 +161,7 @@ func (s *testEvaluatorSuite) TestArithmeticPlus(c *C) {
 	c.Assert(realResult, Equals, float64(0))
 
 	// case 4
-	args = []interface{}{nil, nil}
+	args = []any{nil, nil}
 
 	bf, err = funcs[ast.Plus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -178,7 +178,7 @@ func (s *testEvaluatorSuite) TestArithmeticPlus(c *C) {
 	// case 5
 	hexStr, err := types.ParseHexStr("0x20000000000000")
 	c.Assert(err, IsNil)
-	args = []interface{}{hexStr, int64(1)}
+	args = []any{hexStr, int64(1)}
 
 	bf, err = funcs[ast.Plus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -194,7 +194,7 @@ func (s *testEvaluatorSuite) TestArithmeticPlus(c *C) {
 
 func (s *testEvaluatorSuite) TestArithmeticMinus(c *C) {
 	// case: 1
-	args := []interface{}{int64(12), int64(1)}
+	args := []any{int64(12), int64(1)}
 
 	bf, err := funcs[ast.Minus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -209,7 +209,7 @@ func (s *testEvaluatorSuite) TestArithmeticMinus(c *C) {
 	c.Assert(intResult, Equals, int64(11))
 
 	// case 2
-	args = []interface{}{float64(1.01001), float64(-0.01)}
+	args = []any{float64(1.01001), float64(-0.01)}
 
 	bf, err = funcs[ast.Minus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -224,7 +224,7 @@ func (s *testEvaluatorSuite) TestArithmeticMinus(c *C) {
 	c.Assert(realResult, Equals, float64(1.02001))
 
 	// case 3
-	args = []interface{}{nil, float64(-0.11101)}
+	args = []any{nil, float64(-0.11101)}
 
 	bf, err = funcs[ast.Minus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -239,7 +239,7 @@ func (s *testEvaluatorSuite) TestArithmeticMinus(c *C) {
 	c.Assert(realResult, Equals, float64(0))
 
 	// case 4
-	args = []interface{}{float64(1.01), nil}
+	args = []any{float64(1.01), nil}
 
 	bf, err = funcs[ast.Minus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -254,7 +254,7 @@ func (s *testEvaluatorSuite) TestArithmeticMinus(c *C) {
 	c.Assert(realResult, Equals, float64(0))
 
 	// case 5
-	args = []interface{}{nil, nil}
+	args = []any{nil, nil}
 
 	bf, err = funcs[ast.Minus].getFunction(s.ctx, s.datumsToConstants(types.MakeDatums(args...)))
 	c.Assert(err, IsNil)
@@ -271,32 +271,32 @@ func (s *testEvaluatorSuite) TestArithmeticMinus(c *C) {
 
 func (s *testEvaluatorSuite) TestArithmeticMultiply(c *C) {
 	testCases := []struct {
-		args   []interface{}
-		expect interface{}
+		args   []any
+		expect any
 		err    error
 	}{
 		{
-			args:   []interface{}{int64(11), int64(11)},
+			args:   []any{int64(11), int64(11)},
 			expect: int64(121),
 		},
 		{
-			args:   []interface{}{uint64(11), uint64(11)},
+			args:   []any{uint64(11), uint64(11)},
 			expect: int64(121),
 		},
 		{
-			args:   []interface{}{float64(11), float64(11)},
+			args:   []any{float64(11), float64(11)},
 			expect: float64(121),
 		},
 		{
-			args:   []interface{}{nil, float64(-0.11101)},
+			args:   []any{nil, float64(-0.11101)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{float64(1.01), nil},
+			args:   []any{float64(1.01), nil},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{nil, nil},
+			args:   []any{nil, nil},
 			expect: nil,
 		},
 	}
@@ -313,51 +313,51 @@ func (s *testEvaluatorSuite) TestArithmeticMultiply(c *C) {
 
 func (s *testEvaluatorSuite) TestArithmeticDivide(c *C) {
 	testCases := []struct {
-		args   []interface{}
-		expect interface{}
+		args   []any
+		expect any
 	}{
 		{
-			args:   []interface{}{float64(11.1111111), float64(11.1)},
+			args:   []any{float64(11.1111111), float64(11.1)},
 			expect: float64(1.001001),
 		},
 		{
-			args:   []interface{}{float64(11.1111111), float64(0)},
+			args:   []any{float64(11.1111111), float64(0)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{int64(11), int64(11)},
+			args:   []any{int64(11), int64(11)},
 			expect: float64(1),
 		},
 		{
-			args:   []interface{}{int64(11), int64(2)},
+			args:   []any{int64(11), int64(2)},
 			expect: float64(5.5),
 		},
 		{
-			args:   []interface{}{int64(11), int64(0)},
+			args:   []any{int64(11), int64(0)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{uint64(11), uint64(11)},
+			args:   []any{uint64(11), uint64(11)},
 			expect: float64(1),
 		},
 		{
-			args:   []interface{}{uint64(11), uint64(2)},
+			args:   []any{uint64(11), uint64(2)},
 			expect: float64(5.5),
 		},
 		{
-			args:   []interface{}{uint64(11), uint64(0)},
+			args:   []any{uint64(11), uint64(0)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{nil, float64(-0.11101)},
+			args:   []any{nil, float64(-0.11101)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{float64(1.01), nil},
+			args:   []any{float64(1.01), nil},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{nil, nil},
+			args:   []any{nil, nil},
 			expect: nil,
 		},
 	}
@@ -380,100 +380,100 @@ func (s *testEvaluatorSuite) TestArithmeticDivide(c *C) {
 
 func (s *testEvaluatorSuite) TestArithmeticIntDivide(c *C) {
 	testCases := []struct {
-		args   []interface{}
-		expect []interface{}
+		args   []any
+		expect []any
 	}{
 		{
-			args:   []interface{}{int64(13), int64(11)},
-			expect: []interface{}{int64(1), nil},
+			args:   []any{int64(13), int64(11)},
+			expect: []any{int64(1), nil},
 		},
 		{
-			args:   []interface{}{int64(-13), int64(11)},
-			expect: []interface{}{int64(-1), nil},
+			args:   []any{int64(-13), int64(11)},
+			expect: []any{int64(-1), nil},
 		},
 		{
-			args:   []interface{}{int64(13), int64(-11)},
-			expect: []interface{}{int64(-1), nil},
+			args:   []any{int64(13), int64(-11)},
+			expect: []any{int64(-1), nil},
 		},
 		{
-			args:   []interface{}{int64(-13), int64(-11)},
-			expect: []interface{}{int64(1), nil},
+			args:   []any{int64(-13), int64(-11)},
+			expect: []any{int64(1), nil},
 		},
 		{
-			args:   []interface{}{int64(33), int64(11)},
-			expect: []interface{}{int64(3), nil},
+			args:   []any{int64(33), int64(11)},
+			expect: []any{int64(3), nil},
 		},
 		{
-			args:   []interface{}{int64(-33), int64(11)},
-			expect: []interface{}{int64(-3), nil},
+			args:   []any{int64(-33), int64(11)},
+			expect: []any{int64(-3), nil},
 		},
 		{
-			args:   []interface{}{int64(33), int64(-11)},
-			expect: []interface{}{int64(-3), nil},
+			args:   []any{int64(33), int64(-11)},
+			expect: []any{int64(-3), nil},
 		},
 		{
-			args:   []interface{}{int64(-33), int64(-11)},
-			expect: []interface{}{int64(3), nil},
+			args:   []any{int64(-33), int64(-11)},
+			expect: []any{int64(3), nil},
 		},
 		{
-			args:   []interface{}{int64(11), int64(0)},
-			expect: []interface{}{nil, nil},
+			args:   []any{int64(11), int64(0)},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{int64(-11), int64(0)},
-			expect: []interface{}{nil, nil},
+			args:   []any{int64(-11), int64(0)},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{float64(11.01), float64(1.1)},
-			expect: []interface{}{int64(10), nil},
+			args:   []any{float64(11.01), float64(1.1)},
+			expect: []any{int64(10), nil},
 		},
 		{
-			args:   []interface{}{float64(-11.01), float64(1.1)},
-			expect: []interface{}{int64(-10), nil},
+			args:   []any{float64(-11.01), float64(1.1)},
+			expect: []any{int64(-10), nil},
 		},
 		{
-			args:   []interface{}{float64(11.01), float64(-1.1)},
-			expect: []interface{}{int64(-10), nil},
+			args:   []any{float64(11.01), float64(-1.1)},
+			expect: []any{int64(-10), nil},
 		},
 		{
-			args:   []interface{}{float64(-11.01), float64(-1.1)},
-			expect: []interface{}{int64(10), nil},
+			args:   []any{float64(-11.01), float64(-1.1)},
+			expect: []any{int64(10), nil},
 		},
 		{
-			args:   []interface{}{nil, float64(-0.11101)},
-			expect: []interface{}{nil, nil},
+			args:   []any{nil, float64(-0.11101)},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{float64(1.01), nil},
-			expect: []interface{}{nil, nil},
+			args:   []any{float64(1.01), nil},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{nil, int64(-1001)},
-			expect: []interface{}{nil, nil},
+			args:   []any{nil, int64(-1001)},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{int64(101), nil},
-			expect: []interface{}{nil, nil},
+			args:   []any{int64(101), nil},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{nil, nil},
-			expect: []interface{}{nil, nil},
+			args:   []any{nil, nil},
+			expect: []any{nil, nil},
 		},
 		{
-			args:   []interface{}{float64(123456789100000.0), float64(-0.00001)},
-			expect: []interface{}{nil, "*BIGINT value is out of range in '\\(123456789100000 DIV -0.00001\\)'"},
+			args:   []any{float64(123456789100000.0), float64(-0.00001)},
+			expect: []any{nil, "*BIGINT value is out of range in '\\(123456789100000 DIV -0.00001\\)'"},
 		},
 		{
-			args:   []interface{}{int64(-9223372036854775808), float64(-1)},
-			expect: []interface{}{nil, "*BIGINT value is out of range in '\\(-9223372036854775808 DIV -1\\)'"},
+			args:   []any{int64(-9223372036854775808), float64(-1)},
+			expect: []any{nil, "*BIGINT value is out of range in '\\(-9223372036854775808 DIV -1\\)'"},
 		},
 		{
-			args:   []interface{}{uint64(1), float64(-2)},
-			expect: []interface{}{0, nil},
+			args:   []any{uint64(1), float64(-2)},
+			expect: []any{0, nil},
 		},
 		{
-			args:   []interface{}{uint64(1), float64(-1)},
-			expect: []interface{}{nil, "*BIGINT UNSIGNED value is out of range in '\\(1 DIV -1\\)'"},
+			args:   []any{uint64(1), float64(-1)},
+			expect: []any{nil, "*BIGINT UNSIGNED value is out of range in '\\(1 DIV -1\\)'"},
 		},
 	}
 
@@ -493,99 +493,99 @@ func (s *testEvaluatorSuite) TestArithmeticIntDivide(c *C) {
 
 func (s *testEvaluatorSuite) TestArithmeticMod(c *C) {
 	testCases := []struct {
-		args   []interface{}
-		expect interface{}
+		args   []any
+		expect any
 	}{
 		{
-			args:   []interface{}{int64(13), int64(11)},
+			args:   []any{int64(13), int64(11)},
 			expect: int64(2),
 		},
 		{
-			args:   []interface{}{int64(-13), int64(11)},
+			args:   []any{int64(-13), int64(11)},
 			expect: int64(-2),
 		},
 		{
-			args:   []interface{}{int64(13), int64(-11)},
+			args:   []any{int64(13), int64(-11)},
 			expect: int64(2),
 		},
 		{
-			args:   []interface{}{int64(-13), int64(-11)},
+			args:   []any{int64(-13), int64(-11)},
 			expect: int64(-2),
 		},
 		{
-			args:   []interface{}{int64(33), int64(11)},
+			args:   []any{int64(33), int64(11)},
 			expect: int64(0),
 		},
 		{
-			args:   []interface{}{int64(-33), int64(11)},
+			args:   []any{int64(-33), int64(11)},
 			expect: int64(0),
 		},
 		{
-			args:   []interface{}{int64(33), int64(-11)},
+			args:   []any{int64(33), int64(-11)},
 			expect: int64(0),
 		},
 		{
-			args:   []interface{}{int64(-33), int64(-11)},
+			args:   []any{int64(-33), int64(-11)},
 			expect: int64(0),
 		},
 		{
-			args:   []interface{}{int64(11), int64(0)},
+			args:   []any{int64(11), int64(0)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{int64(-11), int64(0)},
+			args:   []any{int64(-11), int64(0)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{int64(1), float64(1.1)},
+			args:   []any{int64(1), float64(1.1)},
 			expect: float64(1),
 		},
 		{
-			args:   []interface{}{int64(-1), float64(1.1)},
+			args:   []any{int64(-1), float64(1.1)},
 			expect: float64(-1),
 		},
 		{
-			args:   []interface{}{int64(1), float64(-1.1)},
+			args:   []any{int64(1), float64(-1.1)},
 			expect: float64(1),
 		},
 		{
-			args:   []interface{}{int64(-1), float64(-1.1)},
+			args:   []any{int64(-1), float64(-1.1)},
 			expect: float64(-1),
 		},
 		{
-			args:   []interface{}{nil, float64(-0.11101)},
+			args:   []any{nil, float64(-0.11101)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{float64(1.01), nil},
+			args:   []any{float64(1.01), nil},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{nil, int64(-1001)},
+			args:   []any{nil, int64(-1001)},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{int64(101), nil},
+			args:   []any{int64(101), nil},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{nil, nil},
+			args:   []any{nil, nil},
 			expect: nil,
 		},
 		{
-			args:   []interface{}{"1231", 12},
+			args:   []any{"1231", 12},
 			expect: 7,
 		},
 		{
-			args:   []interface{}{"1231", "12"},
+			args:   []any{"1231", "12"},
 			expect: float64(7),
 		},
 		{
-			args:   []interface{}{types.Duration{Duration: 45296 * time.Second}, 122},
+			args:   []any{types.Duration{Duration: 45296 * time.Second}, 122},
 			expect: 114,
 		},
 		{
-			args:   []interface{}{types.Set{Value: 7, Name: "abc"}, "12"},
+			args:   []any{types.Set{Value: 7, Name: "abc"}, "12"},
 			expect: float64(7),
 		},
 	}

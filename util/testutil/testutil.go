@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !codes
 // +build !codes
 
 package testutil
@@ -83,12 +84,13 @@ type datumEqualsChecker struct {
 // DatumEquals checker verifies that the obtained value is equal to
 // the expected value.
 // For example:
-//     c.Assert(value, DatumEquals, NewDatum(42))
+//
+//	c.Assert(value, DatumEquals, NewDatum(42))
 var DatumEquals check.Checker = &datumEqualsChecker{
 	&check.CheckerInfo{Name: "DatumEquals", Params: []string{"obtained", "expected"}},
 }
 
-func (checker *datumEqualsChecker) Check(params []interface{}, names []string) (result bool, error string) {
+func (checker *datumEqualsChecker) Check(params []any, names []string) (result bool, error string) {
 	defer func() {
 		if v := recover(); v != nil {
 			result = false
@@ -116,11 +118,11 @@ func (checker *datumEqualsChecker) Check(params []interface{}, names []string) (
 
 // RowsWithSep is a convenient function to wrap args to a slice of []interface.
 // The arg represents a row, split by sep.
-func RowsWithSep(sep string, args ...string) [][]interface{} {
-	rows := make([][]interface{}, len(args))
+func RowsWithSep(sep string, args ...string) [][]any {
+	rows := make([][]any, len(args))
 	for i, v := range args {
 		strs := strings.Split(v, sep)
-		row := make([]interface{}, len(strs))
+		row := make([]any, len(strs))
 		for j, s := range strs {
 			row[j] = s
 		}
@@ -139,7 +141,7 @@ func init() {
 type testCases struct {
 	Name       string
 	Cases      *json.RawMessage // For delayed parse.
-	decodedOut interface{}      // For generate output.
+	decodedOut any              // For generate output.
 }
 
 // TestData stores all the data of a test suite.
@@ -202,7 +204,7 @@ func loadTestSuiteCases(filePath string) (res []testCases, err error) {
 }
 
 // GetTestCasesByName gets the test cases for a test function by its name.
-func (t *TestData) GetTestCasesByName(caseName string, c *check.C, in interface{}, out interface{}) {
+func (t *TestData) GetTestCasesByName(caseName string, c *check.C, in any, out any) {
 	casesIdx, ok := t.funcMap[caseName]
 	c.Assert(ok, check.IsTrue, check.Commentf("Must get test %s", caseName))
 	err := json.Unmarshal(*t.input[casesIdx].Cases, in)
@@ -222,7 +224,7 @@ func (t *TestData) GetTestCasesByName(caseName string, c *check.C, in interface{
 }
 
 // GetTestCases gets the test cases for a test function.
-func (t *TestData) GetTestCases(c *check.C, in interface{}, out interface{}) {
+func (t *TestData) GetTestCases(c *check.C, in any, out any) {
 	// Extract caller's name.
 	pc, _, _, ok := runtime.Caller(1)
 	c.Assert(ok, check.IsTrue)
@@ -256,7 +258,7 @@ func (t *TestData) OnRecord(updateFunc func()) {
 }
 
 // ConvertRowsToStrings converts [][]interface{} to []string.
-func (t *TestData) ConvertRowsToStrings(rows [][]interface{}) (rs []string) {
+func (t *TestData) ConvertRowsToStrings(rows [][]any) (rs []string) {
 	for _, row := range rows {
 		s := fmt.Sprintf("%v", row)
 		// Trim the leftmost `[` and rightmost `]`.

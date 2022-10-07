@@ -114,12 +114,12 @@ func (e *SortExec) Open(ctx context.Context) error {
 
 // Next implements the Executor Next interface.
 // Sort constructs the result following these step:
-// 1. Read as mush as rows into memory.
-// 2. If memory quota is triggered, sort these rows in memory and put them into disk as partition 1, then reset
-//    the memory quota trigger and return to step 1
-// 3. If memory quota is not triggered and child is consumed, sort these rows in memory as partition N.
-// 4. Merge sort if the count of partitions is larger than 1. If there is only one partition in step 4, it works
-//    just like in-memory sort before.
+//  1. Read as mush as rows into memory.
+//  2. If memory quota is triggered, sort these rows in memory and put them into disk as partition 1, then reset
+//     the memory quota trigger and return to step 1
+//  3. If memory quota is not triggered and child is consumed, sort these rows in memory as partition N.
+//  4. Merge sort if the count of partitions is larger than 1. If there is only one partition in step 4, it works
+//     just like in-memory sort before.
 func (e *SortExec) Next(ctx context.Context, req *chunk.Chunk) error {
 	req.Reset()
 	if !e.fetched {
@@ -192,11 +192,11 @@ func (h *multiWayMerge) Len() int {
 	return len(h.elements)
 }
 
-func (h *multiWayMerge) Push(x interface{}) {
+func (h *multiWayMerge) Push(x any) {
 	// Should never be called.
 }
 
-func (h *multiWayMerge) Pop() interface{} {
+func (h *multiWayMerge) Pop() any {
 	h.elements = h.elements[:len(h.elements)-1]
 	return nil
 }
@@ -374,11 +374,11 @@ func (h *topNChunkHeap) Len() int {
 	return len(h.rowPtrs)
 }
 
-func (h *topNChunkHeap) Push(x interface{}) {
+func (h *topNChunkHeap) Push(x any) {
 	// Should never be called.
 }
 
-func (h *topNChunkHeap) Pop() interface{} {
+func (h *topNChunkHeap) Pop() any {
 	h.rowPtrs = h.rowPtrs[:len(h.rowPtrs)-1]
 	// We don't need the popped value, return nil to avoid memory allocation.
 	return nil

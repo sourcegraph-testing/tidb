@@ -134,16 +134,16 @@ func decodeConfig(content string) (*Config, error) {
 }
 
 // FlattenConfigItems flatten this config, see more cases in the test.
-func FlattenConfigItems(nestedConfig map[string]interface{}) map[string]interface{} {
-	flatMap := make(map[string]interface{})
+func FlattenConfigItems(nestedConfig map[string]any) map[string]any {
+	flatMap := make(map[string]any)
 	flatten(flatMap, nestedConfig, "")
 	return flatMap
 }
 
-func flatten(flatMap map[string]interface{}, nested interface{}, prefix string) {
+func flatten(flatMap map[string]any, nested any, prefix string) {
 	switch nested.(type) {
-	case map[string]interface{}:
-		for k, v := range nested.(map[string]interface{}) {
+	case map[string]any:
+		for k, v := range nested.(map[string]any) {
 			path := k
 			if prefix != "" {
 				path = prefix + "." + k

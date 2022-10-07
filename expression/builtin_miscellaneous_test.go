@@ -27,8 +27,8 @@ import (
 
 func (s *testEvaluatorSuite) TestInetAton(c *C) {
 	tbl := []struct {
-		Input    interface{}
-		Expected interface{}
+		Input    any
+		Expected any
 	}{
 		{"", nil},
 		{nil, nil},
@@ -59,7 +59,7 @@ func (s *testEvaluatorSuite) TestInetAton(c *C) {
 func (s *testEvaluatorSuite) TestIsIPv4(c *C) {
 	tests := []struct {
 		ip     string
-		expect interface{}
+		expect any
 	}{
 		{"192.168.1.1", 1},
 		{"255.255.255.255", 1},
@@ -117,8 +117,8 @@ func (s *testEvaluatorSuite) TestUUID(c *C) {
 
 func (s *testEvaluatorSuite) TestAnyValue(c *C) {
 	tbl := []struct {
-		arg interface{}
-		ret interface{}
+		arg any
+		ret any
 	}{
 		{nil, nil},
 		{1234, 1234},
@@ -139,7 +139,7 @@ func (s *testEvaluatorSuite) TestAnyValue(c *C) {
 func (s *testEvaluatorSuite) TestIsIPv6(c *C) {
 	tests := []struct {
 		ip     string
-		expect interface{}
+		expect any
 	}{
 		{"2001:250:207:0:0:eef2::1", 1},
 		{"2001:0250:0207:0001:0000:0000:0000:ff02", 1},
@@ -167,7 +167,7 @@ func (s *testEvaluatorSuite) TestIsIPv6(c *C) {
 func (s *testEvaluatorSuite) TestInetNtoa(c *C) {
 	tests := []struct {
 		ip     int
-		expect interface{}
+		expect any
 	}{
 		{167773449, "10.0.5.9"},
 		{2063728641, "123.2.0.1"},
@@ -196,7 +196,7 @@ func (s *testEvaluatorSuite) TestInetNtoa(c *C) {
 func (s *testEvaluatorSuite) TestInet6NtoA(c *C) {
 	tests := []struct {
 		ip     []byte
-		expect interface{}
+		expect any
 	}{
 		// Success cases
 		{[]byte{0x00, 0x00, 0x00, 0x00}, "0.0.0.0"},
@@ -233,7 +233,7 @@ func (s *testEvaluatorSuite) TestInet6NtoA(c *C) {
 func (s *testEvaluatorSuite) TestInet6AtoN(c *C) {
 	tests := []struct {
 		ip     string
-		expect interface{}
+		expect any
 	}{
 		{"0.0.0.0", []byte{0x00, 0x00, 0x00, 0x00}},
 		{"10.0.5.9", []byte{0x0A, 0x00, 0x05, 0x09}},
@@ -263,7 +263,7 @@ func (s *testEvaluatorSuite) TestInet6AtoN(c *C) {
 func (s *testEvaluatorSuite) TestIsIPv4Mapped(c *C) {
 	tests := []struct {
 		ip     []byte
-		expect interface{}
+		expect any
 	}{
 		{[]byte{}, 0},
 		{[]byte{0x10, 0x10, 0x10, 0x10}, 0},
@@ -291,7 +291,7 @@ func (s *testEvaluatorSuite) TestIsIPv4Mapped(c *C) {
 func (s *testEvaluatorSuite) TestIsIPv4Compat(c *C) {
 	tests := []struct {
 		ip     []byte
-		expect interface{}
+		expect any
 	}{
 		{[]byte{}, 0},
 		{[]byte{0x10, 0x10, 0x10, 0x10}, 0},
@@ -323,7 +323,7 @@ func (s *testEvaluatorSuite) TestNameConst(c *C) {
 	du := types.Duration{Duration: 12*time.Hour + 1*time.Minute + 1*time.Second, Fsp: types.DefaultFsp}
 	cases := []struct {
 		colName string
-		arg     interface{}
+		arg     any
 		isNil   bool
 		asserts func(d types.Datum)
 	}{
@@ -351,7 +351,7 @@ func (s *testEvaluatorSuite) TestNameConst(c *C) {
 	}
 
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.NameConst, s.primitiveValsToConstants([]interface{}{t.colName, t.arg})...)
+		f, err := newFunctionForTest(s.ctx, ast.NameConst, s.primitiveValsToConstants([]any{t.colName, t.arg})...)
 		c.Assert(err, IsNil)
 		d, err := f.Eval(chunk.Row{})
 		c.Assert(err, IsNil)

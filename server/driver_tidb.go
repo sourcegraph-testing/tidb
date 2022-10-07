@@ -199,12 +199,12 @@ func (tc *TiDBContext) LastInsertID() uint64 {
 }
 
 // Value implements QueryCtx Value method.
-func (tc *TiDBContext) Value(key fmt.Stringer) interface{} {
+func (tc *TiDBContext) Value(key fmt.Stringer) any {
 	return tc.session.Value(key)
 }
 
 // SetValue implements QueryCtx SetValue method.
-func (tc *TiDBContext) SetValue(key fmt.Stringer, value interface{}) {
+func (tc *TiDBContext) SetValue(key fmt.Stringer, value any) {
 	tc.session.SetValue(key, value)
 }
 

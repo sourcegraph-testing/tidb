@@ -160,7 +160,7 @@ type session struct {
 
 	mu struct {
 		sync.RWMutex
-		values map[fmt.Stringer]interface{}
+		values map[fmt.Stringer]any
 	}
 
 	currentPlan plannercore.Plan
@@ -341,7 +341,7 @@ func (s *session) GetSessionManager() util.SessionManager {
 	return s.sessionManager
 }
 
-func (s *session) StoreQueryFeedback(feedback interface{}) {
+func (s *session) StoreQueryFeedback(feedback any) {
 	if s.statsCollector != nil {
 		do, err := GetDomain(s.store)
 		if err != nil {
@@ -549,7 +549,7 @@ func (s *session) GetClient() kv.Client {
 func (s *session) String() string {
 	// TODO: how to print binded context in values appropriately?
 	sessVars := s.sessionVars
-	data := map[string]interface{}{
+	data := map[string]any{
 		"id":         sessVars.ConnectionID,
 		"user":       sessVars.User,
 		"currDBName": sessVars.CurrentDB,
@@ -1527,13 +1527,13 @@ func (s *session) NewTxn(ctx context.Context) error {
 	return nil
 }
 
-func (s *session) SetValue(key fmt.Stringer, value interface{}) {
+func (s *session) SetValue(key fmt.Stringer, value any) {
 	s.mu.Lock()
 	s.mu.values[key] = value
 	s.mu.Unlock()
 }
 
-func (s *session) Value(key fmt.Stringer) interface{} {
+func (s *session) Value(key fmt.Stringer) any {
 	s.mu.RLock()
 	value := s.mu.values[key]
 	s.mu.RUnlock()
@@ -1878,7 +1878,7 @@ func createSessionWithOpt(store kv.Storage, opt *Opt) (*session, error) {
 				plannercore.PreparedPlanCacheMemoryGuardRatio, plannercore.PreparedPlanCacheMaxMemory.Load())
 		}
 	}
-	s.mu.values = make(map[fmt.Stringer]interface{})
+	s.mu.values = make(map[fmt.Stringer]any)
 	s.lockedTables = make(map[int64]model.TableLockTpInfo)
 	domain.BindDomain(s, dom)
 	// session implements variable.GlobalVarAccessor. Bind it to ctx.
@@ -1906,7 +1906,7 @@ func CreateSessionWithDomain(store kv.Storage, dom *domain.Domain) (*session, er
 		s.preparedPlanCache = kvcache.NewSimpleLRUCache(plannercore.PreparedPlanCacheCapacity,
 			plannercore.PreparedPlanCacheMemoryGuardRatio, plannercore.PreparedPlanCacheMaxMemory.Load())
 	}
-	s.mu.values = make(map[fmt.Stringer]interface{})
+	s.mu.values = make(map[fmt.Stringer]any)
 	s.lockedTables = make(map[int64]model.TableLockTpInfo)
 	domain.BindDomain(s, dom)
 	// session implements variable.GlobalVarAccessor. Bind it to ctx.

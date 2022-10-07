@@ -34,7 +34,7 @@ type testDatumSuite struct {
 }
 
 func (ts *testDatumSuite) TestDatum(c *C) {
-	values := []interface{}{
+	values := []any{
 		int64(1),
 		uint64(1),
 		1.1,
@@ -53,7 +53,7 @@ func (ts *testDatumSuite) TestDatum(c *C) {
 	}
 }
 
-func testDatumToBool(c *C, in interface{}, res int) {
+func testDatumToBool(c *C, in any, res int) {
 	datum := NewDatum(in)
 	res64 := int64(res)
 	sc := new(stmtctx.StatementContext)
@@ -101,33 +101,33 @@ func (ts *testDatumSuite) TestToBool(c *C) {
 
 func (ts *testDatumSuite) TestEqualDatums(c *C) {
 	tests := []struct {
-		a    []interface{}
-		b    []interface{}
+		a    []any
+		b    []any
 		same bool
 	}{
 		// Positive cases
-		{[]interface{}{1}, []interface{}{1}, true},
-		{[]interface{}{1, "aa"}, []interface{}{1, "aa"}, true},
-		{[]interface{}{1, "aa", 1}, []interface{}{1, "aa", 1}, true},
+		{[]any{1}, []any{1}, true},
+		{[]any{1, "aa"}, []any{1, "aa"}, true},
+		{[]any{1, "aa", 1}, []any{1, "aa", 1}, true},
 
 		// negative cases
-		{[]interface{}{1}, []interface{}{2}, false},
-		{[]interface{}{1, "a"}, []interface{}{1, "aaaaaa"}, false},
-		{[]interface{}{1, "aa", 3}, []interface{}{1, "aa", 2}, false},
+		{[]any{1}, []any{2}, false},
+		{[]any{1, "a"}, []any{1, "aaaaaa"}, false},
+		{[]any{1, "aa", 3}, []any{1, "aa", 2}, false},
 
 		// Corner cases
-		{[]interface{}{}, []interface{}{}, true},
-		{[]interface{}{nil}, []interface{}{nil}, true},
-		{[]interface{}{}, []interface{}{1}, false},
-		{[]interface{}{1}, []interface{}{1, 1}, false},
-		{[]interface{}{nil}, []interface{}{1}, false},
+		{[]any{}, []any{}, true},
+		{[]any{nil}, []any{nil}, true},
+		{[]any{}, []any{1}, false},
+		{[]any{1}, []any{1, 1}, false},
+		{[]any{nil}, []any{1}, false},
 	}
 	for _, tt := range tests {
 		testEqualDatums(c, tt.a, tt.b, tt.same)
 	}
 }
 
-func testEqualDatums(c *C, a []interface{}, b []interface{}, same bool) {
+func testEqualDatums(c *C, a []any, b []any, same bool) {
 	sc := new(stmtctx.StatementContext)
 	sc.IgnoreTruncate = true
 	res, err := EqualDatums(sc, MakeDatums(a...), MakeDatums(b...))
@@ -135,7 +135,7 @@ func testEqualDatums(c *C, a []interface{}, b []interface{}, same bool) {
 	c.Assert(res, Equals, same, Commentf("a: %v, b: %v", a, b))
 }
 
-func testDatumToInt64(c *C, val interface{}, expect int64) {
+func testDatumToInt64(c *C, val any, expect int64) {
 	d := NewDatum(val)
 	sc := new(stmtctx.StatementContext)
 	sc.IgnoreTruncate = true
@@ -278,7 +278,7 @@ func (ts *testDatumSuite) TestToJSON(c *C) {
 
 func (ts *testDatumSuite) TestIsNull(c *C) {
 	tests := []struct {
-		data   interface{}
+		data   any
 		isnull bool
 	}{
 		{nil, true},
@@ -293,7 +293,7 @@ func (ts *testDatumSuite) TestIsNull(c *C) {
 	}
 }
 
-func testIsNull(c *C, data interface{}, isnull bool) {
+func testIsNull(c *C, data any, isnull bool) {
 	d := NewDatum(data)
 	c.Assert(d.IsNull(), Equals, isnull, Commentf("data: %v, isnull: %v", data, isnull))
 }

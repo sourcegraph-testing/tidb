@@ -100,7 +100,7 @@ func writeError(w http.ResponseWriter, err error) {
 	terror.Log(errors.Trace(err))
 }
 
-func writeData(w http.ResponseWriter, data interface{}) {
+func writeData(w http.ResponseWriter, data any) {
 	js, err := json.MarshalIndent(data, "", " ")
 	if err != nil {
 		writeError(w, err)
@@ -1350,7 +1350,7 @@ func (h regionHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				writeError(w, err)
 				return
 			}
-			writeData(w, map[string]interface{}{
+			writeData(w, map[string]any{
 				"write": hotWrite,
 				"read":  hotRead,
 			})
@@ -1451,7 +1451,7 @@ func parseQuery(query string, m url.Values, shouldUnescape bool) error {
 
 // ServeHTTP handles request of list a table's regions.
 func (h mvccTxnHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	var data interface{}
+	var data any
 	params := mux.Vars(req)
 	var err error
 	switch h.op {
@@ -1497,7 +1497,7 @@ func extractTableAndPartitionName(str string) (string, string) {
 }
 
 // handleMvccGetByIdx gets MVCC info by an index key.
-func (h mvccTxnHandler) handleMvccGetByIdx(params map[string]string, values url.Values) (interface{}, error) {
+func (h mvccTxnHandler) handleMvccGetByIdx(params map[string]string, values url.Values) (any, error) {
 	dbName := params[pDBName]
 	tableName := params[pTableName]
 	handleStr := params[pHandle]
@@ -1524,7 +1524,7 @@ func (h mvccTxnHandler) handleMvccGetByIdx(params map[string]string, values url.
 	return h.getMvccByIdxValue(idx, values, idxCols, handleStr)
 }
 
-func (h mvccTxnHandler) handleMvccGetByKey(params map[string]string, decodeData bool) (interface{}, error) {
+func (h mvccTxnHandler) handleMvccGetByKey(params map[string]string, decodeData bool) (any, error) {
 	handle, err := strconv.ParseInt(params[pHandle], 0, 64)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -1547,7 +1547,7 @@ func (h mvccTxnHandler) handleMvccGetByKey(params map[string]string, decodeData 
 	}
 
 	respValue := resp.Value
-	var result interface{} = resp
+	var result any = resp
 	if respValue.Info != nil {
 		datas := make(map[string][]map[string]string)
 		for _, w := range respValue.Info.Writes {
@@ -1563,7 +1563,7 @@ func (h mvccTxnHandler) handleMvccGetByKey(params map[string]string, decodeData 
 		}
 
 		if len(datas) > 0 {
-			re := map[string]interface{}{
+			re := map[string]any{
 				"key":  resp.Key,
 				"info": respValue.Info,
 				"data": datas,
@@ -1593,7 +1593,7 @@ func (h mvccTxnHandler) decodeMvccData(bs []byte, colMap map[int64]*types.FieldT
 	return record, err
 }
 
-func (h *mvccTxnHandler) handleMvccGetByTxn(params map[string]string) (interface{}, error) {
+func (h *mvccTxnHandler) handleMvccGetByTxn(params map[string]string) (any, error) {
 	startTS, err := strconv.ParseInt(params[pStartTS], 0, 64)
 	if err != nil {
 		return nil, errors.Trace(err)
@@ -1694,7 +1694,7 @@ type dbTableInfo struct {
 	SchemaVersion int64            `json:"schema_version"`
 }
 
-//ServeHTTP handles request of database information and table information by tableID.
+// ServeHTTP handles request of database information and table information by tableID.
 func (h dbTableHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	tableID := params[pTableID]

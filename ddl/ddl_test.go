@@ -77,7 +77,7 @@ func (d *ddl) restartWorkers(ctx context.Context) {
 		defer d.wg.Done()
 		util.WithRecovery(
 			func() { d.limitDDLJobs() },
-			func(r interface{}) {
+			func(r any) {
 				logutil.BgLogger().Error("[ddl] DDL add batch DDL jobs meet panic",
 					zap.String("ID", d.uuid), zap.Reflect("r", r), zap.Stack("stack trace"))
 				metrics.PanicCounter.WithLabelValues(metrics.LabelDDL).Inc()
@@ -94,7 +94,7 @@ func (d *ddl) restartWorkers(ctx context.Context) {
 		worker.quitCh = make(chan struct{})
 		w := worker
 		go util.WithRecovery(func() { w.start(d.ddlCtx) },
-			func(r interface{}) {
+			func(r any) {
 				if r != nil {
 					log.Error("[ddl] restart DDL worker meet panic", zap.String("worker", w.String()), zap.String("ID", d.uuid))
 				}
@@ -198,7 +198,7 @@ func buildCreateIdxJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, unique bo
 		TableID:    tblInfo.ID,
 		Type:       model.ActionAddIndex,
 		BinlogInfo: &model.HistoryInfo{},
-		Args: []interface{}{unique, model.NewCIStr(indexName),
+		Args: []any{unique, model.NewCIStr(indexName),
 			[]*ast.IndexPartSpecification{{
 				Column: &ast.ColumnName{Name: model.NewCIStr(colName)},
 				Length: types.UnspecifiedLength}}},
@@ -224,7 +224,7 @@ func testCreateIndex(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo,
 	return job
 }
 
-func testAddColumn(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, tblInfo *model.TableInfo, args []interface{}) *model.Job {
+func testAddColumn(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, tblInfo *model.TableInfo, args []any) *model.Job {
 	job := &model.Job{
 		SchemaID:   dbInfo.ID,
 		TableID:    tblInfo.ID,
@@ -239,7 +239,7 @@ func testAddColumn(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, t
 	return job
 }
 
-func testAddColumns(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, tblInfo *model.TableInfo, args []interface{}) *model.Job {
+func testAddColumns(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBInfo, tblInfo *model.TableInfo, args []any) *model.Job {
 	job := &model.Job{
 		SchemaID:   dbInfo.ID,
 		TableID:    tblInfo.ID,
@@ -264,7 +264,7 @@ func buildDropIdxJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, indexName s
 		TableID:    tblInfo.ID,
 		Type:       tp,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{model.NewCIStr(indexName)},
+		Args:       []any{model.NewCIStr(indexName)},
 	}
 }
 
@@ -283,6 +283,6 @@ func buildRebaseAutoIDJobJob(dbInfo *model.DBInfo, tblInfo *model.TableInfo, new
 		TableID:    tblInfo.ID,
 		Type:       model.ActionRebaseAutoID,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{newBaseID},
+		Args:       []any{newBaseID},
 	}
 }

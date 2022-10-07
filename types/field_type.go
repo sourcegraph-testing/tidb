@@ -140,7 +140,7 @@ func setTypeFlag(flag *uint, flagItem uint, on bool) {
 }
 
 // DefaultParamTypeForValue returns the default FieldType for the parameterized value.
-func DefaultParamTypeForValue(value interface{}, tp *FieldType) {
+func DefaultParamTypeForValue(value any, tp *FieldType) {
 	switch value.(type) {
 	case nil:
 		tp.Tp = mysql.TypeVarString
@@ -167,7 +167,7 @@ func hasVariantFieldLength(tp *FieldType) bool {
 }
 
 // DefaultTypeForValue returns the default FieldType for the value.
-func DefaultTypeForValue(value interface{}, tp *FieldType, char string, collate string) {
+func DefaultTypeForValue(value any, tp *FieldType, char string, collate string) {
 	switch x := value.(type) {
 	case nil:
 		tp.Tp = mysql.TypeNull

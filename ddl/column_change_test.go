@@ -360,8 +360,8 @@ func getCurrentTable(d *ddl, schemaID, tableID int64) (table.Table, error) {
 	return tbl, err
 }
 
-func checkResult(ctx sessionctx.Context, t table.Table, cols []*table.Column, rows [][]interface{}) error {
-	var gotRows [][]interface{}
+func checkResult(ctx sessionctx.Context, t table.Table, cols []*table.Column, rows [][]any) error {
+	var gotRows [][]any
 	err := t.IterRecords(ctx, t.FirstKey(), cols, func(h int64, data []types.Datum, cols []*table.Column) (bool, error) {
 		gotRows = append(gotRows, datumsToInterfaces(data))
 		return true, nil
@@ -377,8 +377,8 @@ func checkResult(ctx sessionctx.Context, t table.Table, cols []*table.Column, ro
 	return nil
 }
 
-func datumsToInterfaces(datums []types.Datum) []interface{} {
-	ifs := make([]interface{}, 0, len(datums))
+func datumsToInterfaces(datums []types.Datum) []any {
+	ifs := make([]any, 0, len(datums))
 	for _, d := range datums {
 		ifs = append(ifs, d.GetValue())
 	}

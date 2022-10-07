@@ -809,7 +809,7 @@ func (s *testSerialSuite) TestAutoRandom(c *C) {
 	tk.MustExec("use auto_random_db")
 	tk.MustExec("drop table if exists t")
 
-	assertInvalidAutoRandomErr := func(sql string, errMsg string, args ...interface{}) {
+	assertInvalidAutoRandomErr := func(sql string, errMsg string, args ...any) {
 		_, err := tk.Exec(sql)
 		c.Assert(err, NotNil)
 		c.Assert(err.Error(), Equals, ddl.ErrInvalidAutoRandom.GenWithStackByArgs(fmt.Sprintf(errMsg, args...)).Error())

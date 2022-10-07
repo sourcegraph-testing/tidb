@@ -837,7 +837,7 @@ func (w *tableWorker) compareData(ctx context.Context, task *lookupTableTask, ta
 			return errors.Trace(err)
 		}
 		if chk.NumRows() == 0 {
-			task.indexOrder.Range(func(h kv.Handle, val interface{}) bool {
+			task.indexOrder.Range(func(h kv.Handle, val any) bool {
 				idxRow := task.idxRows.GetRow(val.(int))
 				err = errors.Errorf("handle %#v, index:%#v != record:%#v", h, idxRow.GetDatum(0, w.idxColTps[0]), nil)
 				return false

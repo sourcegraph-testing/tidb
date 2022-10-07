@@ -94,12 +94,12 @@ func (rh *rowHeap) Less(i, j int) bool {
 }
 
 // Push pushes an element into rowHeap.
-func (rh *rowHeap) Push(x interface{}) {
+func (rh *rowHeap) Push(x any) {
 	rh.ims = append(rh.ims, x.(*item))
 }
 
 // Pop pops the last element from rowHeap.
-func (rh *rowHeap) Pop() interface{} {
+func (rh *rowHeap) Pop() any {
 	old := rh.ims
 	n := len(old)
 	x := old[n-1]

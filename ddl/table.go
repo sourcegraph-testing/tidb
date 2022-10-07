@@ -485,7 +485,7 @@ func onTruncateTable(d *ddlCtx, t *meta.Meta, job *model.Job) (ver int64, _ erro
 	job.FinishTableJob(model.JobStateDone, model.StatePublic, ver, tblInfo)
 	asyncNotifyEvent(d, &util.Event{Tp: model.ActionTruncateTable, TableInfo: tblInfo})
 	startKey := tablecodec.EncodeTablePrefix(tableID)
-	job.Args = []interface{}{startKey, oldPartitionIDs}
+	job.Args = []any{startKey, oldPartitionIDs}
 	return ver, nil
 }
 

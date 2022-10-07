@@ -686,7 +686,7 @@ func (e *CheckTableExec) checkIndexHandle(ctx context.Context, src *IndexLookUpE
 	return errors.Trace(err)
 }
 
-func (e *CheckTableExec) handlePanic(r interface{}) {
+func (e *CheckTableExec) handlePanic(r any) {
 	if r != nil {
 		e.retCh <- errors.Errorf("%v", r)
 	}
@@ -828,6 +828,7 @@ func (e *CheckIndexExec) Next(ctx context.Context, req *chunk.Chunk) error {
 
 // ShowSlowExec represents the executor of showing the slow queries.
 // It is build from the "admin show slow" statement:
+//
 //	admin show slow top [internal | all] N
 //	admin show slow recent N
 type ShowSlowExec struct {
@@ -1423,21 +1424,22 @@ func (e *MaxOneRowExec) Next(ctx context.Context, req *chunk.Chunk) error {
 // UnionExec pulls all it's children's result and returns to its parent directly.
 // A "resultPuller" is started for every child to pull result from that child and push it to the "resultPool", the used
 // "Chunk" is obtained from the corresponding "resourcePool". All resultPullers are running concurrently.
-//                             +----------------+
-//   +---> resourcePool 1 ---> | resultPuller 1 |-----+
-//   |                         +----------------+     |
-//   |                                                |
-//   |                         +----------------+     v
-//   +---> resourcePool 2 ---> | resultPuller 2 |-----> resultPool ---+
-//   |                         +----------------+     ^               |
-//   |                               ......           |               |
-//   |                         +----------------+     |               |
-//   +---> resourcePool n ---> | resultPuller n |-----+               |
-//   |                         +----------------+                     |
-//   |                                                                |
-//   |                          +-------------+                       |
-//   |--------------------------| main thread | <---------------------+
-//                              +-------------+
+//
+//	                          +----------------+
+//	+---> resourcePool 1 ---> | resultPuller 1 |-----+
+//	|                         +----------------+     |
+//	|                                                |
+//	|                         +----------------+     v
+//	+---> resourcePool 2 ---> | resultPuller 2 |-----> resultPool ---+
+//	|                         +----------------+     ^               |
+//	|                               ......           |               |
+//	|                         +----------------+     |               |
+//	+---> resourcePool n ---> | resultPuller n |-----+               |
+//	|                         +----------------+                     |
+//	|                                                                |
+//	|                          +-------------+                       |
+//	|--------------------------| main thread | <---------------------+
+//	                           +-------------+
 type UnionExec struct {
 	baseExecutor
 

@@ -63,7 +63,7 @@ func (s *testStatSuite) TestStat(c *C) {
 		SchemaID:   dbInfo.ID,
 		Type:       model.ActionDropSchema,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{dbInfo.Name},
+		Args:       []any{dbInfo.Name},
 	}
 
 	ctx := mock.NewContext()

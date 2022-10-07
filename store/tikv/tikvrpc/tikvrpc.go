@@ -158,14 +158,14 @@ func (t CmdType) String() string {
 // Request wraps all kv/coprocessor requests.
 type Request struct {
 	Type CmdType
-	req  interface{}
+	req  any
 	kvrpcpb.Context
 	ReplicaReadSeed uint32
 	StoreTp         kv.StoreType
 }
 
 // NewRequest returns new kv rpc request.
-func NewRequest(typ CmdType, pointer interface{}, ctxs ...kvrpcpb.Context) *Request {
+func NewRequest(typ CmdType, pointer any, ctxs ...kvrpcpb.Context) *Request {
 	if len(ctxs) > 0 {
 		return &Request{
 			Type:    typ,
@@ -180,7 +180,7 @@ func NewRequest(typ CmdType, pointer interface{}, ctxs ...kvrpcpb.Context) *Requ
 }
 
 // NewReplicaReadRequest returns new kv rpc request with replica read.
-func NewReplicaReadRequest(typ CmdType, pointer interface{}, replicaReadType kv.ReplicaReadType, replicaReadSeed uint32, ctxs ...kvrpcpb.Context) *Request {
+func NewReplicaReadRequest(typ CmdType, pointer any, replicaReadType kv.ReplicaReadType, replicaReadSeed uint32, ctxs ...kvrpcpb.Context) *Request {
 	req := NewRequest(typ, pointer, ctxs...)
 	req.ReplicaRead = replicaReadType.IsFollowerRead()
 	req.ReplicaReadSeed = replicaReadSeed
@@ -430,7 +430,7 @@ func (req *Request) IsDebugReq() bool {
 
 // Response wraps all kv/coprocessor responses.
 type Response struct {
-	Resp interface{}
+	Resp any
 }
 
 // FromBatchCommandsResponse converts a BatchCommands response to Response.
@@ -600,7 +600,7 @@ func SetContext(req *Request, region *metapb.Region, peer *metapb.Peer) error {
 // GenRegionErrorResp returns corresponding Response with specified RegionError
 // according to the given req.
 func GenRegionErrorResp(req *Request, e *errorpb.Error) (*Response, error) {
-	var p interface{}
+	var p any
 	resp := &Response{}
 	switch req.Type {
 	case CmdGet:

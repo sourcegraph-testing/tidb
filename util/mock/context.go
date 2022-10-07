@@ -39,7 +39,7 @@ var _ sqlexec.SQLExecutor = (*Context)(nil)
 
 // Context represents mocked sessionctx.Context.
 type Context struct {
-	values      map[fmt.Stringer]interface{}
+	values      map[fmt.Stringer]any
 	txn         wrapTxn    // mock global variable
 	Store       kv.Storage // mock global variable
 	sessionVars *variable.SessionVars
@@ -77,12 +77,12 @@ func (c *Context) DDLOwnerChecker() owner.DDLOwnerChecker {
 }
 
 // SetValue implements sessionctx.Context SetValue interface.
-func (c *Context) SetValue(key fmt.Stringer, value interface{}) {
+func (c *Context) SetValue(key fmt.Stringer, value any) {
 	c.values[key] = value
 }
 
 // Value implements sessionctx.Context Value interface.
-func (c *Context) Value(key fmt.Stringer) interface{} {
+func (c *Context) Value(key fmt.Stringer) any {
 	value := c.values[key]
 	return value
 }
@@ -205,7 +205,7 @@ func (c *Context) GoCtx() context.Context {
 }
 
 // StoreQueryFeedback stores the query feedback.
-func (c *Context) StoreQueryFeedback(_ interface{}) {}
+func (c *Context) StoreQueryFeedback(_ any) {}
 
 // StmtCommit implements the sessionctx.Context interface.
 func (c *Context) StmtCommit(tracker *memory.Tracker) error {
@@ -268,7 +268,7 @@ func (c *Context) Close() {
 func NewContext() *Context {
 	ctx, cancel := context.WithCancel(context.Background())
 	sctx := &Context{
-		values:      make(map[fmt.Stringer]interface{}),
+		values:      make(map[fmt.Stringer]any),
 		sessionVars: variable.NewSessionVars(),
 		ctx:         ctx,
 		cancel:      cancel,

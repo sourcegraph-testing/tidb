@@ -138,7 +138,7 @@ func (s *testEvaluatorSuite) TestVersion(c *C) {
 func (s *testEvaluatorSuite) TestBenchMark(c *C) {
 	cases := []struct {
 		LoopCount  int
-		Expression interface{}
+		Expression any
 		Expected   int64
 		IsNil      bool
 	}{
@@ -155,7 +155,7 @@ func (s *testEvaluatorSuite) TestBenchMark(c *C) {
 	}
 
 	for _, t := range cases {
-		f, err := newFunctionForTest(s.ctx, ast.Benchmark, s.primitiveValsToConstants([]interface{}{
+		f, err := newFunctionForTest(s.ctx, ast.Benchmark, s.primitiveValsToConstants([]any{
 			t.LoopCount,
 			t.Expression,
 		})...)
@@ -216,7 +216,7 @@ func (s *testEvaluatorSuite) TestRowCount(c *C) {
 
 // TestTiDBVersion for tidb_server().
 func (s *testEvaluatorSuite) TestTiDBVersion(c *C) {
-	f, err := newFunctionForTest(s.ctx, ast.TiDBVersion, s.primitiveValsToConstants([]interface{}{})...)
+	f, err := newFunctionForTest(s.ctx, ast.TiDBVersion, s.primitiveValsToConstants([]any{})...)
 	c.Assert(err, IsNil)
 	v, err := f.Eval(chunk.Row{})
 	c.Assert(err, IsNil)
@@ -227,7 +227,7 @@ func (s *testEvaluatorSuite) TestLastInsertID(c *C) {
 	maxUint64 := uint64(math.MaxUint64)
 	cases := []struct {
 		insertID uint64
-		args     interface{}
+		args     any
 		expected uint64
 		isNil    bool
 		getErr   bool
@@ -250,7 +250,7 @@ func (s *testEvaluatorSuite) TestLastInsertID(c *C) {
 		}
 
 		if t.args != nil {
-			f, err = newFunctionForTest(s.ctx, ast.LastInsertId, s.primitiveValsToConstants([]interface{}{t.args})...)
+			f, err = newFunctionForTest(s.ctx, ast.LastInsertId, s.primitiveValsToConstants([]any{t.args})...)
 		} else {
 			f, err = newFunctionForTest(s.ctx, ast.LastInsertId)
 		}
@@ -280,8 +280,8 @@ func (s *testEvaluatorSuite) TestLastInsertID(c *C) {
 
 func (s *testEvaluatorSuite) TestFormatBytes(c *C) {
 	tbl := []struct {
-		Arg interface{}
-		Ret interface{}
+		Arg any
+		Ret any
 	}{
 		{nil, nil},
 		{float64(0), "0 bytes"},
@@ -308,8 +308,8 @@ func (s *testEvaluatorSuite) TestFormatBytes(c *C) {
 
 func (s *testEvaluatorSuite) TestFormatNanoTime(c *C) {
 	tbl := []struct {
-		Arg interface{}
-		Ret interface{}
+		Arg any
+		Ret any
 	}{
 		{nil, nil},
 		{float64(0), "0 ns"},

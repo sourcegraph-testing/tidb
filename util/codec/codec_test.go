@@ -663,8 +663,8 @@ func (s *testCodecSuite) TestDecimal(c *C) {
 	}
 
 	tblCmp := []struct {
-		Arg1 interface{}
-		Arg2 interface{}
+		Arg1 any
+		Arg2 any
 		Ret  int
 	}{
 		// Test for float type decimal.
@@ -956,7 +956,7 @@ func (s *testCodecSuite) TestDecodeOneToChunk(c *C) {
 
 func datumsForTest(sc *stmtctx.StatementContext) ([]types.Datum, []*types.FieldType) {
 	table := []struct {
-		value interface{}
+		value any
 		tp    *types.FieldType
 	}{
 		{nil, types.NewFieldType(mysql.TypeNull)},
@@ -1035,7 +1035,7 @@ func (s *testCodecSuite) TestDecodeRange(c *C) {
 	}
 }
 
-func testHashChunkRowEqual(c *C, a, b interface{}, equal bool) {
+func testHashChunkRowEqual(c *C, a, b any, equal bool) {
 	sc := &stmtctx.StatementContext{TimeZone: time.Local}
 	buf1 := make([]byte, 1)
 	buf2 := make([]byte, 1)

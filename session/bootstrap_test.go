@@ -120,7 +120,7 @@ func (s *testBootstrapSuite) bootstrapWithOnlyDDLWork(store kv.Storage, c *C) {
 		sessionVars: variable.NewSessionVars(),
 	}
 	ss.txn.init()
-	ss.mu.values = make(map[fmt.Stringer]interface{})
+	ss.mu.values = make(map[fmt.Stringer]any)
 	ss.SetValue(sessionctx.Initing, true)
 	dom, err := domap.Get(store)
 	c.Assert(err, IsNil)

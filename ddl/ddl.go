@@ -144,7 +144,7 @@ type DDL interface {
 	// GetLease returns current schema lease time.
 	GetLease() time.Duration
 	// Stats returns the DDL statistics.
-	Stats(vars *variable.SessionVars) (map[string]interface{}, error)
+	Stats(vars *variable.SessionVars) (map[string]any, error)
 	// GetScope gets the status variables scope.
 	GetScope(status string) variable.ScopeFlag
 	// Stop stops DDL worker.
@@ -326,7 +326,7 @@ func (d *ddl) start(ctx context.Context, ctxPool *pools.ResourcePool) {
 		defer d.wg.Done()
 		tidbutil.WithRecovery(
 			func() { d.limitDDLJobs() },
-			func(r interface{}) {
+			func(r any) {
 				if r != nil {
 					logutil.BgLogger().Error("[ddl] limit DDL jobs meet panic",
 						zap.String("ID", d.uuid), zap.Reflect("r", r), zap.Stack("stack trace"))
@@ -351,7 +351,7 @@ func (d *ddl) start(ctx context.Context, ctxPool *pools.ResourcePool) {
 			w := worker
 			go tidbutil.WithRecovery(
 				func() { w.start(d.ddlCtx) },
-				func(r interface{}) {
+				func(r any) {
 					if r != nil {
 						logutil.Logger(w.logCtx).Error("[ddl] DDL worker meet panic", zap.String("ID", d.uuid))
 						metrics.PanicCounter.WithLabelValues(metrics.LabelDDLWorker).Inc()
@@ -366,7 +366,7 @@ func (d *ddl) start(ctx context.Context, ctxPool *pools.ResourcePool) {
 
 		go tidbutil.WithRecovery(
 			func() { d.schemaSyncer.StartCleanWork() },
-			func(r interface{}) {
+			func(r any) {
 				if r != nil {
 					logutil.BgLogger().Error("[ddl] DDL syncer clean worker meet panic",
 						zap.String("ID", d.uuid), zap.Reflect("r", r), zap.Stack("stack trace"))

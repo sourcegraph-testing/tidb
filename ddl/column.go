@@ -36,9 +36,9 @@ import (
 )
 
 // adjustColumnInfoInAddColumn is used to set the correct position of column info when adding column.
-// 1. The added column was append at the end of tblInfo.Columns, due to ddl state was not public then.
-//    It should be moved to the correct position when the ddl state to be changed to public.
-// 2. The offset of column should also to be set to the right value.
+//  1. The added column was append at the end of tblInfo.Columns, due to ddl state was not public then.
+//     It should be moved to the correct position when the ddl state to be changed to public.
+//  2. The offset of column should also to be set to the right value.
 func adjustColumnInfoInAddColumn(tblInfo *model.TableInfo, offset int) {
 	oldCols := tblInfo.Columns
 	newCols := make([]*model.ColumnInfo, 0, len(oldCols))
@@ -188,7 +188,7 @@ func onAddColumn(d *ddlCtx, t *meta.Meta, job *model.Job) (ver int64, err error)
 		logutil.BgLogger().Info("[ddl] run add column job", zap.String("job", job.String()), zap.Reflect("columnInfo", *columnInfo), zap.Int("offset", offset))
 		// Set offset arg to job.
 		if offset != 0 {
-			job.Args = []interface{}{columnInfo, pos, offset}
+			job.Args = []any{columnInfo, pos, offset}
 		}
 		if err = checkAddColumnTooManyColumns(len(tblInfo.Columns)); err != nil {
 			job.State = model.JobStateCancelled
@@ -324,7 +324,7 @@ func onAddColumns(d *ddlCtx, t *meta.Meta, job *model.Job) (ver int64, err error
 			columnInfos = append(columnInfos, columnInfo)
 		}
 		// Set arg to job.
-		job.Args = []interface{}{columnInfos, positions, offsets, ifNotExists}
+		job.Args = []any{columnInfos, positions, offsets, ifNotExists}
 	}
 
 	originalState := columnInfos[0].State
@@ -473,7 +473,7 @@ func checkDropColumns(t *meta.Meta, job *model.Job) (*model.TableInfo, []*model.
 		newIfExists = append(newIfExists, ifExists[i])
 		colInfos = append(colInfos, colInfo)
 	}
-	job.Args = []interface{}{newColNames, newIfExists}
+	job.Args = []any{newColNames, newIfExists}
 	return tblInfo, colInfos, len(colInfos), nil
 }
 
@@ -857,7 +857,7 @@ func modifyColsFromNull2NotNull(w *worker, dbInfo *model.DBInfo, tblInfo *model.
 	return nil
 }
 
-func generateOriginDefaultValue(col *model.ColumnInfo) (interface{}, error) {
+func generateOriginDefaultValue(col *model.ColumnInfo) (any, error) {
 	var err error
 	odValue := col.GetDefaultValue()
 	if odValue == nil && mysql.HasNotNullFlag(col.Flag) {

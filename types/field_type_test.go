@@ -161,7 +161,7 @@ func (s *testFieldTypeSuite) TestFieldType(c *C) {
 func (s *testFieldTypeSuite) TestDefaultTypeForValue(c *C) {
 	defer testleak.AfterTest(c)()
 	tests := []struct {
-		value     interface{}
+		value     any
 		tp        byte
 		flen      int
 		decimal   int

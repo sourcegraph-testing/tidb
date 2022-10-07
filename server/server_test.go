@@ -184,31 +184,31 @@ func (dbt *DBTest) mustPrepare(query string) *sql.Stmt {
 	return stmt
 }
 
-func (dbt *DBTest) mustExecPrepared(stmt *sql.Stmt, args ...interface{}) sql.Result {
+func (dbt *DBTest) mustExecPrepared(stmt *sql.Stmt, args ...any) sql.Result {
 	res, err := stmt.Exec(args...)
 	dbt.Assert(err, IsNil, Commentf("Execute prepared with args: %s", args))
 	return res
 }
 
-func (dbt *DBTest) mustQueryPrepared(stmt *sql.Stmt, args ...interface{}) *sql.Rows {
+func (dbt *DBTest) mustQueryPrepared(stmt *sql.Stmt, args ...any) *sql.Rows {
 	rows, err := stmt.Query(args...)
 	dbt.Assert(err, IsNil, Commentf("Query prepared with args: %s", args))
 	return rows
 }
 
-func (dbt *DBTest) mustExec(query string, args ...interface{}) (res sql.Result) {
+func (dbt *DBTest) mustExec(query string, args ...any) (res sql.Result) {
 	res, err := dbt.db.Exec(query, args...)
 	dbt.Assert(err, IsNil, Commentf("Exec %s", query))
 	return res
 }
 
-func (dbt *DBTest) mustQuery(query string, args ...interface{}) (rows *sql.Rows) {
+func (dbt *DBTest) mustQuery(query string, args ...any) (rows *sql.Rows) {
 	rows, err := dbt.db.Query(query, args...)
 	dbt.Assert(err, IsNil, Commentf("Query %s", query))
 	return rows
 }
 
-func (dbt *DBTest) mustQueryRows(query string, args ...interface{}) {
+func (dbt *DBTest) mustQueryRows(query string, args ...any) {
 	rows := dbt.mustQuery(query, args...)
 	dbt.Assert(rows.Next(), IsTrue)
 	rows.Close()
@@ -425,11 +425,11 @@ func (cli *testServerClient) runTestLoadDataWithSelectIntoOutfile(c *C, server *
 		dbt.mustExec("create table t1 (i int, r real, d decimal(10, 5), s varchar(100), dt datetime, ts timestamp, j json)")
 		dbt.mustExec(fmt.Sprintf("load data local infile %q into table t1", outfile))
 
-		fetchResults := func(table string) [][]interface{} {
-			var res [][]interface{}
+		fetchResults := func(table string) [][]any {
+			var res [][]any
 			row := dbt.mustQuery("select * from " + table + " order by i")
 			for row.Next() {
-				r := make([]interface{}, 7)
+				r := make([]any, 7)
 				c.Assert(row.Scan(&r[0], &r[1], &r[2], &r[3], &r[4], &r[5], &r[6]), IsNil)
 				res = append(res, r)
 			}

@@ -368,7 +368,7 @@ func (s *testSuite3) TestInsertWithAutoidSchema(c *C) {
 	tests := []struct {
 		insert string
 		query  string
-		result [][]interface{}
+		result [][]any
 	}{
 		{
 			`insert into t1(id, n) values(1, 1)`,

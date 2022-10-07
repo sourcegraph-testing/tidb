@@ -399,7 +399,7 @@ func (s *tikvSnapshot) IterReverse(k kv.Key) (kv.Iterator, error) {
 
 // SetOption sets an option with a value, when val is nil, uses the default
 // value of this option. Only ReplicaRead is supported for snapshot
-func (s *tikvSnapshot) SetOption(opt kv.Option, val interface{}) {
+func (s *tikvSnapshot) SetOption(opt kv.Option, val any) {
 	switch opt {
 	case kv.ReplicaRead:
 		s.replicaRead = val.(kv.ReplicaReadType)

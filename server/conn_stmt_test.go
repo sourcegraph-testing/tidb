@@ -32,7 +32,7 @@ func (ts *ConnTestSuite) TestParseExecArgs(c *C) {
 	tests := []struct {
 		args   args
 		err    error
-		expect interface{}
+		expect any
 	}{
 		// Tests for int overflow
 		{

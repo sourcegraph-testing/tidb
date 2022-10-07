@@ -35,8 +35,8 @@ func (s *testSuite) TestMergePartialResult4JsonObjectagg(c *C) {
 	numRows := 5
 
 	for k := 0; k < len(argCombines); k++ {
-		entries1 := make(map[string]interface{})
-		entries2 := make(map[string]interface{})
+		entries1 := make(map[string]any)
+		entries2 := make(map[string]any)
 
 		argTypes := argCombines[k]
 		fGenFunc := getDataGenFunc(types.NewFieldType(argTypes[0]))
@@ -80,7 +80,7 @@ func (s *testSuite) TestJsonObjectagg(c *C) {
 	numRows := 5
 
 	for k := 0; k < len(argCombines); k++ {
-		entries := make(map[string]interface{})
+		entries := make(map[string]any)
 
 		argTypes := argCombines[k]
 		fGenFunc := getDataGenFunc(types.NewFieldType(argTypes[0]))

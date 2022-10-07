@@ -44,10 +44,10 @@ type Context interface {
 	GetClient() kv.Client
 
 	// SetValue saves a value associated with this context for key.
-	SetValue(key fmt.Stringer, value interface{})
+	SetValue(key fmt.Stringer, value any)
 
 	// Value returns the value associated with this context for key.
-	Value(key fmt.Stringer) interface{}
+	Value(key fmt.Stringer) any
 
 	// ClearValue clears the value associated with this context for key.
 	ClearValue(key fmt.Stringer)
@@ -72,7 +72,7 @@ type Context interface {
 	PreparedPlanCache() *kvcache.SimpleLRUCache
 
 	// StoreQueryFeedback stores the query feedback.
-	StoreQueryFeedback(feedback interface{})
+	StoreQueryFeedback(feedback any)
 
 	// HasDirtyContent checks whether there's dirty update on the given table.
 	HasDirtyContent(tid int64) bool

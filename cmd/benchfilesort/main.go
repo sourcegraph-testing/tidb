@@ -426,12 +426,12 @@ func main() {
 	}
 }
 
-func cLogf(format string, args ...interface{}) {
+func cLogf(format string, args ...any) {
 	str := fmt.Sprintf(format, args...)
 	fmt.Println("\033[0;32m" + str + "\033[0m")
 }
 
-func cLog(args ...interface{}) {
+func cLog(args ...any) {
 	str := fmt.Sprint(args...)
 	fmt.Println("\033[0;32m" + str + "\033[0m")
 }

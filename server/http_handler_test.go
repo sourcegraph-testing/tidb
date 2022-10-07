@@ -469,7 +469,7 @@ func (ts *HTTPHandlerTestSuite) TestGetTableMVCC(c *C) {
 	resp, err = ts.fetchStatus(fmt.Sprintf("/mvcc/key/tidb/test/1?decode=true"))
 	c.Assert(err, IsNil)
 	decoder = json.NewDecoder(resp.Body)
-	var data3 map[string]interface{}
+	var data3 map[string]any
 	err = decoder.Decode(&data3)
 	c.Assert(err, IsNil)
 	c.Assert(data3["key"], NotNil)
@@ -481,7 +481,7 @@ func (ts *HTTPHandlerTestSuite) TestGetTableMVCC(c *C) {
 	c.Assert(err, IsNil)
 	defer resp.Body.Close()
 	decoder = json.NewDecoder(resp.Body)
-	var data4 map[string]interface{}
+	var data4 map[string]any
 	err = decoder.Decode(&data4)
 	c.Assert(err, IsNil)
 	c.Assert(data4["key"], NotNil)
@@ -711,7 +711,7 @@ func (ts *HTTPHandlerTestSuite) TestDecodeColumnValue(c *C) {
 		resp, err := ts.fetchStatus(path)
 		c.Assert(err, IsNil, Commentf("url:%s", ts.statusURL(path)))
 		decoder := json.NewDecoder(resp.Body)
-		var data interface{}
+		var data any
 		err = decoder.Decode(&data)
 		c.Assert(err, IsNil, Commentf("url:%v\ndata%v", ts.statusURL(path), data))
 		colVal, err := types.DatumsToString([]types.Datum{row[col.id-1]}, false)

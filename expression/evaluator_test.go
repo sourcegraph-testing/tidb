@@ -143,7 +143,7 @@ func (s *testEvaluatorSuiteBase) datumsToConstants(datums []types.Datum) []Expre
 	return constants
 }
 
-func (s *testEvaluatorSuiteBase) primitiveValsToConstants(args []interface{}) []Expression {
+func (s *testEvaluatorSuiteBase) primitiveValsToConstants(args []any) []Expression {
 	cons := s.datumsToConstants(types.MakeDatums(args...))
 	char, col := s.ctx.GetSessionVars().GetCharsetInfo()
 	for i, arg := range args {
@@ -220,9 +220,9 @@ func (s *testEvaluatorSuite) TestSleep(c *C) {
 
 func (s *testEvaluatorSuite) TestBinopComparison(c *C) {
 	tbl := []struct {
-		lhs    interface{}
+		lhs    any
 		op     string
-		rhs    interface{}
+		rhs    any
 		result int64 // 0 for false, 1 for true
 	}{
 		// test EQ
@@ -267,9 +267,9 @@ func (s *testEvaluatorSuite) TestBinopComparison(c *C) {
 
 	// test nil
 	nilTbl := []struct {
-		lhs interface{}
+		lhs any
 		op  string
-		rhs interface{}
+		rhs any
 	}{
 		{nil, ast.EQ, nil},
 		{nil, ast.EQ, 1},
@@ -297,10 +297,10 @@ func (s *testEvaluatorSuite) TestBinopComparison(c *C) {
 
 func (s *testEvaluatorSuite) TestBinopLogic(c *C) {
 	tbl := []struct {
-		lhs interface{}
+		lhs any
 		op  string
-		rhs interface{}
-		ret interface{}
+		rhs any
+		ret any
 	}{
 		{nil, ast.LogicAnd, 1, nil},
 		{nil, ast.LogicAnd, 0, 0},
@@ -335,10 +335,10 @@ func (s *testEvaluatorSuite) TestBinopLogic(c *C) {
 
 func (s *testEvaluatorSuite) TestBinopBitop(c *C) {
 	tbl := []struct {
-		lhs interface{}
+		lhs any
 		op  string
-		rhs interface{}
-		ret interface{}
+		rhs any
+		ret any
 	}{
 		{1, ast.And, 1, 1},
 		{1, ast.Or, 1, 1},
@@ -371,10 +371,10 @@ func (s *testEvaluatorSuite) TestBinopBitop(c *C) {
 
 func (s *testEvaluatorSuite) TestBinopNumeric(c *C) {
 	tbl := []struct {
-		lhs interface{}
+		lhs any
 		op  string
-		rhs interface{}
-		ret interface{}
+		rhs any
+		ret any
 	}{
 		// plus
 		{1, ast.Plus, 1, 2},
@@ -468,9 +468,9 @@ func (s *testEvaluatorSuite) TestBinopNumeric(c *C) {
 	}
 
 	testcases := []struct {
-		lhs interface{}
+		lhs any
 		op  string
-		rhs interface{}
+		rhs any
 	}{
 		// div
 		{1, ast.Div, float64(0)},
@@ -567,9 +567,9 @@ func (s *testEvaluatorSuite) TestExtract(c *C) {
 
 func (s *testEvaluatorSuite) TestUnaryOp(c *C) {
 	tbl := []struct {
-		arg    interface{}
+		arg    any
 		op     string
-		result interface{}
+		result any
 	}{
 		// test NOT.
 		{1, ast.UnaryNot, int64(0)},
@@ -608,9 +608,9 @@ func (s *testEvaluatorSuite) TestUnaryOp(c *C) {
 	}
 
 	tbl = []struct {
-		arg    interface{}
+		arg    any
 		op     string
-		result interface{}
+		result any
 	}{
 		{types.NewDecFromInt(1), ast.UnaryMinus, types.NewDecFromInt(-1)},
 		{types.ZeroDuration, ast.UnaryMinus, new(types.MyDecimal)},

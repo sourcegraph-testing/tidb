@@ -497,7 +497,7 @@ func matchStmtSummaryByDigest(first, second *stmtSummaryByDigest) bool {
 	return true
 }
 
-func match(c *C, row []types.Datum, expected ...interface{}) {
+func match(c *C, row []types.Datum, expected ...any) {
 	c.Assert(len(row), Equals, len(expected))
 	for i := range row {
 		got := fmt.Sprintf("%v", row[i].GetValue())
@@ -585,7 +585,7 @@ func (s *testStmtSummarySuite) TestToDatum(c *C) {
 	n := types.NewTime(types.FromGoTime(time.Unix(s.ssMap.beginTimeForCurInterval, 0)), mysql.TypeTimestamp, types.DefaultFsp)
 	e := types.NewTime(types.FromGoTime(time.Unix(s.ssMap.beginTimeForCurInterval+1800, 0)), mysql.TypeTimestamp, types.DefaultFsp)
 	t := types.NewTime(types.FromGoTime(stmtExecInfo1.StartTime), mysql.TypeTimestamp, types.DefaultFsp)
-	expectedDatum := []interface{}{n, e, "select", stmtExecInfo1.SchemaName, stmtExecInfo1.Digest, stmtExecInfo1.NormalizedSQL,
+	expectedDatum := []any{n, e, "select", stmtExecInfo1.SchemaName, stmtExecInfo1.Digest, stmtExecInfo1.NormalizedSQL,
 		"db1.tb1,db2.tb2", "a", stmtExecInfo1.User, 1, 0, 0, int64(stmtExecInfo1.TotalLatency),
 		int64(stmtExecInfo1.TotalLatency), int64(stmtExecInfo1.TotalLatency), int64(stmtExecInfo1.TotalLatency),
 		int64(stmtExecInfo1.ParseLatency), int64(stmtExecInfo1.ParseLatency), int64(stmtExecInfo1.CompileLatency),

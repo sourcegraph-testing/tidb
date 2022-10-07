@@ -48,10 +48,10 @@ type QueryCtx interface {
 	AffectedRows() uint64
 
 	// Value returns the value associated with this context for key.
-	Value(key fmt.Stringer) interface{}
+	Value(key fmt.Stringer) any
 
 	// SetValue saves a value associated with this context for key.
-	SetValue(key fmt.Stringer, value interface{})
+	SetValue(key fmt.Stringer, value any)
 
 	SetProcessInfo(sql string, t time.Time, command byte, maxExecutionTime uint64)
 

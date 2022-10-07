@@ -37,7 +37,7 @@ func (*testSessionSuite) TestSetSystemVariable(c *C) {
 	v.TimeZone = time.UTC
 	tests := []struct {
 		key   string
-		value interface{}
+		value any
 		err   bool
 	}{
 		{variable.TxnIsolation, "SERIALIZABLE", true},

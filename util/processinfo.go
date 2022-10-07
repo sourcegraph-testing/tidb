@@ -30,12 +30,12 @@ type ProcessInfo struct {
 	User          string
 	Host          string
 	DB            string
-	Plan          interface{}
+	Plan          any
 	Time          time.Time
 	Info          string
 	CurTxnStartTS uint64
 	StmtCtx       *stmtctx.StatementContext
-	StatsInfo     func(interface{}) map[string]uint64
+	StatsInfo     func(any) map[string]uint64
 	// MaxExecutionTime is the timeout for select statement, in milliseconds.
 	// If the query takes too long, kill it.
 	MaxExecutionTime uint64
@@ -46,8 +46,8 @@ type ProcessInfo struct {
 }
 
 // ToRowForShow returns []interface{} for the row data of "SHOW [FULL] PROCESSLIST".
-func (pi *ProcessInfo) ToRowForShow(full bool) []interface{} {
-	var info interface{}
+func (pi *ProcessInfo) ToRowForShow(full bool) []any {
+	var info any
 	if len(pi.Info) > 0 {
 		if full {
 			info = pi.Info
@@ -56,11 +56,11 @@ func (pi *ProcessInfo) ToRowForShow(full bool) []interface{} {
 		}
 	}
 	t := uint64(time.Since(pi.Time) / time.Second)
-	var db interface{}
+	var db any
 	if len(pi.DB) > 0 {
 		db = pi.DB
 	}
-	return []interface{}{
+	return []any{
 		pi.ID,
 		pi.User,
 		pi.Host,
@@ -82,7 +82,7 @@ func (pi *ProcessInfo) txnStartTs(tz *time.Location) (txnStart string) {
 
 // ToRow returns []interface{} for the row data of
 // "SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST".
-func (pi *ProcessInfo) ToRow(tz *time.Location) []interface{} {
+func (pi *ProcessInfo) ToRow(tz *time.Location) []any {
 	bytesConsumed := int64(0)
 	if pi.StmtCtx != nil && pi.StmtCtx.MemTracker != nil {
 		bytesConsumed = pi.StmtCtx.MemTracker.BytesConsumed()

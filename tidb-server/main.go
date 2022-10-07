@@ -602,7 +602,7 @@ func setupLog() {
 	err = logutil.InitLogger(cfg.Log.ToLogConfig())
 	terror.MustNil(err)
 	// Disable automaxprocs log
-	nopLog := func(string, ...interface{}) {}
+	nopLog := func(string, ...any) {}
 	_, err = maxprocs.Set(maxprocs.Logger(nopLog))
 	terror.MustNil(err)
 

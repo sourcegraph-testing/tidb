@@ -11,16 +11,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:build !race
 // +build !race
 
 package localpool
 
 // Get gets an object from the pool.
-func (p *LocalPool) Get() interface{} {
+func (p *LocalPool) Get() any {
 	pid := procPin()
 	slot := p.slots[pid]
 	objLen := len(slot.objs)
-	var result interface{}
+	var result any
 	if objLen > 0 {
 		lastIdx := objLen - 1
 		result = slot.objs[lastIdx]
@@ -39,7 +40,7 @@ func (p *LocalPool) Get() interface{} {
 
 // Put puts an object back to the pool.
 // It returns true if the pool is not full and the obj is successfully put into the pool.
-func (p *LocalPool) Put(obj interface{}) bool {
+func (p *LocalPool) Put(obj any) bool {
 	if p.resetFn != nil {
 		p.resetFn(obj)
 	}

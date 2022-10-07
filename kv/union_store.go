@@ -29,11 +29,11 @@ type UnionStore interface {
 	WalkBuffer(f func(k Key, v []byte) error) error
 	// SetOption sets an option with a value, when val is nil, uses the default
 	// value of this option.
-	SetOption(opt Option, val interface{})
+	SetOption(opt Option, val any)
 	// DelOption deletes an option.
 	DelOption(opt Option)
 	// GetOption gets an option.
-	GetOption(opt Option) interface{}
+	GetOption(opt Option) any
 	// GetMemBuffer return the MemBuffer binding to this UnionStore.
 	GetMemBuffer() MemBuffer
 }
@@ -54,7 +54,7 @@ type Option int
 // Options is an interface of a set of options. Each option is associated with a value.
 type Options interface {
 	// Get gets an option value.
-	Get(opt Option) (v interface{}, ok bool)
+	Get(opt Option) (v any, ok bool)
 }
 
 type existErrInfo struct {
@@ -95,7 +95,7 @@ func NewUnionStore(snapshot Snapshot) UnionStore {
 	return &unionStore{
 		BufferStore:  NewBufferStore(snapshot),
 		keyExistErrs: make(map[string]*existErrInfo),
-		opts:         make(map[Option]interface{}),
+		opts:         make(map[Option]any),
 	}
 }
 
@@ -133,7 +133,7 @@ func (us *unionStore) DeleteKeyExistErrInfo(k Key) {
 }
 
 // SetOption implements the UnionStore SetOption interface.
-func (us *unionStore) SetOption(opt Option, val interface{}) {
+func (us *unionStore) SetOption(opt Option, val any) {
 	us.opts[opt] = val
 }
 
@@ -143,7 +143,7 @@ func (us *unionStore) DelOption(opt Option) {
 }
 
 // GetOption implements the UnionStore GetOption interface.
-func (us *unionStore) GetOption(opt Option) interface{} {
+func (us *unionStore) GetOption(opt Option) any {
 	return us.opts[opt]
 }
 
@@ -164,9 +164,9 @@ func (us *unionStore) Discard() {
 	us.BufferStore.Discard()
 }
 
-type options map[Option]interface{}
+type options map[Option]any
 
-func (opts options) Get(opt Option) (interface{}, bool) {
+func (opts options) Get(opt Option) (any, bool) {
 	v, ok := opts[opt]
 	return v, ok
 }

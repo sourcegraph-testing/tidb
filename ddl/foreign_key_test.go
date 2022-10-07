@@ -73,7 +73,7 @@ func (s *testForeighKeySuite) testCreateForeignKey(c *C, tblInfo *model.TableInf
 		TableID:    tblInfo.ID,
 		Type:       model.ActionAddForeignKey,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{fkInfo},
+		Args:       []any{fkInfo},
 	}
 	err := s.ctx.NewTxn(context.Background())
 	c.Assert(err, IsNil)
@@ -88,7 +88,7 @@ func testDropForeignKey(c *C, ctx sessionctx.Context, d *ddl, dbInfo *model.DBIn
 		TableID:    tblInfo.ID,
 		Type:       model.ActionDropForeignKey,
 		BinlogInfo: &model.HistoryInfo{},
-		Args:       []interface{}{model.NewCIStr(foreignKeyName)},
+		Args:       []any{model.NewCIStr(foreignKeyName)},
 	}
 	err := d.doDDLJob(ctx, job)
 	c.Assert(err, IsNil)
