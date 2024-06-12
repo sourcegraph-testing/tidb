@@ -490,7 +490,7 @@ func checkCreatePartitionValue(ctx sessionctx.Context, tblInfo *model.TableInfo)
 		}
 		if fromExpr {
 			// Constant fold the expression.
-			defs[i].LessThan[0] = fmt.Sprintf("%d", currentRangeValue)
+			defs[i].LessThan[0] = strconv.Itoa(currentRangeValue)
 		}
 
 		if i == 0 {
