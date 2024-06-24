@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -203,10 +204,10 @@ func (vt *perfSchemaTable) getRows(ctx sessionctx.Context, cols []*table.Column)
 	case tableNameTiDBProfileGoroutines:
 		fullRows, err = (&profile.Collector{}).ProfileGraph("goroutine")
 	case tableNameTiKVProfileCPU:
-		interval := fmt.Sprintf("%d", profile.CPUProfileInterval/time.Second)
+		interval := strconv.Itoa(profile.CPUProfileInterval / time.Second)
 		fullRows, err = dataForRemoteProfile(ctx, "tikv", "/debug/pprof/profile?seconds="+interval, false)
 	case tableNamePDProfileCPU:
-		interval := fmt.Sprintf("%d", profile.CPUProfileInterval/time.Second)
+		interval := strconv.Itoa(profile.CPUProfileInterval / time.Second)
 		fullRows, err = dataForRemoteProfile(ctx, "pd", "/pd/api/v1/debug/pprof/profile?seconds="+interval, false)
 	case tableNamePDProfileMemory:
 		fullRows, err = dataForRemoteProfile(ctx, "pd", "/pd/api/v1/debug/pprof/heap", false)

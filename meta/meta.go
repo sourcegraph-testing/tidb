@@ -860,7 +860,7 @@ func (m *Meta) GetBootstrapVersion() (int64, error) {
 
 // FinishBootstrap finishes bootstrap.
 func (m *Meta) FinishBootstrap(version int64) error {
-	err := m.txn.Set(mBootstrapKey, []byte(fmt.Sprintf("%d", version)))
+	err := m.txn.Set(mBootstrapKey, []byte(strconv.Itoa(version)))
 	return errors.Trace(err)
 }
 

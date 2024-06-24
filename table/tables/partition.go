@@ -295,7 +295,7 @@ func (t *partitionedTable) locateRangePartition(ctx sessionctx.Context, pi *mode
 			if err == nil {
 				val, _, err := e.EvalInt(ctx, chunk.MutRowFromDatums(r).ToRow())
 				if err == nil {
-					valueMsg = fmt.Sprintf("%d", val)
+					valueMsg = strconv.Itoa(val)
 				}
 			}
 		} else {
