@@ -15,7 +15,7 @@ package handle
 
 import (
 	"context"
-	"fmt"
+	"strconv"
 
 	"github.com/cznic/mathutil"
 	"github.com/pingcap/errors"
@@ -338,5 +338,5 @@ func getFullTableName(is infoschema.InfoSchema, tblInfo *model.TableInfo) string
 			}
 		}
 	}
-	return fmt.Sprintf("%d", tblInfo.ID)
+	return strconv.Itoa(tblInfo.ID)
 }

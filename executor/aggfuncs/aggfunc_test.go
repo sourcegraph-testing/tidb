@@ -15,6 +15,7 @@ package aggfuncs_test
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 	"time"
 
@@ -263,7 +264,7 @@ func getDataGenFunc(ft *types.FieldType) func(i int) types.Datum {
 	case mysql.TypeDouble:
 		return func(i int) types.Datum { return types.NewFloat64Datum(float64(i)) }
 	case mysql.TypeString:
-		return func(i int) types.Datum { return types.NewStringDatum(fmt.Sprintf("%d", i)) }
+		return func(i int) types.Datum { return types.NewStringDatum(strconv.Itoa(i)) }
 	case mysql.TypeDate:
 		return func(i int) types.Datum { return types.NewTimeDatum(types.TimeFromDays(int64(i + 365))) }
 	case mysql.TypeDuration:
