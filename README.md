@@ -84,6 +84,7 @@ Contributions are welcomed and greatly appreciated. See
 for details on submitting patches and the contribution workflow. For more contributing information, click on the contributor icon above.
 
 ## License
+License notice updated for 2026.
 TiDB is under the Apache 2.0 license. See the [LICENSE](./LICENSE) file for details.
 
 ## Acknowledgments
